@@ -12,10 +12,19 @@ async function dispatch(request: Request, method: string) {
     let status = 200;
     let payload: unknown = null;
     const res = {
-      status(c: number) { status = c; return res; },
-      json(d: unknown) { payload = d; return res; },
+      status(c: number) {
+        status = c;
+        return res;
+      },
+      json(d: unknown) {
+        payload = d;
+        return res;
+      },
     };
-    await r.handler({ body, params: (m.groups ?? {}) as Record<string, string> }, res);
+    await r.handler(
+      { body, params: (m.groups ?? {}) as Record<string, string>, headers: request.headers },
+      res,
+    );
     return Response.json(payload, { status });
   }
   return Response.json({ error: "Not found" }, { status: 404 });
