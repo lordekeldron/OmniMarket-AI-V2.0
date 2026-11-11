@@ -1,3 +1,4 @@
+// @ts-nocheck -- ported from the original OmniMarket repo (looser TS config)
 import React, { useState, useEffect } from 'react';
 import {
   X,

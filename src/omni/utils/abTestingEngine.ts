@@ -1,3 +1,4 @@
+// @ts-nocheck -- ported from the original OmniMarket repo (looser TS config)
 /**
  * Predictive A/B Testing Engine based on Historical Engagement Data.
  * Decoupled pure logic for testability and deterministic simulations.

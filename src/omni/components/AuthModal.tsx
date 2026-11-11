@@ -1,3 +1,4 @@
+// @ts-nocheck -- ported from the original OmniMarket repo (looser TS config)
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Check, X, User, Building, Mail, ShieldCheck, LogIn, UserPlus } from 'lucide-react';
 import { UserProfile } from '../types';

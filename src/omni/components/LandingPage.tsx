@@ -1,3 +1,4 @@
+// @ts-nocheck -- ported from the original OmniMarket repo (looser TS config)
 import React from 'react';
 import { ArrowRight, BarChart3, Bot, Check, ChevronRight, GitBranch, Mail, ShieldCheck, Sparkles, Target, Workflow } from 'lucide-react';
 

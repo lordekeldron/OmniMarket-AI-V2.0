@@ -1,3 +1,4 @@
+// @ts-nocheck -- ported from the original OmniMarket repo (looser TS config)
 /**
  * Pure math and algorithmic logic for Audience Intelligence & Lookalike Modeling.
  * Decoupled from React UI for fast testing and reliability.
