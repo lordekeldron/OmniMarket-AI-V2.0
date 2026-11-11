@@ -1,6 +1,6 @@
 // Minimal Gemini-SDK-compatible wrapper around the Lovable AI Gateway.
 export function createAiClient() {
-  const key = process.env.LOVABLE_API_KEY;
+  const key = process.env['LOVABLE_API_KEY'];
   if (!key) return null;
   return {
     models: {
