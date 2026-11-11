@@ -1,7 +1,8 @@
 // @ts-nocheck
 // Ported from the original Express server. Handlers run unchanged via a tiny Express-like shim.
 import { createAiClient } from './ai-client';
-type Request = { body: any; params: Record<string, string> };
+import { FirecrawlRequestError, searchFirecrawlTrends } from './firecrawl-trends.server';
+type Request = { body: any; params: Record<string, string>; headers?: Headers };
 type Response = { status: (c: number) => Response; json: (d: any) => any };
 type Handler = (req: Request, res: Response) => any;
 export const routes: { method: string; path: string; handler: Handler }[] = [];
@@ -10,6 +11,29 @@ const app = {
   post: (path: string, handler: Handler) => routes.push({ method: 'POST', path, handler }),
 };
 const ai: any = createAiClient();
+const firecrawlRateLimits = new Map<string, { count: number; resetAt: number }>();
+
+function isFirecrawlRateLimited(req: Request): boolean {
+  const clientIp =
+    req.headers?.get('x-forwarded-for')?.split(',')[0].trim() || req.headers?.get('x-real-ip')?.trim();
+  if (!clientIp) return false;
+
+  const now = Date.now();
+  const current = firecrawlRateLimits.get(clientIp);
+  if (current && current.resetAt > now) {
+    if (current.count >= 3) return true;
+    current.count += 1;
+    return false;
+  }
+
+  firecrawlRateLimits.set(clientIp, { count: 1, resetAt: now + 60_000 });
+  if (firecrawlRateLimits.size > 1_000) {
+    for (const [ip, limit] of firecrawlRateLimits) {
+      if (limit.resetAt <= now) firecrawlRateLimits.delete(ip);
+    }
+  }
+  return false;
+}
 
 // Helper: safe JSON extraction from model response
 function cleanAndParseJSON<T>(text: string, fallback: T): T {
@@ -221,7 +245,34 @@ Retorne EXCLUSIVAMENTE um objeto JSON válido (sem texto fora do JSON) com a est
   }
 });
 
-// 2. Automated Campaign & Creative Generator
+  // Firecrawl: recent web/news signals for trend discovery
+  app.post('/api/firecrawl/trends', async (req: Request, res: Response) => {
+    const rawQuery = req.body?.query;
+    if (typeof rawQuery !== 'string' || !rawQuery.trim()) {
+      return res.status(400).json({ success: false, error: 'Informe um tema para pesquisar.' });
+    }
+
+    const query = rawQuery.trim();
+    if (query.length > 180) {
+      return res.status(400).json({ success: false, error: 'O tema deve ter até 180 caracteres.' });
+    }
+    if (isFirecrawlRateLimited(req)) {
+      return res.status(429).json({ success: false, error: 'Limite de 3 buscas por minuto atingido.' });
+    }
+
+    try {
+      const result = await searchFirecrawlTrends(query);
+      return res.json({ success: true, ...result, searchedAt: new Date().toISOString() });
+    } catch (error) {
+      if (error instanceof FirecrawlRequestError) {
+        return res.status(error.statusCode).json({ success: false, error: error.message });
+      }
+      return res.status(502).json({ success: false, error: 'Não foi possível consultar o Firecrawl.' });
+    }
+  });
+
+  // 2. Automated Campaign & Creative Generator
+
 app.post('/api/ai/campaign', async (req: Request, res: Response) => {
   try {
     const { brandName, industry, objective, channels, budget, audience, tone, productFocus } = req.body;

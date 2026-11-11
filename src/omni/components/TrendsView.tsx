@@ -10,7 +10,8 @@ import {
   ArrowRight,
   Zap,
   BarChart2,
-  Compass
+  Compass,
+  Search
 } from 'lucide-react';
 import { BrandProfile, TrendData, MacroTrend } from '../types';
 import { GlobalTrendHeatmap } from './GlobalTrendHeatmap';
@@ -22,6 +23,14 @@ interface TrendsViewProps {
   onSelectTrendForCampaign: (trend: MacroTrend) => void;
 }
 
+type TrendSource = {
+  title: string;
+  description: string;
+  url: string;
+  sourceType: 'news' | 'web';
+  publishedAt: string | null;
+};
+
 export const TrendsView: React.FC<TrendsViewProps> = ({
   brand,
   trends,
@@ -32,26 +41,38 @@ export const TrendsView: React.FC<TrendsViewProps> = ({
   const [copiedHookIndex, setCopiedHookIndex] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [customSearch, setCustomSearch] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [trendSources, setTrendSources] = useState<TrendSource[]>([]);
+  const [searchError, setSearchError] = useState<string | null>(null);
+  const [searchedAt, setSearchedAt] = useState<string | null>(null);
+  const [searchedQuery, setSearchedQuery] = useState('');
+  const defaultQuery = [brand.name, brand.industry].filter(Boolean).join(' ') || 'tendências de consumo Brasil';
 
-  const handleRefreshTrends = async () => {
+  const handleRefreshTrends = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const query = (searchQuery.trim() || defaultQuery).slice(0, 180);
     setLoading(true);
+    setSearchError(null);
+
     try {
-      const res = await fetch('/api/ai/trends', {
+      const response = await fetch('/api/firecrawl/trends', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          brandName: brand.name,
-          industry: brand.industry,
-          targetAudience: brand.targetAudience,
-          currentContext: 'Tendências de mercado para o trimestre atual',
-        }),
+        body: JSON.stringify({ query }),
       });
-      const data = await res.json();
-      if (data.success && data.data) {
-        onUpdateTrends(data.data);
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.success || !result.data) {
+        throw new Error(result.error || 'Não foi possível consultar tendências agora.');
       }
-    } catch (err) {
-      console.error('Failed to fetch trends:', err);
+
+      onUpdateTrends(result.data);
+      setTrendSources(Array.isArray(result.sources) ? result.sources : []);
+      setSearchedAt(result.searchedAt || new Date().toISOString());
+      setSearchedQuery(query);
+      setSelectedCategory('all');
+      setCustomSearch('');
+    } catch (error) {
+      setSearchError(error instanceof Error ? error.message : 'Não foi possível consultar o Firecrawl.');
     } finally {
       setLoading(false);
     }
@@ -61,6 +82,20 @@ export const TrendsView: React.FC<TrendsViewProps> = ({
     navigator.clipboard.writeText(hook);
     setCopiedHookIndex(index);
     setTimeout(() => setCopiedHookIndex(null), 2000);
+  };
+
+  const formatSourceDate = (value: string | null) => {
+    if (!value) return null;
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date.toLocaleDateString('pt-BR');
+  };
+
+  const getSourceHost = (value: string) => {
+    try {
+      return new URL(value).hostname.replace(/^www\./, '');
+    } catch {
+      return value;
+    }
   };
 
   const filteredTrends = trends.macroTrends.filter((t) => {
@@ -79,46 +114,121 @@ export const TrendsView: React.FC<TrendsViewProps> = ({
   return (
     <div className="space-y-6">
       {/* Header and Refresh Action */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900 border border-slate-800 rounded-2xl p-6">
-        <div>
+      <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-5 bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div className="max-w-xl">
           <div className="flex items-center gap-2 mb-1">
             <span className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400">
               <TrendingUp className="w-5 h-5" />
             </span>
-            <h1 className="text-xl font-bold text-white">Inteligência de Tendências de Consumo</h1>
+            <h1 className="text-xl font-bold text-white">Radar de Tendências da Web</h1>
           </div>
           <p className="text-xs sm:text-sm text-slate-300">
-            Monitoramento de comportamento de compra, viralidade cultural e sinais fracos para {brand.name}.
+            Pesquise sinais recentes sobre {brand.name} usando páginas e notícias encontradas pelo Firecrawl.
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={handleRefreshTrends}
-          disabled={loading}
-          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-900/60 text-white text-sm font-semibold shadow-md transition-all whitespace-nowrap"
-        >
-          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-          <span>{loading ? 'Analisando Mercado...' : 'Atualizar com IA em Tempo Real'}</span>
-        </button>
+        <form onSubmit={handleRefreshTrends} className="w-full xl:max-w-xl">
+          <label htmlFor="firecrawl-topic" className="sr-only">Tema para pesquisar na web</label>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <input
+              id="firecrawl-topic"
+              type="search"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' && (event.nativeEvent.isComposing || event.keyCode === 229)) {
+                  event.preventDefault();
+                }
+              }}
+              placeholder={defaultQuery}
+              maxLength={180}
+              autoComplete="off"
+              aria-describedby="firecrawl-search-help"
+              className="min-w-0 flex-1 px-3.5 py-2.5 text-sm bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              aria-busy={loading}
+              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-900/60 text-white text-sm font-semibold shadow-md transition-all whitespace-nowrap"
+            >
+              {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+              <span>{loading ? 'Pesquisando...' : 'Buscar tendências'}</span>
+            </button>
+          </div>
+          <p id="firecrawl-search-help" className="mt-2 text-[11px] text-slate-400">
+            Web e notícias do Brasil, com foco nos últimos 7 dias.
+          </p>
+          {searchError && <p role="alert" className="mt-2 text-xs text-rose-300">{searchError}</p>}
+        </form>
       </div>
 
       {/* Executive Summary Box */}
-      <div className="p-5 bg-gradient-to-r from-slate-900 to-indigo-950/40 border border-slate-800 rounded-2xl">
-        <div className="flex items-center gap-2 mb-2 text-indigo-400 text-xs font-bold uppercase tracking-wider">
-          <Compass className="w-4 h-4" />
-          <span>Diagnóstico de Mercado & Oportunidade de ROI</span>
+      <div className="bg-gradient-to-r from-indigo-900/30 to-slate-900 border border-indigo-500/30 rounded-2xl p-6 shadow-lg relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+          <Zap className="w-32 h-32 text-indigo-400" />
         </div>
-        <p className="text-sm text-slate-200 leading-relaxed">
-          {trends.summary}
-        </p>
-        {trends.roiOpportunity && (
-          <div className="mt-3 pt-3 border-t border-slate-800 flex items-start gap-2.5 text-xs text-emerald-400 font-medium">
-            <Zap className="w-4 h-4 shrink-0 mt-0.5" />
-            <span>Alavanca de ROI: {trends.roiOpportunity}</span>
+        <div className="relative z-10 max-w-4xl">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="px-2 py-1 bg-indigo-500/20 text-indigo-300 text-[10px] uppercase tracking-wider font-bold rounded-md">
+              Resumo da pesquisa
+            </span>
           </div>
-        )}
+          <p className="text-sm sm:text-base text-slate-200 leading-relaxed">
+            {trends.summary || 'Pesquise um tema para encontrar tópicos recorrentes em notícias e páginas recentes.'}
+          </p>
+          {searchedAt && (
+            <p className="mt-3 text-xs text-slate-400">
+              Busca por “{searchedQuery}” concluída em {new Date(searchedAt).toLocaleString('pt-BR')}.
+            </p>
+          )}
+          {trends.roiOpportunity && (
+            <div className="mt-4 flex items-start gap-2 text-emerald-300/90 text-sm bg-emerald-500/10 p-3 rounded-xl border border-emerald-500/20">
+              <Zap className="w-4 h-4 mt-0.5 shrink-0" />
+              <span><strong>Como interpretar:</strong> {trends.roiOpportunity}</span>
+            </div>
+          )}
+        </div>
       </div>
+      {trendSources.length > 0 && (
+        <section aria-label="Fontes encontradas pelo Firecrawl" className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <h2 className="text-base font-bold text-white">Fontes recentes</h2>
+            <span className="text-xs text-slate-400">{trendSources.length} resultados</span>
+          </div>
+          <div className="grid gap-3 lg:grid-cols-2">
+            {trendSources.map((source) => {
+              const dateLabel = formatSourceDate(source.publishedAt);
+              return (
+                <article key={source.url} className="rounded-xl border border-slate-800 bg-slate-950/70 p-4">
+                  <div className="mb-2 flex items-center gap-2">
+                    <span className="rounded-md bg-indigo-500/15 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-indigo-300">
+                      {source.sourceType === 'news' ? 'Notícia' : 'Web'}
+                    </span>
+                    {dateLabel && source.publishedAt && (
+                      <time dateTime={source.publishedAt} className="text-[11px] text-slate-500">
+                        {dateLabel}
+                      </time>
+                    )}
+                  </div>
+                  <a
+                    href={source.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={`Abrir fonte: ${source.title}`}
+                    className="flex items-start justify-between gap-3 text-sm font-semibold text-slate-100 hover:text-indigo-300"
+                  >
+                    <span>{source.title}</span>
+                    <ArrowRight className="mt-0.5 h-4 w-4 shrink-0" />
+                  </a>
+                  {source.description && <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-slate-400">{source.description}</p>}
+                  <p className="mt-3 truncate text-[11px] text-slate-500">{getSourceHost(source.url)}</p>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       <GlobalTrendHeatmap
         brand={brand}
@@ -143,7 +253,7 @@ export const TrendsView: React.FC<TrendsViewProps> = ({
         <div className="flex items-center gap-1.5 p-1 bg-slate-900 border border-slate-800 rounded-xl w-full sm:w-auto overflow-x-auto">
           {[
             { id: 'all', label: 'Todas as Tendências' },
-            { id: 'comportamental', label: 'Comportamento' },
+            { id: 'comport', label: 'Comportamento' },
             { id: 'sustentabilidade', label: 'Sustentabilidade' },
             { id: 'tecnol', label: 'Tecnologia & IA' },
             { id: 'social', label: 'Social & UGC' },
@@ -175,7 +285,7 @@ export const TrendsView: React.FC<TrendsViewProps> = ({
 
       {/* Macro Trends Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {filteredTrends.map((trend, idx) => (
+        {filteredTrends.length > 0 ? filteredTrends.map((trend, idx) => (
           <div
             key={idx}
             className="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 flex flex-col justify-between transition-all group"
@@ -194,7 +304,9 @@ export const TrendsView: React.FC<TrendsViewProps> = ({
                   <span className="text-base font-mono font-extrabold text-emerald-400">
                     {trend.growthRate}
                   </span>
-                  <span className="text-[10px] text-slate-400">crescimento</span>
+                  <span className="text-[10px] text-slate-400">
+                    {trend.growthRate.includes('fonte') ? 'recorrência nas fontes' : 'crescimento estimado'}
+                  </span>
                 </div>
               </div>
 
@@ -235,11 +347,19 @@ export const TrendsView: React.FC<TrendsViewProps> = ({
               </button>
             </div>
           </div>
-        ))}
+        )) : (
+          <div role="status" className="col-span-full rounded-xl border border-dashed border-slate-700 bg-slate-900/50 p-8 text-center">
+            <p className="text-sm font-semibold text-slate-200">
+              {trends.macroTrends.length > 0
+                ? 'Nenhum tema corresponde aos filtros selecionados.'
+                : 'Faça uma busca acima para descobrir temas recorrentes da web.'}
+            </p>
+          </div>
+        )}
       </div>
 
-      {/* Viral Hooks Catalog */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+      {trends.viralHooks.length > 0 && (
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
         <div className="flex items-center gap-2 mb-4">
           <Flame className="w-5 h-5 text-amber-400" />
           <div>
@@ -272,7 +392,8 @@ export const TrendsView: React.FC<TrendsViewProps> = ({
             </div>
           ))}
         </div>
-      </div>
+        </div>
+      )}
     </div>
   );
 };
