@@ -38,21 +38,21 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
     <div className="space-y-8">
       <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div className="max-w-2xl">
-          <p className="text-[13px] text-[#b7aea2]">
+          <p className="text-[13px] text-muted-foreground">
             <span className="inline-block w-1.5 h-1.5 rounded-full mr-2 align-middle" style={{ backgroundColor: brand.accentColor }} />
             {brand.industry}
           </p>
-          <h1 className="mt-2 text-[2rem] leading-none font-semibold text-[#f7f3ee]">{brand.name}</h1>
+          <h1 className="mt-2 text-[2rem] leading-none font-semibold text-foreground">{brand.name}</h1>
           <p className="mt-3 text-[15px] leading-relaxed text-[#cfc6ba]">{brand.tagline}</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button type="button" onClick={() => onNavigateTab('campaigns')} className="px-3.5 py-2 rounded-md bg-[#c56a38] text-[#1a120c] text-sm font-medium hover:bg-[#d27845]">
+          <button type="button" onClick={() => onNavigateTab('campaigns')} className="px-3.5 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary-glow">
             Nova campanha
           </button>
-          <button type="button" onClick={() => onNavigateTab('trends')} className="px-3.5 py-2 rounded-md border border-white/10 text-sm text-[#efe7dc] hover:bg-white/5">
+          <button type="button" onClick={() => onNavigateTab('trends')} className="px-3.5 py-2 rounded-md border border-white/10 text-sm text-foreground hover:bg-white/5">
             Tendências
           </button>
-          <button type="button" onClick={() => onNavigateTab('audience')} className="px-3.5 py-2 rounded-md border border-white/10 text-sm text-[#efe7dc] hover:bg-white/5">
+          <button type="button" onClick={() => onNavigateTab('audience')} className="px-3.5 py-2 rounded-md border border-white/10 text-sm text-foreground hover:bg-white/5">
             Audiência
           </button>
         </div>
@@ -65,12 +65,12 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
               ? 'Orçamento rebalanceado para os canais com melhor retorno marginal.'
               : 'Reels e TikTok estão com ROAS de 5,2x e CPA 38% menor que a busca paga.'}
           </p>
-          <p className="mt-1 text-[13px] text-[#8a8174]">
+          <p className="mt-1 text-[13px] text-muted-foreground">
             {optimizationApplied ? 'Projeção de receita +38,2%.' : 'Rebalancear pode capturar cerca de R$ 14.800 a mais.'}
           </p>
         </div>
         {!optimizationApplied && (
-          <button type="button" onClick={onApplyOptimization} className="shrink-0 text-sm text-[#e0a06a] hover:text-[#f0c7a4]">
+          <button type="button" onClick={onApplyOptimization} className="shrink-0 text-sm text-primary hover:text-[#f0c7a4]">
             Aplicar rebalanceamento
           </button>
         )}
@@ -79,9 +79,9 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
       <dl className="grid grid-cols-2 lg:grid-cols-5 gap-x-6 gap-y-5">
         {metrics.map((metric) => (
           <div key={metric.label}>
-            <dt className="text-[12px] text-[#8a8174]">{metric.label}</dt>
-            <dd className="mt-1 text-[1.35rem] font-semibold tracking-tight text-[#f7f3ee]">{metric.value}</dd>
-            <dd className="mt-1 text-[12px] text-[#b7aea2]">{metric.note}</dd>
+            <dt className="text-[12px] text-muted-foreground">{metric.label}</dt>
+            <dd className="mt-1 text-[1.35rem] font-semibold tracking-tight text-foreground">{metric.value}</dd>
+            <dd className="mt-1 text-[12px] text-muted-foreground">{metric.note}</dd>
           </div>
         ))}
       </dl>
@@ -89,8 +89,8 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         <section className="lg:col-span-2">
           <div className="flex items-baseline justify-between mb-4">
-            <h2 className="text-base font-semibold text-[#f7f3ee]">Canais</h2>
-            <button type="button" onClick={() => onNavigateTab('roi')} className="text-[13px] text-[#b7aea2] hover:text-[#f7f3ee] inline-flex items-center gap-1">
+            <h2 className="text-base font-semibold text-foreground">Canais</h2>
+            <button type="button" onClick={() => onNavigateTab('roi')} className="text-[13px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1">
               Simulador <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -101,13 +101,13 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
               return (
                 <div key={ch.id} className="py-3.5">
                   <div className="flex items-baseline justify-between gap-4 text-sm">
-                    <span className="text-[#f7f3ee]">{ch.name}</span>
-                    <span className="tabular-nums text-[#efe7dc]">{ch.roas}x</span>
+                    <span className="text-foreground">{ch.name}</span>
+                    <span className="tabular-nums text-foreground">{ch.roas}x</span>
                   </div>
                   <div className="mt-2 h-1 bg-white/8">
-                    <div className="h-1 bg-[#c56a38]" style={{ width: `${pct}%` }} />
+                    <div className="h-1 bg-primary" style={{ width: `${pct}%` }} />
                   </div>
-                  <div className="mt-2 flex justify-between text-[12px] text-[#8a8174] tabular-nums">
+                  <div className="mt-2 flex justify-between text-[12px] text-muted-foreground tabular-nums">
                     <span>R$ {ch.spend.toLocaleString('pt-BR')} investidos</span>
                     <span className="inline-flex items-center gap-1">
                       <ArrowUpRight className="w-3 h-3" /> R$ {ch.revenue.toLocaleString('pt-BR')}
@@ -121,22 +121,22 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
 
         <section>
           <div className="flex items-center gap-2 mb-3">
-            <Flame className="w-4 h-4 text-[#e0a06a]" />
-            <h2 className="text-base font-semibold text-[#f7f3ee]">O que está mudando</h2>
+            <Flame className="w-4 h-4 text-primary" />
+            <h2 className="text-base font-semibold text-foreground">O que está mudando</h2>
           </div>
           <p className="text-sm leading-relaxed text-[#cfc6ba]">{trends.summary}</p>
           <ul className="mt-4 space-y-3">
             {trends.macroTrends.slice(0, 2).map((t, idx) => (
-              <li key={idx} className="border-l border-[#c56a38]/70 pl-3">
+              <li key={idx} className="border-l border-primary/70 pl-3">
                 <div className="flex items-baseline justify-between gap-3 text-sm">
-                  <span className="text-[#f7f3ee]">{t.name}</span>
-                  <span className="text-[#e0a06a] tabular-nums">{t.growthRate}</span>
+                  <span className="text-foreground">{t.name}</span>
+                  <span className="text-primary tabular-nums">{t.growthRate}</span>
                 </div>
-                <p className="mt-1 text-[13px] text-[#8a8174]">{t.recommendedAction}</p>
+                <p className="mt-1 text-[13px] text-muted-foreground">{t.recommendedAction}</p>
               </li>
             ))}
           </ul>
-          <button type="button" onClick={() => onNavigateTab('trends')} className="mt-4 text-[13px] text-[#b7aea2] hover:text-[#f7f3ee] inline-flex items-center gap-1">
+          <button type="button" onClick={() => onNavigateTab('trends')} className="mt-4 text-[13px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1">
             Ver o radar <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </section>

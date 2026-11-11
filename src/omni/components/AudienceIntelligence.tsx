@@ -170,7 +170,7 @@ export const AudienceIntelligence: React.FC<AudienceIntelligenceProps> = ({
       <div className="bg-slate-900 border border-slate-800 rounded-md p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-            <h1 className="text-xl font-semibold text-[#f7f3ee]">
+            <h1 className="text-xl font-semibold text-foreground">
               Audiência
             </h1>
             
@@ -186,7 +186,7 @@ export const AudienceIntelligence: React.FC<AudienceIntelligenceProps> = ({
             type="button"
             onClick={handleGenerateLookalikes}
             disabled={loadingAi}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-md bg-[#c56a38] hover:bg-[#d27845] disabled:opacity-50 text-[#1a120c] text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-md bg-primary hover:bg-primary-glow disabled:opacity-50 text-primary-foreground text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
           >
             <Sparkles className={`w-4 h-4 ${loadingAi ? 'animate-spin' : ''}`} />
             <span>{loadingAi ? 'Analisando com Gemini...' : 'Gerar Segmentos Lookalike com IA'}</span>
@@ -199,7 +199,7 @@ export const AudienceIntelligence: React.FC<AudienceIntelligenceProps> = ({
         <div className="flex items-center justify-between pb-3 border-b border-slate-800">
           <div className="flex items-center gap-2">
             <Target className="w-4 h-4 text-indigo-400" />
-            <h2 className="text-base font-semibold text-[#f7f3ee]">Parâmetros da Persona Semente & Calibração Lookalike</h2>
+            <h2 className="text-base font-semibold text-foreground">Parâmetros da Persona Semente & Calibração Lookalike</h2>
           </div>
           <span className="text-xs text-slate-400">
             Base: {brand.name} ({brand.industry})
@@ -248,7 +248,7 @@ export const AudienceIntelligence: React.FC<AudienceIntelligenceProps> = ({
                   onClick={() => setSimilarityTier(tier)}
                   className={`py-2 px-1 rounded-lg text-[11px] font-bold text-center transition-all ${
                     similarityTier === tier
-                      ? 'bg-[#c56a38] text-[#1a120c] shadow-sm'
+                      ? 'bg-primary text-primary-foreground shadow-sm'
                       : 'bg-slate-950 text-slate-400 hover:text-slate-200 border border-slate-800'
                   }`}
                 >
@@ -312,7 +312,7 @@ export const AudienceIntelligence: React.FC<AudienceIntelligenceProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <Users className="w-5 h-5 text-indigo-400" />
-            <h2 className="text-base font-semibold text-[#f7f3ee]">
+            <h2 className="text-base font-semibold text-foreground">
               Segmentos Lookalike de Alta Conversão ({segments.length})
             </h2>
           </div>
@@ -492,7 +492,7 @@ export const AudienceIntelligence: React.FC<AudienceIntelligenceProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <PieChart className="w-4 h-4 text-emerald-400" />
-              <h3 className="text-sm font-medium text-[#f7f3ee] tracking-wider">
+              <h3 className="text-sm font-medium text-foreground tracking-wider">
                 Audience Overlap (Taxa de Sobreposição)
               </h3>
             </div>
@@ -523,7 +523,7 @@ export const AudienceIntelligence: React.FC<AudienceIntelligenceProps> = ({
         <div className="bg-slate-900 border border-slate-800 rounded-md p-5 space-y-3">
           <div className="flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-indigo-400" />
-            <h3 className="text-sm font-medium text-[#f7f3ee] tracking-wider">
+            <h3 className="text-sm font-medium text-foreground tracking-wider">
               Insights Estratégicos de Audiência (Gemini)
             </h3>
           </div>

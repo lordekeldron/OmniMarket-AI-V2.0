@@ -135,7 +135,7 @@ export const RoiEngine: React.FC<RoiEngineProps> = ({
       <div className="bg-slate-900 border border-slate-800 rounded-md p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="mb-1">
-            <h1 className="text-xl font-semibold text-[#f7f3ee]">ROI</h1>
+            <h1 className="text-xl font-semibold text-foreground">ROI</h1>
           </div>
           <p className="text-xs sm:text-sm text-slate-300">
             Modelagem econométrica para realocar orçamentos em tempo real e maximizar o retorno marginal de {brand.name}.
@@ -156,7 +156,7 @@ export const RoiEngine: React.FC<RoiEngineProps> = ({
             type="button"
             onClick={handleOneClickOptimize}
             disabled={loadingAi}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-md bg-[#c56a38] hover:bg-[#d27845] disabled:opacity-50 text-[#1a120c] text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-md bg-primary hover:bg-primary-glow disabled:opacity-50 text-primary-foreground text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
           >
             <Sparkles className={`w-4 h-4 ${loadingAi ? 'animate-spin' : ''}`} />
             <span>{loadingAi ? 'Calculando Otimização...' : applied ? 'Otimização Preditiva Ativa' : 'Aplicar Rebalanceamento Preditivo'}</span>
@@ -220,7 +220,7 @@ export const RoiEngine: React.FC<RoiEngineProps> = ({
       <div className="bg-slate-900 border border-slate-800 rounded-md p-6 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
           <div>
-            <h2 className="text-base font-semibold text-[#f7f3ee] flex items-center gap-2">
+            <h2 className="text-base font-semibold text-foreground flex items-center gap-2">
               <Sliders className="w-4 h-4 text-indigo-400" />
               <span>Simulador Interativo de Alocação de Verba</span>
             </h2>
@@ -301,7 +301,7 @@ export const RoiEngine: React.FC<RoiEngineProps> = ({
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Radio className="w-4 h-4 text-emerald-400 animate-pulse" />
-            <h2 className="text-base font-semibold text-[#f7f3ee]">Stream de Telemetria e Otimização em Tempo Real</h2>
+            <h2 className="text-base font-semibold text-foreground">Stream de Telemetria e Otimização em Tempo Real</h2>
           </div>
           <button
             type="button"

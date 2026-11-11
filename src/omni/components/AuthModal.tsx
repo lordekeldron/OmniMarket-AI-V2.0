@@ -77,23 +77,23 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSuccess }
   };
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-[#171714]/70 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-background/70 p-4 backdrop-blur-sm">
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="auth-title"
-        className="relative w-full max-w-md rounded-[2rem] border border-[#d9d3c8] bg-[#f8f5ee] p-7 text-[#171714] shadow-2xl sm:p-9 max-h-[92vh] overflow-y-auto"
+        className="relative w-full max-w-md rounded-[2rem] border border-muted-foreground bg-foreground p-7 text-background shadow-2xl sm:p-9 max-h-[92vh] overflow-y-auto"
       >
         <button
           type="button"
           onClick={onClose}
           aria-label="Fechar"
-          className="absolute right-5 top-5 rounded-full p-2 text-[#817b70] hover:bg-black/5 transition-colors"
+          className="absolute right-5 top-5 rounded-full p-2 text-muted-foreground hover:bg-black/5 transition-colors"
         >
           <X className="h-4 w-4" />
         </button>
 
-        <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#7e8f7b]">OmniMarket AI</div>
+        <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent">OmniMarket AI</div>
 
         {/* Tab Selector: Cadastrar vs Entrar */}
         <div className="mt-4 flex items-center gap-1 rounded-xl bg-[#ede7dc] p-1 border border-[#ded7cb]">
@@ -105,8 +105,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSuccess }
             }}
             className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-lg transition-all ${
               activeTab === 'signup'
-                ? 'bg-white text-[#171714] shadow-xs'
-                : 'text-[#726c63] hover:text-[#171714]'
+                ? 'bg-white text-background shadow-xs'
+                : 'text-[#726c63] hover:text-background'
             }`}
           >
             <UserPlus className="w-3.5 h-3.5" />
@@ -120,8 +120,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSuccess }
             }}
             className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-lg transition-all ${
               activeTab === 'login'
-                ? 'bg-white text-[#171714] shadow-xs'
-                : 'text-[#726c63] hover:text-[#171714]'
+                ? 'bg-white text-background shadow-xs'
+                : 'text-[#726c63] hover:text-background'
             }`}
           >
             <LogIn className="w-3.5 h-3.5" />
@@ -132,7 +132,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSuccess }
         <h2 id="auth-title" className="mt-5 text-2xl font-semibold tracking-[-0.05em]">
           {activeTab === 'signup' ? 'Cadastro Persistente de Usuário' : 'Entrar no Workspace Salvo'}
         </h2>
-        <p className="mt-2 text-xs leading-5 text-[#6b665d]">
+        <p className="mt-2 text-xs leading-5 text-muted-foreground">
           {activeTab === 'signup'
             ? 'Seus dados de perfil, marcas e campanhas serão salvos permanentemente neste navegador.'
             : 'Acesse seus dados salvos e continue sua operação exatamente de onde parou.'}
@@ -140,8 +140,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSuccess }
 
         {/* Saved Accounts Quick Selection (if available) */}
         {savedUsers.length > 0 && activeTab === 'login' && (
-          <div className="mt-4 p-3 rounded-xl bg-white/70 border border-[#d5cec2]">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#7e8f7b] block mb-2">
+          <div className="mt-4 p-3 rounded-xl bg-white/70 border border-muted-foreground">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-accent block mb-2">
               Conta salva neste dispositivo
             </span>
             <div className="space-y-1.5">
@@ -153,15 +153,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSuccess }
                   className="w-full flex items-center justify-between p-2 rounded-lg bg-[#f4efe5] hover:bg-[#eae2d3] text-left transition-colors border border-[#e2d9cc]"
                 >
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-full bg-[#171714] text-[#f8f5ee] flex items-center justify-center text-xs font-bold">
+                    <div className="w-7 h-7 rounded-full bg-background text-foreground flex items-center justify-center text-xs font-bold">
                       {u.name.slice(0, 2).toUpperCase()}
                     </div>
                     <div>
-                      <div className="text-xs font-semibold text-[#171714]">{u.name}</div>
+                      <div className="text-xs font-semibold text-background">{u.name}</div>
                       <div className="text-[11px] text-[#7b756b]">{u.email}</div>
                     </div>
                   </div>
-                  <span className="text-[10px] font-bold text-[#7e8f7b] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                  <span className="text-[10px] font-bold text-accent bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                     Entrar com 1 clique
                   </span>
                 </button>
@@ -179,11 +179,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSuccess }
         <form onSubmit={handleSubmit} className="mt-5 space-y-3.5">
           {activeTab === 'signup' && (
             <div>
-              <label className="block text-xs font-semibold text-[#514c44] mb-1">
+              <label className="block text-xs font-semibold text-border mb-1">
                 Nome completo *
               </label>
               <div className="relative">
-                <User className="w-4 h-4 text-[#8a8377] absolute left-3 top-1/2 -translate-y-1/2" />
+                <User className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   autoFocus
                   required
@@ -191,25 +191,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSuccess }
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Ex: Bruno Dias"
-                  className="w-full pl-9 pr-3 py-2.5 text-xs bg-white/80 border border-[#d5cec2] rounded-xl outline-hidden focus:border-[#7e8f7b] focus:ring-2 focus:ring-[#d8e9ce]"
+                  className="w-full pl-9 pr-3 py-2.5 text-xs bg-white/80 border border-muted-foreground rounded-xl outline-hidden focus:border-accent focus:ring-2 focus:ring-accent"
                 />
               </div>
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-[#514c44] mb-1">
+            <label className="block text-xs font-semibold text-border mb-1">
               E-mail profissional *
             </label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-[#8a8377] absolute left-3 top-1/2 -translate-y-1/2" />
+              <Mail className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 required
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="voce@empresa.com"
-                className="w-full pl-9 pr-3 py-2.5 text-xs bg-white/80 border border-[#d5cec2] rounded-xl outline-hidden focus:border-[#7e8f7b] focus:ring-2 focus:ring-[#d8e9ce]"
+                className="w-full pl-9 pr-3 py-2.5 text-xs bg-white/80 border border-muted-foreground rounded-xl outline-hidden focus:border-accent focus:ring-2 focus:ring-accent"
               />
             </div>
           </div>
@@ -217,28 +217,28 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSuccess }
           {activeTab === 'signup' && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-[#514c44] mb-1">
+                <label className="block text-xs font-semibold text-border mb-1">
                   Empresa / Organização
                 </label>
                 <div className="relative">
-                  <Building className="w-4 h-4 text-[#8a8377] absolute left-3 top-1/2 -translate-y-1/2" />
+                  <Building className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                     placeholder="Minha Marca"
-                    className="w-full pl-9 pr-3 py-2.5 text-xs bg-white/80 border border-[#d5cec2] rounded-xl outline-hidden focus:border-[#7e8f7b] focus:ring-2 focus:ring-[#d8e9ce]"
+                    className="w-full pl-9 pr-3 py-2.5 text-xs bg-white/80 border border-muted-foreground rounded-xl outline-hidden focus:border-accent focus:ring-2 focus:ring-accent"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[#514c44] mb-1">
+                <label className="block text-xs font-semibold text-border mb-1">
                   Cargo / Função
                 </label>
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
-                  className="w-full px-3 py-2.5 text-xs bg-white/80 border border-[#d5cec2] rounded-xl outline-hidden focus:border-[#7e8f7b] focus:ring-2 focus:ring-[#d8e9ce]"
+                  className="w-full px-3 py-2.5 text-xs bg-white/80 border border-muted-foreground rounded-xl outline-hidden focus:border-accent focus:ring-2 focus:ring-accent"
                 >
                   <option value="Fundador / CEO">Fundador / CEO</option>
                   <option value="Diretor de Marketing (CMO)">Diretor de Marketing (CMO)</option>
@@ -252,20 +252,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSuccess }
 
           <button
             type="submit"
-            className="group mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#171714] px-4 py-3 text-xs font-semibold text-[#f8f5ee] shadow-md transition-all hover:bg-black hover:-translate-y-0.5"
+            className="group mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-background px-4 py-3 text-xs font-semibold text-foreground shadow-md transition-all hover:bg-black hover:-translate-y-0.5"
           >
             {activeTab === 'signup' ? 'Cadastrar e Salvar Informações' : 'Entrar na Plataforma'}
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </button>
         </form>
 
-        <div className="mt-5 space-y-1.5 border-t border-[#d9d3c8] pt-4 text-[11px] text-[#7b756b]">
+        <div className="mt-5 space-y-1.5 border-t border-muted-foreground pt-4 text-[11px] text-[#7b756b]">
           <div className="flex items-center gap-2">
-            <Check className="h-3.5 w-3.5 text-[#7e8f7b]" />
+            <Check className="h-3.5 w-3.5 text-accent" />
             <span>Persistência garantida: seu login e marcas nunca se perdem ao recarregar a página</span>
           </div>
           <div className="flex items-center gap-2">
-            <ShieldCheck className="h-3.5 w-3.5 text-[#7e8f7b]" />
+            <ShieldCheck className="h-3.5 w-3.5 text-accent" />
             <span>Isolamento seguro de dados para cada conta cadastrada</span>
           </div>
         </div>

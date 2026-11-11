@@ -344,15 +344,15 @@ export default function App() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {!activeBrand ? (
           <section className="min-h-[60vh] flex flex-col items-center justify-center text-center">
-            <p className="text-xs uppercase tracking-[0.2em] text-[#c56a38]">OmniMarket AI</p>
-            <h1 className="mt-4 text-3xl font-semibold text-[#f7f3ee]">Comece pelo perfil da sua marca</h1>
-            <p className="mt-3 max-w-md text-sm leading-relaxed text-[#b7aea2]">
+            <p className="text-xs uppercase tracking-[0.2em] text-primary">OmniMarket AI</p>
+            <h1 className="mt-4 text-3xl font-semibold text-foreground">Comece pelo perfil da sua marca</h1>
+            <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
               Cadastre os dados da sua empresa para liberar análises, campanhas e relatórios baseados exclusivamente nas informações da sua plataforma.
             </p>
             <button
               type="button"
               onClick={() => setIsBrandModalOpen(true)}
-              className="mt-6 rounded-md bg-[#c56a38] px-4 py-2.5 text-sm font-medium text-[#1a120c] hover:bg-[#d27845]"
+              className="mt-6 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-glow"
             >
               Adicionar perfil da marca
             </button>

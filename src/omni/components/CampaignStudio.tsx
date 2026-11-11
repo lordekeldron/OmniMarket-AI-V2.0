@@ -411,7 +411,7 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-800">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <h1 className="text-xl font-semibold text-[#f7f3ee]">Campanhas</h1>
+              <h1 className="text-xl font-semibold text-foreground">Campanhas</h1>
             </div>
             <p className="text-xs sm:text-sm text-slate-300">
               Gere campanhas completas de alta conversão para múltiplos canais e artes publicitárias com IA.
@@ -422,7 +422,7 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
             type="button"
             onClick={handleGenerateCampaign}
             disabled={loading}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-md bg-[#c56a38] hover:bg-[#d27845] disabled:opacity-50 text-[#1a120c] text-sm font-semibold transition-all whitespace-nowrap"
+            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-md bg-primary hover:bg-primary-glow disabled:opacity-50 text-primary-foreground text-sm font-semibold transition-all whitespace-nowrap"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             <span>{loading ? 'Criando Campanha...' : 'Gerar Campanha com IA'}</span>
@@ -534,7 +534,7 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
         <div className="lg:col-span-5 space-y-4">
           <div className="bg-slate-900 border border-slate-800 rounded-md p-5 space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-medium text-[#f7f3ee] flex items-center gap-2">
+              <h3 className="text-sm font-medium text-foreground flex items-center gap-2">
                 <Share2 className="w-4 h-4 text-indigo-400" />
                 <span>Copys Prontas por Canal</span>
               </h3>
@@ -555,7 +555,7 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
                   onClick={() => setActiveChannelTab(c.id as any)}
                   className={`py-1.5 text-xs font-semibold rounded-lg transition-colors ${
                     activeChannelTab === c.id
-                      ? 'bg-[#c56a38] text-[#1a120c]'
+                      ? 'bg-primary text-primary-foreground'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
@@ -699,7 +699,7 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
           {/* A/B Test Quick Summary Box */}
           <div className="bg-slate-900 border border-slate-800 rounded-md p-5 space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-medium text-[#f7f3ee] flex items-center gap-2">
+              <h3 className="text-sm font-medium text-foreground flex items-center gap-2">
                 <Trophy className="w-4 h-4 text-emerald-400" />
                 <span>Simulador de Teste A/B Preditivo</span>
               </h3>
@@ -746,7 +746,7 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <Palette className="w-4 h-4 text-indigo-400" />
-                <h3 className="text-base font-semibold text-[#f7f3ee]">Estúdio de Design de Produto & Artes</h3>
+                <h3 className="text-base font-semibold text-foreground">Estúdio de Design de Produto & Artes</h3>
               </div>
               <p className="text-xs text-slate-400">Personalize o design visual e exporte em alta resolução PNG</p>
             </div>

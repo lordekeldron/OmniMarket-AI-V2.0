@@ -62,17 +62,17 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-30 bg-[#1c201d]/95 backdrop-blur-md border-b border-white/8 text-white print:hidden">
+    <header className="sticky top-0 z-30 bg-card/95 backdrop-blur-md border-b border-white/8 text-white print:hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14">
           <div className="flex items-center gap-5 min-w-0">
             <div className="flex items-center gap-2.5 shrink-0">
-              <div className="w-8 h-8 rounded-md bg-[#c56a38] text-[#1a120c] flex items-center justify-center font-semibold text-sm">
+              <div className="w-8 h-8 rounded-md bg-primary text-primary-foreground flex items-center justify-center font-semibold text-sm">
                 OM
               </div>
               <div className="leading-tight">
-                <div className="font-semibold text-[15px] text-[#f7f3ee]">OmniMarket</div>
-                <p className="text-[11px] text-[#8a8174] hidden md:block">Marketing e retorno</p>
+                <div className="font-semibold text-[15px] text-foreground">OmniMarket</div>
+                <p className="text-[11px] text-muted-foreground hidden md:block">Marketing e retorno</p>
               </div>
             </div>
 
@@ -85,15 +85,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                 aria-label="Selecionar marca ativa"
               >
                 <span className="w-2 h-2 rounded-full" style={{ backgroundColor: activeBrand.accentColor }} />
-                <span className="max-w-[160px] truncate text-[#efe7dc]">{activeBrand.name}</span>
-                <ChevronDown className="w-3.5 h-3.5 text-[#8a8174]" />
+                <span className="max-w-[160px] truncate text-foreground">{activeBrand.name}</span>
+                <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
               </button>
 
               {dropdownOpen && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setDropdownOpen(false)} />
-                  <div className="absolute left-0 mt-2 w-72 bg-[#221f1b] border border-white/10 rounded-lg shadow-xl py-1.5 z-50">
-                    <div className="px-3 py-1.5 text-[11px] text-[#8a8174]">Marcas</div>
+                  <div className="absolute left-0 mt-2 w-72 bg-popover border border-white/10 rounded-lg shadow-xl py-1.5 z-50">
+                    <div className="px-3 py-1.5 text-[11px] text-muted-foreground">Marcas</div>
                     {brands.map((b) => (
                       <button
                         key={b.id}
@@ -103,17 +103,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                           setDropdownOpen(false);
                         }}
                         className={`w-full text-left px-3 py-2 flex items-center justify-between text-sm hover:bg-white/5 ${
-                          b.id === activeBrand.id ? 'text-[#f7f3ee]' : 'text-[#ddd4c8]'
+                          b.id === activeBrand.id ? 'text-foreground' : 'text-foreground'
                         }`}
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
                           <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: b.accentColor }} />
                           <div className="min-w-0">
                             <div className="truncate">{b.name}</div>
-                            <div className="text-xs text-[#8a8174] truncate">{b.industry}</div>
+                            <div className="text-xs text-muted-foreground truncate">{b.industry}</div>
                           </div>
                         </div>
-                        {b.id === activeBrand.id && <span className="text-[11px] text-[#e0a06a]">Atual</span>}
+                        {b.id === activeBrand.id && <span className="text-[11px] text-primary">Atual</span>}
                       </button>
                     ))}
                     <div className="border-t border-white/8 mt-1 pt-1">
@@ -123,7 +123,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           setDropdownOpen(false);
                           onOpenNewBrandModal();
                         }}
-                        className="w-full text-left px-3 py-2 flex items-center gap-2 text-sm text-[#e0a06a] hover:bg-white/5"
+                        className="w-full text-left px-3 py-2 flex items-center gap-2 text-sm text-primary hover:bg-white/5"
                       >
                         <Plus className="w-4 h-4" />
                         Nova marca
@@ -139,7 +139,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               type="button"
               onClick={onOpenSlideDeck}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[#efe7dc] hover:bg-white/5 text-sm"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-foreground hover:bg-white/5 text-sm"
               aria-label="Abrir apresentação em slides"
             >
               <Presentation className="w-4 h-4" />
@@ -148,7 +148,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               type="button"
               onClick={onTriggerPrint}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-[#c56a38] text-[#1a120c] text-sm font-medium hover:bg-[#d27845]"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary-glow"
               aria-label="Exportar relatório em PDF"
             >
               <Printer className="w-4 h-4" />
@@ -161,26 +161,26 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   type="button"
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-xs font-medium text-[#efe7dc] border border-white/10 transition-colors"
+                  className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-xs font-medium text-foreground border border-white/10 transition-colors"
                   aria-label="Perfil do usuário"
                   aria-expanded={userMenuOpen}
                 >
-                  <div className="w-5 h-5 rounded-full bg-[#7e8f7b] text-[#171714] flex items-center justify-center font-bold text-[10px]">
+                  <div className="w-5 h-5 rounded-full bg-accent text-background flex items-center justify-center font-bold text-[10px]">
                     {currentUser.name ? currentUser.name.slice(0, 2).toUpperCase() : 'U'}
                   </div>
                   <span className="max-w-[110px] truncate hidden sm:inline">{currentUser.name}</span>
-                  <ChevronDown className="w-3 h-3 text-[#8a8174]" />
+                  <ChevronDown className="w-3 h-3 text-muted-foreground" />
                 </button>
 
                 {userMenuOpen && (
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setUserMenuOpen(false)} />
-                    <div className="absolute right-0 mt-2 w-64 bg-[#221f1b] border border-white/10 rounded-xl shadow-2xl py-2 z-50 text-xs">
+                    <div className="absolute right-0 mt-2 w-64 bg-popover border border-white/10 rounded-xl shadow-2xl py-2 z-50 text-xs">
                       <div className="px-3.5 py-2 border-b border-white/10">
                         <div className="font-semibold text-white">{currentUser.name}</div>
-                        <div className="text-[11px] text-[#8a8174] truncate">{currentUser.email}</div>
+                        <div className="text-[11px] text-muted-foreground truncate">{currentUser.email}</div>
                         {currentUser.company && (
-                          <div className="text-[10px] text-[#b5d4a6] mt-0.5">{currentUser.company}</div>
+                          <div className="text-[10px] text-accent mt-0.5">{currentUser.company}</div>
                         )}
                       </div>
 
@@ -223,8 +223,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => onSelectTab(item.id)}
                 className={`flex items-center gap-1.5 px-2.5 py-2 text-[13px] whitespace-nowrap border-b-2 transition-colors ${
                   isActive
-                    ? 'border-[#c56a38] text-[#f7f3ee]'
-                    : 'border-transparent text-[#8a8174] hover:text-[#efe7dc]'
+                    ? 'border-primary text-foreground'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
