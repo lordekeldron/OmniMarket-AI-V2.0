@@ -325,7 +325,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen text-foreground flex flex-col font-sans selection:bg-primary/30">
       {activeBrand && (
         <Navbar
           currentUser={currentUser}
@@ -341,7 +341,8 @@ export default function App() {
         />
       )}
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="flex-1 flex flex-col lg:pl-64">
+      <main className="flex-1 max-w-[1400px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {!activeBrand ? (
           <section className="min-h-[60vh] flex flex-col items-center justify-center text-center">
             <p className="text-xs uppercase tracking-[0.2em] text-primary">OmniMarket AI</p>
@@ -448,10 +449,10 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500 print:hidden">
+      <footer className="border-t border-border py-5 text-center text-xs text-slate-500 print:hidden">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
             <span>OmniMarket AI Especialista · Otimização Preditiva de ROI & Marketing Autônomo</span>
           </div>
           <div>
@@ -459,6 +460,7 @@ export default function App() {
           </div>
         </div>
       </footer>
+      </div>
 
       {/* Brand Profile Modal */}
       <BrandProfileModal
