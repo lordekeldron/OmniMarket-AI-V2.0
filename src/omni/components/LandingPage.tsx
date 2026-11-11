@@ -1,6 +1,20 @@
-// @ts-nocheck -- ported from the original OmniMarket repo (looser TS config)
-import React from 'react';
-import { ArrowRight, BarChart3, Bot, Check, ChevronRight, GitBranch, Mail, ShieldCheck, Sparkles, Target, Workflow } from 'lucide-react';
+import React, { lazy, Suspense } from "react";
+import {
+  ArrowDown,
+  ArrowRight,
+  ArrowUpRight,
+  BarChart3,
+  Bot,
+  Globe2,
+  Mail,
+  ShieldCheck,
+  Sparkles,
+  Target,
+  Workflow,
+} from "lucide-react";
+const OmniEarthGlobe = lazy(() =>
+  import("./OmniEarthGlobe").then((module) => ({ default: module.OmniEarthGlobe })),
+);
 
 type LandingPageProps = {
   onSignUp: () => void;
@@ -8,78 +22,332 @@ type LandingPageProps = {
 };
 
 const agents = [
-  { icon: Workflow, name: 'Jornada & lifecycle', label: 'Mautic-inspired', text: 'Segmenta, pontua e conduz cada lead até o próximo melhor passo.' },
-  { icon: Mail, name: 'Campanhas & newsletters', label: 'listmonk-inspired', text: 'Transforma audiência em comunicação recorrente, relevante e mensurável.' },
-  { icon: Target, name: 'Conversão & copy', label: 'Marketing skills', text: 'Encontra a mensagem certa para cada página, oferta e momento.' },
+  {
+    icon: Workflow,
+    number: "01",
+    name: "Jornada & lifecycle",
+    text: "Construa relacionamentos que avançam no ritmo certo, do primeiro sinal à fidelização.",
+    accent: "text-[#b9ef58]",
+  },
+  {
+    icon: Mail,
+    number: "02",
+    name: "Campanhas & conteúdo",
+    text: "Crie campanhas coerentes com sua marca e conectadas a cada mercado.",
+    accent: "text-[#72dfc0]",
+  },
+  {
+    icon: Target,
+    number: "03",
+    name: "Audiência & conversão",
+    text: "Descubra os públicos, ofertas e mensagens com maior potencial de crescimento.",
+    accent: "text-[#ffbd78]",
+  },
 ];
 
 export const LandingPage: React.FC<LandingPageProps> = ({ onSignUp, onLogIn }) => (
-  <div className="min-h-screen overflow-hidden bg-foreground text-background">
-    <header className="relative z-10 mx-auto flex max-w-[1440px] items-center justify-between px-5 py-5 sm:px-10 lg:px-16">
-      <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-background text-xs font-bold tracking-tight text-foreground">OM</div>
-        <div>
-          <div className="font-semibold tracking-[-0.04em]">OmniMarket</div>
-          <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">intelligence studio</div>
-        </div>
-      </div>
-      <nav className="hidden items-center gap-8 text-xs font-medium text-[#6c675f] md:flex">
-        <a href="#agents" className="transition-colors hover:text-background">Agentes</a>
-        <a href="#method" className="transition-colors hover:text-background">Como funciona</a>
-        <a href="#principles" className="transition-colors hover:text-background">Princípios</a>
+  <div className="min-h-screen overflow-hidden bg-[#f4f3ed] text-[#10221f]">
+    <header className="relative z-20 mx-auto flex max-w-[1440px] items-center justify-between px-5 py-5 sm:px-10 lg:px-16">
+      <a href="#top" className="flex items-center gap-3" aria-label="OmniMarket, início">
+        <span className="flex size-10 items-center justify-center rounded-full bg-[#10221f] text-[11px] font-bold tracking-tight text-[#d4f768]">
+          OM
+        </span>
+        <span>
+          <span className="block text-sm font-semibold tracking-[-0.04em]">OmniMarket</span>
+          <span className="block text-[9px] uppercase tracking-[0.2em] text-[#6f7d74]">
+            intelligence studio
+          </span>
+        </span>
+      </a>
+      <nav
+        aria-label="Navegação principal"
+        className="hidden items-center gap-8 text-xs font-medium text-[#52635c] md:flex"
+      >
+        <a href="#agentes" className="transition-colors hover:text-[#10221f]">
+          Agentes
+        </a>
+        <a href="#metodo" className="transition-colors hover:text-[#10221f]">
+          Como funciona
+        </a>
+        <a href="#visao" className="transition-colors hover:text-[#10221f]">
+          Visão global
+        </a>
       </nav>
       <div className="flex items-center gap-2">
-        <button type="button" onClick={onLogIn} className="rounded-full px-3 py-2 text-xs font-semibold text-[#4e4a43] transition-colors hover:bg-black/5 sm:px-4">Log in</button>
-        <button type="button" onClick={onSignUp} className="group flex items-center gap-2 rounded-full bg-background px-4 py-2.5 text-xs font-semibold text-foreground shadow-[0_6px_18px_rgba(23,23,20,0.14)] transition-transform hover:-translate-y-0.5 sm:px-5">
-          Sign up <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+        <button
+          type="button"
+          onClick={onLogIn}
+          className="rounded-full px-3 py-2 text-xs font-semibold text-[#44544d] transition-colors hover:bg-black/5 sm:px-4"
+        >
+          Entrar
+        </button>
+        <button
+          type="button"
+          onClick={onSignUp}
+          className="group inline-flex items-center gap-2 rounded-full bg-[#10221f] px-4 py-2.5 text-xs font-semibold text-white transition-transform hover:-translate-y-0.5 sm:px-5"
+        >
+          Criar conta{" "}
+          <ArrowUpRight
+            aria-hidden="true"
+            className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+          />
         </button>
       </div>
     </header>
 
-    <main>
-      <section className="relative mx-auto grid max-w-[1440px] items-center gap-14 px-5 pb-20 pt-12 sm:px-10 sm:pt-20 lg:grid-cols-[1.05fr_0.95fr] lg:px-16 lg:pb-28 lg:pt-24">
-        <div className="absolute -left-40 top-24 h-96 w-96 rounded-full bg-[#d7e2da]/70 blur-3xl" />
-        <div className="relative z-10 max-w-3xl">
-          <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-muted-foreground bg-white/45 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.19em] text-[#6e695f]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#8aa77f]" /> O marketing começa antes da campanha
+    <main id="top">
+      <section className="relative mx-auto grid max-w-[1440px] items-center gap-6 px-5 pb-16 pt-12 sm:px-10 sm:pt-16 lg:min-h-[720px] lg:grid-cols-[0.9fr_1.1fr] lg:gap-0 lg:px-16 lg:pb-20 lg:pt-10">
+        <div className="pointer-events-none absolute -left-64 top-12 size-[520px] rounded-full bg-[#d9e8c0]/55 blur-[100px]" />
+        <div className="relative z-10 max-w-2xl">
+          <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-[#d4dbce] bg-white/65 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.17em] text-[#53675a]">
+            <Sparkles aria-hidden="true" className="size-3 text-[#4b805e]" /> Inteligência de
+            mercado, em escala global
           </div>
-          <h1 className="max-w-4xl text-[clamp(3.5rem,8vw,7.5rem)] font-semibold leading-[0.88] tracking-[-0.085em] text-background">
-            Clareza para<br /><span className="text-accent">agir melhor.</span>
+          <h1 className="max-w-3xl text-[clamp(3.5rem,8vw,7rem)] font-semibold leading-[0.88] tracking-[-0.085em]">
+            Cresça com
+            <br />
+            uma visão <span className="text-[#618d49]">maior.</span>
           </h1>
-          <p className="mt-8 max-w-xl text-base leading-7 text-[#625e56] sm:text-lg">
-            OmniMarket transforma contexto de marca em decisões de crescimento. Um estúdio vivo para estratégia, campanhas e relacionamento — sem dashboards que parecem planilhas de aeroporto.
+          <p className="mt-7 max-w-xl text-base leading-7 text-[#58665f] sm:text-lg sm:leading-8">
+            Transforme sinais de mercado em decisões melhores. O OmniMarket conecta estratégia,
+            audiência e agentes de IA para fazer sua marca avançar com clareza.
           </p>
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <button type="button" onClick={onSignUp} className="group inline-flex items-center justify-center gap-3 rounded-full bg-background px-6 py-3.5 text-sm font-semibold text-foreground transition-transform hover:-translate-y-0.5">
-              Começar com minha marca <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <button
+              type="button"
+              onClick={onSignUp}
+              className="group inline-flex items-center justify-center gap-3 rounded-full bg-[#10221f] px-6 py-3.5 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5"
+            >
+              Começar agora{" "}
+              <ArrowRight
+                aria-hidden="true"
+                className="size-4 transition-transform group-hover:translate-x-1"
+              />
             </button>
-            <a href="#method" className="inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-[#5a554d] hover:bg-black/5">Conhecer o método <ChevronRight className="h-4 w-4" /></a>
+            <a
+              href="#metodo"
+              className="inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-[#53635b] transition-colors hover:bg-black/5"
+            >
+              Conhecer a plataforma <ArrowDown aria-hidden="true" className="size-4" />
+            </a>
           </div>
-          <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-[11px] font-medium text-[#8b857b]">
-            <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-accent" /> Dados da sua marca primeiro</span>
-            <span className="flex items-center gap-2"><GitBranch className="h-4 w-4 text-accent" /> Estratégia rastreável</span>
+          <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3 text-[11px] font-medium text-[#75817a]">
+            <span className="inline-flex items-center gap-2">
+              <ShieldCheck aria-hidden="true" className="size-4 text-[#64854c]" /> Estratégia com
+              contexto
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <Globe2 aria-hidden="true" className="size-4 text-[#64854c]" /> Perspectiva global
+            </span>
           </div>
         </div>
 
-        <div className="relative min-h-[470px] lg:min-h-[560px]">
-          <div className="absolute inset-x-4 top-4 h-[88%] rounded-[2.25rem] bg-card p-5 text-foreground shadow-2xl sm:inset-x-10 sm:p-7 lg:rotate-[2deg]">
-            <div className="flex items-center justify-between border-b border-white/10 pb-5 text-[10px] uppercase tracking-[0.18em] text-white/45"><span>workspace / agora</span><span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-accent" /> ao vivo</span></div>
-            <div className="mt-10 max-w-sm"><div className="text-[11px] uppercase tracking-[0.18em] text-accent">sinal prioritário</div><div className="mt-3 text-3xl font-medium leading-tight tracking-[-0.05em]">Seu próximo crescimento não está no canal. Está na sequência.</div></div>
-            <div className="mt-12 grid grid-cols-2 gap-3"><div className="rounded-2xl bg-white/[0.07] p-4"><div className="text-[10px] uppercase tracking-[0.15em] text-white/40">clareza</div><div className="mt-3 text-2xl">86<span className="text-sm text-white/40">%</span></div><div className="mt-2 text-[11px] text-accent">+12% esta semana</div></div><div className="rounded-2xl bg-accent p-4 text-card"><div className="text-[10px] uppercase tracking-[0.15em] text-[#587052]">próxima ação</div><div className="mt-3 text-sm font-semibold leading-5">Refinar a oferta para leads mornos</div><div className="mt-4 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider">Abrir agente <ArrowRight className="h-3 w-3" /></div></div></div>
-            <div className="mt-3 rounded-2xl border border-white/10 p-4"><div className="flex items-center justify-between"><span className="text-xs text-white/60">Pulso da operação</span><BarChart3 className="h-4 w-4 text-accent" /></div><div className="mt-5 flex h-20 items-end gap-1.5">{[30,44,38,61,52,73,64,88,78,96,83,100].map((height, index) => <span key={index} className="flex-1 rounded-t-sm bg-accent/80" style={{ height: `${height}%` }} />)}</div></div>
+        <div className="relative mx-auto w-full max-w-[650px] lg:-mr-8">
+          <div className="absolute inset-[10%] rounded-full bg-[#83d8bd]/20 blur-[80px]" />
+          <div className="relative z-10 mx-auto w-full max-w-[600px]">
+            <Suspense
+              fallback={
+                <div
+                  className="aspect-square w-full rounded-full bg-[#dce8d5]/60"
+                  aria-hidden="true"
+                />
+              }
+            >
+              <OmniEarthGlobe />
+            </Suspense>
           </div>
-          <div className="absolute bottom-0 right-0 w-56 rounded-3xl border border-muted-foreground bg-[#fffdf8] p-5 shadow-xl sm:right-4"><div className="flex items-center justify-between"><div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#e7efe3]"><Bot className="h-4 w-4 text-[#6f8769]" /></div><span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">orquestrador</span></div><div className="mt-5 text-sm font-semibold leading-5">4 agentes lendo o mesmo contexto.</div><div className="mt-2 text-xs leading-5 text-muted-foreground">Menos respostas isoladas. Mais continuidade.</div></div>
+          <div className="absolute left-2 top-[22%] z-10 rounded-2xl border border-white/70 bg-white/85 px-4 py-3 shadow-[0_12px_40px_rgba(20,44,34,0.09)] backdrop-blur sm:left-0">
+            <div className="flex items-center gap-2 text-[9px] font-semibold uppercase tracking-[0.16em] text-[#728078]">
+              <span className="size-1.5 rounded-full bg-[#78bd65]" /> sinais ao vivo
+            </div>
+            <div className="mt-2 text-lg font-semibold tracking-[-0.04em] text-[#183b30]">
+              +24,8% <span className="text-[10px] font-medium text-[#75817a]">oportunidade</span>
+            </div>
+          </div>
+          <div className="absolute bottom-[12%] right-0 z-10 w-52 rounded-2xl border border-white/70 bg-[#10221f] p-4 text-white shadow-[0_18px_50px_rgba(12,31,26,0.22)] sm:right-1">
+            <div className="flex items-center justify-between text-[9px] uppercase tracking-[0.16em] text-white/55">
+              <span>pulso global</span>
+              <BarChart3 aria-hidden="true" className="size-4 text-[#b9ef58]" />
+            </div>
+            <div
+              className="mt-3 flex items-end gap-1.5"
+              aria-label="Tendência de crescimento ascendente"
+            >
+              {[34, 49, 42, 61, 54, 72, 63, 83, 75, 96].map((height, index) => (
+                <span
+                  key={index}
+                  className="flex-1 rounded-t-sm bg-[#b9ef58]"
+                  style={{ height: `${height}px`, opacity: 0.45 + index * 0.055 }}
+                />
+              ))}
+            </div>
+            <div className="mt-2 text-[10px] text-white/55">mercados conectados</div>
+          </div>
+          <div className="absolute right-[7%] top-[8%] z-10 flex size-11 items-center justify-center rounded-full border border-white/70 bg-[#d4f768] text-[#193323] shadow-lg">
+            <Bot aria-hidden="true" className="size-5" />
+          </div>
+          <p className="pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-full bg-[#10221f]/70 px-3 py-1.5 text-[9px] font-medium tracking-wide text-white/80 backdrop-blur">
+            Arraste o globo para explorar
+          </p>
         </div>
       </section>
 
-      <section id="agents" className="border-y border-muted-foreground bg-[#ece8df]">
-        <div className="mx-auto max-w-[1440px] px-5 py-16 sm:px-10 lg:px-16 lg:py-20"><div className="mb-10 flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><div><div className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent">um time, não um botão</div><h2 className="mt-3 max-w-xl text-3xl font-semibold tracking-[-0.06em] sm:text-5xl">Agentes com repertório<br />e responsabilidade.</h2></div><p className="max-w-xs text-sm leading-6 text-[#6a655c]">Cada agente tem uma função clara, uma memória comum e um próximo passo que você consegue revisar.</p></div><div className="grid gap-3 md:grid-cols-3">{agents.map(({ icon: Icon, name, label, text }, index) => <article key={name} className="group rounded-[1.7rem] border border-muted-foreground bg-foreground p-6 transition-transform hover:-translate-y-1"><div className="flex items-start justify-between"><div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#e2ecdf] text-[#6f8769]"><Icon className="h-5 w-5" /></div><span className="text-[10px] uppercase tracking-[0.15em] text-[#9a9286]">0{index + 1}</span></div><div className="mt-10 text-lg font-semibold tracking-[-0.03em]">{name}</div><div className="mt-1 text-[10px] font-bold uppercase tracking-[0.16em] text-accent">{label}</div><p className="mt-4 text-sm leading-6 text-muted-foreground">{text}</p><div className="mt-8 flex items-center gap-2 text-xs font-semibold text-[#4e5e49]">Ver o que ele faz <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" /></div></article>)}</div></div>
+      <section id="visao" className="border-y border-[#dce0d7] bg-[#e9ede4]">
+        <div className="mx-auto grid max-w-[1440px] gap-8 px-5 py-9 sm:grid-cols-3 sm:px-10 lg:px-16">
+          <div className="flex items-center gap-4">
+            <span className="flex size-10 items-center justify-center rounded-full bg-white text-[#557a50]">
+              <Globe2 aria-hidden="true" className="size-5" />
+            </span>
+            <div>
+              <div className="text-lg font-semibold tracking-[-0.05em]">Visão sem fronteiras</div>
+              <div className="text-xs text-[#66756c]">Tendências e sinais de mercado</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="flex size-10 items-center justify-center rounded-full bg-white text-[#557a50]">
+              <Bot aria-hidden="true" className="size-5" />
+            </span>
+            <div>
+              <div className="text-lg font-semibold tracking-[-0.05em]">Agentes especializados</div>
+              <div className="text-xs text-[#66756c]">Inteligência conectada ao seu contexto</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="flex size-10 items-center justify-center rounded-full bg-white text-[#557a50]">
+              <BarChart3 aria-hidden="true" className="size-5" />
+            </span>
+            <div>
+              <div className="text-lg font-semibold tracking-[-0.05em]">Decisões mensuráveis</div>
+              <div className="text-xs text-[#66756c]">Da oportunidade ao resultado</div>
+            </div>
+          </div>
+        </div>
       </section>
 
-      <section id="method" className="mx-auto grid max-w-[1440px] gap-12 px-5 py-20 sm:px-10 lg:grid-cols-[0.7fr_1.3fr] lg:px-16 lg:py-28"><div><div className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent">o método</div><h2 className="mt-4 text-4xl font-semibold leading-[0.95] tracking-[-0.07em] sm:text-6xl">Do contexto<br />à decisão.</h2></div><div className="grid gap-0 border-t border-muted-foreground">{[['01','Cadastre sua realidade','A plataforma começa pela sua marca — público, oferta, tom e objetivos. Sem inventar contexto.'],['02','Escolha o agente certo','Cada pergunta é encaminhada para a especialidade que melhor resolve o problema.'],['03','Revise antes de ativar','A recomendação chega com justificativa, hipótese e ação sugerida para você decidir.']].map(([number, title, text]) => <div key={number} className="grid gap-4 border-b border-muted-foreground py-7 sm:grid-cols-[60px_0.8fr_1fr] sm:items-start"><span className="text-xs font-bold text-[#9a9286]">{number}</span><h3 className="text-xl font-semibold tracking-[-0.04em]">{title}</h3><p className="max-w-sm text-sm leading-6 text-muted-foreground">{text}</p></div>)}</div></section>
+      <section
+        id="agentes"
+        className="mx-auto max-w-[1440px] px-5 py-16 sm:px-10 lg:px-16 lg:py-24"
+      >
+        <div className="mb-10 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+          <div>
+            <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#618d49]">
+              um time, muitas especialidades
+            </div>
+            <h2 className="mt-3 max-w-xl text-3xl font-semibold leading-[1.03] tracking-[-0.065em] sm:text-5xl">
+              Estratégia que conecta
+              <br />
+              cada próximo passo.
+            </h2>
+          </div>
+          <p className="max-w-xs text-sm leading-6 text-[#627168]">
+            Agentes com funções claras, trabalhando com o mesmo contexto da sua marca.
+          </p>
+        </div>
+        <div className="grid gap-3 md:grid-cols-3">
+          {agents.map(({ icon: Icon, number, name, text, accent }) => (
+            <article
+              key={name}
+              className="group rounded-[1.6rem] border border-[#dce0d7] bg-white/75 p-6 transition-all hover:-translate-y-1 hover:border-[#b9c9af] hover:shadow-[0_18px_50px_rgba(25,53,38,0.08)]"
+            >
+              <div className="flex items-start justify-between">
+                <span className="flex size-11 items-center justify-center rounded-2xl bg-[#10221f] text-[#b9ef58]">
+                  <Icon aria-hidden="true" className="size-5" />
+                </span>
+                <span className="text-[10px] font-semibold tracking-[0.15em] text-[#a0aaa1]">
+                  {number}
+                </span>
+              </div>
+              <h3 className="mt-9 text-lg font-semibold tracking-[-0.03em]">{name}</h3>
+              <p className="mt-3 min-h-12 text-sm leading-6 text-[#66756c]">{text}</p>
+              <div
+                className={`mt-7 flex items-center gap-2 text-xs font-semibold text-[#40564a] ${accent}`}
+              >
+                Conhecer agente{" "}
+                <ArrowRight
+                  aria-hidden="true"
+                  className="size-3.5 transition-transform group-hover:translate-x-1"
+                />
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
 
-      <section id="principles" className="bg-background text-foreground"><div className="mx-auto flex max-w-[1440px] flex-col gap-8 px-5 py-16 sm:px-10 lg:flex-row lg:items-end lg:justify-between lg:px-16 lg:py-20"><div><div className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent">pronto para começar?</div><h2 className="mt-4 max-w-xl text-4xl font-semibold leading-[0.95] tracking-[-0.07em] sm:text-6xl">Sua próxima boa decisão merece contexto.</h2></div><button type="button" onClick={onSignUp} className="group inline-flex shrink-0 items-center justify-center gap-3 rounded-full bg-accent px-6 py-3.5 text-sm font-semibold text-card transition-transform hover:-translate-y-0.5">Criar meu workspace <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></button></div></section>
+      <section id="metodo" className="bg-[#10221f] text-white">
+        <div className="mx-auto grid max-w-[1440px] gap-12 px-5 py-16 sm:px-10 lg:grid-cols-[0.7fr_1.3fr] lg:px-16 lg:py-24">
+          <div>
+            <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#b9ef58]">
+              do sinal à ação
+            </div>
+            <h2 className="mt-4 text-4xl font-semibold leading-[0.95] tracking-[-0.07em] sm:text-6xl">
+              Veja o todo.
+              <br />
+              Aja com precisão.
+            </h2>
+            <p className="mt-5 max-w-sm text-sm leading-6 text-white/60">
+              A tecnologia encontra os sinais. Você decide o que faz sentido para a sua marca.
+            </p>
+          </div>
+          <div className="border-t border-white/15">
+            {[
+              [
+                "01",
+                "Entenda seu contexto",
+                "Defina público, oferta, tom e objetivos. A inteligência começa pela realidade da sua marca.",
+              ],
+              [
+                "02",
+                "Encontre a oportunidade",
+                "Conecte tendências, canais e audiências para enxergar onde agir primeiro.",
+              ],
+              [
+                "03",
+                "Transforme em crescimento",
+                "Receba recomendações claras, revise cada ação e acompanhe o impacto.",
+              ],
+            ].map(([number, title, text]) => (
+              <div
+                key={number}
+                className="grid gap-3 border-b border-white/15 py-6 sm:grid-cols-[56px_0.8fr_1fr] sm:items-start"
+              >
+                <span className="text-xs font-bold text-[#b9ef58]">{number}</span>
+                <h3 className="text-lg font-semibold tracking-[-0.03em]">{title}</h3>
+                <p className="max-w-sm text-sm leading-6 text-white/60">{text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#d4f768] text-[#10221f]">
+        <div className="mx-auto flex max-w-[1440px] flex-col gap-8 px-5 py-14 sm:px-10 lg:flex-row lg:items-end lg:justify-between lg:px-16 lg:py-20">
+          <div>
+            <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#48633f]">
+              o próximo passo é seu
+            </div>
+            <h2 className="mt-4 max-w-2xl text-4xl font-semibold leading-[0.95] tracking-[-0.07em] sm:text-6xl">
+              Uma visão maior começa com uma decisão.
+            </h2>
+          </div>
+          <button
+            type="button"
+            onClick={onSignUp}
+            className="group inline-flex shrink-0 items-center justify-center gap-3 rounded-full bg-[#10221f] px-6 py-3.5 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5"
+          >
+            Criar meu workspace{" "}
+            <ArrowRight
+              aria-hidden="true"
+              className="size-4 transition-transform group-hover:translate-x-1"
+            />
+          </button>
+        </div>
+      </section>
     </main>
-    <footer className="bg-background px-5 pb-8 text-xs text-white/45 sm:px-10 lg:px-16"><div className="mx-auto flex max-w-[1440px] flex-col justify-between gap-3 border-t border-white/10 pt-5 sm:flex-row"><span>© 2026 OmniMarket Intelligence Studio</span><span>Feito para marcas que preferem método a ruído.</span></div></footer>
+    <footer className="bg-[#10221f] px-5 pb-8 text-xs text-white/50 sm:px-10 lg:px-16">
+      <div className="mx-auto flex max-w-[1440px] flex-col justify-between gap-3 border-t border-white/10 pt-5 sm:flex-row">
+        <span>© 2026 OmniMarket Intelligence Studio</span>
+        <span>Feito para marcas que crescem com contexto.</span>
+      </div>
+    </footer>
   </div>
 );
