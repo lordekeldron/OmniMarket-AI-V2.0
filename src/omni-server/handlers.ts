@@ -2,6 +2,12 @@
 // Ported from the original Express server. Handlers run unchanged via a tiny Express-like shim.
 import { createAiClient } from "./ai-client";
 import { FirecrawlRequestError, searchFirecrawlTrends } from "./firecrawl-trends.server";
+import {
+  CAMPAIGN_IMAGE_ART_DIRECTIONS,
+  CAMPAIGN_IMAGE_ASPECT_RATIOS,
+  CAMPAIGN_IMAGE_PRODUCT_TYPES,
+  generateCampaignImage,
+} from "./campaign-image-generation.server";
 type Request = { body: any; params: Record<string, string>; headers?: Headers };
 type Response = { status: (c: number) => Response; json: (d: any) => any };
 type Handler = (req: Request, res: Response) => any;
@@ -31,6 +37,30 @@ function isFirecrawlRateLimited(req: Request): boolean {
   if (firecrawlRateLimits.size > 1_000) {
     for (const [ip, limit] of firecrawlRateLimits) {
       if (limit.resetAt <= now) firecrawlRateLimits.delete(ip);
+    }
+  }
+  return false;
+}
+
+const imageGenerationRateLimits = new Map<string, { count: number; resetAt: number }>();
+
+function isImageGenerationRateLimited(req: Request): boolean {
+  const clientIp =
+    req.headers?.get("x-forwarded-for")?.split(",")[0].trim() || req.headers?.get("x-real-ip")?.trim();
+  if (!clientIp) return false;
+
+  const now = Date.now();
+  const current = imageGenerationRateLimits.get(clientIp);
+  if (current && current.resetAt > now) {
+    if (current.count >= 2) return true;
+    current.count += 1;
+    return false;
+  }
+
+  imageGenerationRateLimits.set(clientIp, { count: 1, resetAt: now + 60_000 });
+  if (imageGenerationRateLimits.size > 1_000) {
+    for (const [ip, limit] of imageGenerationRateLimits) {
+      if (limit.resetAt <= now) imageGenerationRateLimits.delete(ip);
     }
   }
   return false;
@@ -277,6 +307,81 @@ app.post("/api/firecrawl/trends", async (req: Request, res: Response) => {
     return res
       .status(502)
       .json({ success: false, error: "Não foi possível consultar o Firecrawl." });
+  }
+});
+
+app.post("/api/ai/image", async (req: Request, res: Response) => {
+  const {
+    brandName,
+    industry,
+    productFocus,
+    creativeBrief,
+    productType,
+    artDirection,
+    aspectRatio,
+    accentColor,
+  } = req.body ?? {};
+
+  if (typeof brandName !== "string" || !brandName.trim() || brandName.length > 80) {
+    return res.status(400).json({ success: false, error: "Informe uma marca válida." });
+  }
+  if (typeof productFocus !== "string" || !productFocus.trim() || productFocus.length > 160) {
+    return res.status(400).json({
+      success: false,
+      error: "Informe um produto ou tema com até 160 caracteres.",
+    });
+  }
+  if (creativeBrief !== undefined && typeof creativeBrief !== "string") {
+    return res.status(400).json({ success: false, error: "O briefing visual precisa ser texto." });
+  }
+  if (typeof creativeBrief === "string" && creativeBrief.length > 700) {
+    return res.status(400).json({
+      success: false,
+      error: "O briefing visual deve ter até 700 caracteres.",
+    });
+  }
+  if (!CAMPAIGN_IMAGE_PRODUCT_TYPES.includes(productType)) {
+    return res.status(400).json({ success: false, error: "Selecione um tipo de produto válido." });
+  }
+  if (!CAMPAIGN_IMAGE_ART_DIRECTIONS.includes(artDirection)) {
+    return res
+      .status(400)
+      .json({ success: false, error: "Selecione uma direção de arte válida." });
+  }
+  if (!CAMPAIGN_IMAGE_ASPECT_RATIOS.includes(aspectRatio)) {
+    return res
+      .status(400)
+      .json({ success: false, error: "Selecione uma proporção de imagem válida." });
+  }
+  if (isImageGenerationRateLimited(req)) {
+    return res
+      .status(429)
+      .json({ success: false, error: "Limite de 2 gerações de imagem por minuto atingido." });
+  }
+
+  const normalizedAccentColor =
+    typeof accentColor === "string" && /^#[\da-f]{6}$/i.test(accentColor) ? accentColor : "#7dd3c7";
+
+  try {
+    const data = await generateCampaignImage({
+      brandName: brandName.trim(),
+      industry: typeof industry === "string" ? industry.trim().slice(0, 120) : "Geral",
+      productFocus: productFocus.trim(),
+      creativeBrief: typeof creativeBrief === "string" ? creativeBrief.trim() : "",
+      productType,
+      artDirection,
+      aspectRatio,
+      accentColor: normalizedAccentColor,
+    });
+    return res.json({ success: true, data });
+  } catch (error) {
+    const isTimeout = error instanceof Error && error.name === "TimeoutError";
+    return res.status(isTimeout ? 504 : 502).json({
+      success: false,
+      error: isTimeout
+        ? "A geração demorou mais do que o esperado. Tente novamente."
+        : "Não foi possível gerar a imagem agora. Tente novamente em instantes.",
+    });
   }
 });
 
