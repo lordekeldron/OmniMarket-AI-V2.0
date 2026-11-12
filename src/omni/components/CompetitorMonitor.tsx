@@ -1,5 +1,5 @@
 // @ts-nocheck -- ported from the original OmniMarket repo (looser TS config)
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Users,
   Globe,
@@ -13,9 +13,9 @@ import {
   Target,
   ArrowRight,
   TrendingDown,
-  CheckCircle2
-} from 'lucide-react';
-import { BrandProfile, CompetitorData } from '../types';
+  CheckCircle2,
+} from "lucide-react";
+import { BrandProfile, CompetitorData } from "../types";
 
 interface CompetitorMonitorProps {
   brand: BrandProfile;
@@ -35,15 +35,15 @@ export const CompetitorMonitor: React.FC<CompetitorMonitorProps> = ({
   const [showAddModal, setShowAddModal] = useState(false);
 
   // New competitor form inputs
-  const [newCompName, setNewCompName] = useState('');
-  const [newCompWebsite, setNewCompWebsite] = useState('');
+  const [newCompName, setNewCompName] = useState("");
+  const [newCompWebsite, setNewCompWebsite] = useState("");
 
   const handleRunAiAudit = async (competitor: CompetitorData) => {
     setLoadingAudit(true);
     try {
-      const res = await fetch('/api/ai/competitor', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/ai/competitor", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           brandName: brand.name,
           industry: brand.industry,
@@ -60,7 +60,7 @@ export const CompetitorMonitor: React.FC<CompetitorMonitorProps> = ({
         setSelectedComp(updated);
       }
     } catch (err) {
-      console.error('Failed to run competitor audit:', err);
+      console.error("Failed to run competitor audit:", err);
     } finally {
       setLoadingAudit(false);
     }
@@ -71,23 +71,23 @@ export const CompetitorMonitor: React.FC<CompetitorMonitorProps> = ({
     if (!newCompName.trim()) return;
 
     const newComp: CompetitorData = {
-      id: 'comp_' + Date.now(),
+      id: "comp_" + Date.now(),
       name: newCompName.trim(),
       website: newCompWebsite.trim(),
-      marketShare: '',
-      pricingStrategy: '',
-      threatLevel: '',
+      marketShare: "",
+      pricingStrategy: "",
+      threatLevel: "",
       trafficShare: [],
       spottedAdHooks: [],
       strengths: [],
       vulnerabilities: [],
-      counterStrategy: '',
+      counterStrategy: "",
       keywordOpportunities: [
         {
           keyword: `alternativa para ${newCompName.toLowerCase()}`,
-          searchVolume: '4.800/mês',
-          difficulty: 'Baixa',
-          opportunity: 'Criar landing page comparativa com foco em qualidade',
+          searchVolume: "4.800/mês",
+          difficulty: "Baixa",
+          opportunity: "Criar landing page comparativa com foco em qualidade",
         },
       ],
     };
@@ -95,8 +95,8 @@ export const CompetitorMonitor: React.FC<CompetitorMonitorProps> = ({
     onAddCompetitor(newComp);
     setSelectedComp(newComp);
     setShowAddModal(false);
-    setNewCompName('');
-    setNewCompWebsite('');
+    setNewCompName("");
+    setNewCompWebsite("");
   };
 
   return (
@@ -108,10 +108,13 @@ export const CompetitorMonitor: React.FC<CompetitorMonitorProps> = ({
             <span className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400">
               <Users className="w-5 h-5" />
             </span>
-            <h1 className="text-xl font-bold text-white">Monitor de Concorrentes & Inteligência em Tempo Real</h1>
+            <h1 className="text-xl font-bold text-white">
+              Monitor de Concorrentes & Inteligência em Tempo Real
+            </h1>
           </div>
           <p className="text-xs sm:text-sm text-slate-300">
-            Rastreamento contínuo de anúncios ativos, precificação, palavras-chave e vulnerabilidades de mercado.
+            Rastreamento contínuo de anúncios ativos, precificação, palavras-chave e
+            vulnerabilidades de mercado.
           </p>
         </div>
 
@@ -140,8 +143,8 @@ export const CompetitorMonitor: React.FC<CompetitorMonitorProps> = ({
             onClick={() => setSelectedComp(comp)}
             className={`px-4 py-3 rounded-xl border text-left transition-all shrink-0 flex items-center gap-3 min-w-[220px] ${
               selectedComp?.id === comp.id
-                ? 'bg-slate-800 border-indigo-500/80 shadow-md shadow-indigo-500/10'
-                : 'bg-slate-900 border-slate-800 hover:bg-slate-800/60 text-slate-300'
+                ? "bg-slate-800 border-indigo-500/80 shadow-md shadow-indigo-500/10"
+                : "bg-slate-900 border-slate-800 hover:bg-slate-800/60 text-slate-300"
             }`}
           >
             <div className="w-8 h-8 rounded-lg bg-rose-950/60 text-rose-400 flex items-center justify-center font-bold text-xs border border-rose-800/40">
@@ -152,7 +155,7 @@ export const CompetitorMonitor: React.FC<CompetitorMonitorProps> = ({
               <div className="text-[11px] text-slate-400 flex items-center gap-1">
                 <span>{comp.marketShare} share</span>
                 <span>·</span>
-                <span className={comp.threatLevel === 'Alta' ? 'text-rose-400' : 'text-amber-400'}>
+                <span className={comp.threatLevel === "Alta" ? "text-rose-400" : "text-amber-400"}>
                   Ameaça {comp.threatLevel}
                 </span>
               </div>
@@ -179,12 +182,13 @@ export const CompetitorMonitor: React.FC<CompetitorMonitorProps> = ({
                       className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
                     >
                       <Globe className="w-3.5 h-3.5" />
-                      <span>{selectedComp.website.replace('https://', '')}</span>
+                      <span>{selectedComp.website.replace("https://", "")}</span>
                       <ExternalLink className="w-3 h-3" />
                     </a>
                   </div>
                   <p className="text-xs text-slate-400 mt-1">
-                    Estratégia de Precificação: <strong className="text-slate-200">{selectedComp.pricingStrategy}</strong>
+                    Estratégia de Precificação:{" "}
+                    <strong className="text-slate-200">{selectedComp.pricingStrategy}</strong>
                   </p>
                 </div>
 
@@ -194,8 +198,8 @@ export const CompetitorMonitor: React.FC<CompetitorMonitorProps> = ({
                   disabled={loadingAudit}
                   className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-900 text-white text-xs font-semibold shadow-md transition-all whitespace-nowrap"
                 >
-                  <Sparkles className={`w-3.5 h-3.5 ${loadingAudit ? 'animate-spin' : ''}`} />
-                  <span>{loadingAudit ? 'Auditando...' : 'Fazer Auditoria Completa com IA'}</span>
+                  <Sparkles className={`w-3.5 h-3.5 ${loadingAudit ? "animate-spin" : ""}`} />
+                  <span>{loadingAudit ? "Auditando..." : "Fazer Auditoria Completa com IA"}</span>
                 </button>
               </div>
 
@@ -277,7 +281,9 @@ export const CompetitorMonitor: React.FC<CompetitorMonitorProps> = ({
                     {selectedComp.keywordOpportunities?.map((kw, kidx) => (
                       <tr key={kidx} className="hover:bg-slate-800/40">
                         <td className="py-2.5 px-3 font-semibold text-white">{kw.keyword}</td>
-                        <td className="py-2.5 px-3 font-mono text-emerald-400">{kw.searchVolume}</td>
+                        <td className="py-2.5 px-3 font-mono text-emerald-400">
+                          {kw.searchVolume}
+                        </td>
                         <td className="py-2.5 px-3">
                           <span className="px-2 py-0.5 rounded-md text-[10px] bg-slate-800 text-slate-300">
                             {kw.difficulty}
@@ -308,11 +314,14 @@ export const CompetitorMonitor: React.FC<CompetitorMonitorProps> = ({
 
               <div className="space-y-2.5">
                 {selectedComp.spottedAdHooks.map((ad, aidx) => (
-                  <div key={aidx} className="p-3 bg-slate-800/70 border border-slate-800 rounded-xl space-y-1">
-                    <span className="text-[10px] text-slate-400 block uppercase">Criativo #{aidx + 1}</span>
-                    <p className="text-xs text-slate-200 italic">
-                      "{ad}"
-                    </p>
+                  <div
+                    key={aidx}
+                    className="p-3 bg-slate-800/70 border border-slate-800 rounded-xl space-y-1"
+                  >
+                    <span className="text-[10px] text-slate-400 block uppercase">
+                      Criativo #{aidx + 1}
+                    </span>
+                    <p className="text-xs text-slate-200 italic">"{ad}"</p>
                   </div>
                 ))}
               </div>
@@ -353,7 +362,9 @@ export const CompetitorMonitor: React.FC<CompetitorMonitorProps> = ({
 
             <form onSubmit={handleAddNewCompetitor} className="space-y-3.5">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Nome do Concorrente *</label>
+                <label className="block text-xs font-medium text-slate-300 mb-1">
+                  Nome do Concorrente *
+                </label>
                 <input
                   type="text"
                   required
@@ -365,7 +376,9 @@ export const CompetitorMonitor: React.FC<CompetitorMonitorProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Site Oficial ou Perfil</label>
+                <label className="block text-xs font-medium text-slate-300 mb-1">
+                  Site Oficial ou Perfil
+                </label>
                 <input
                   type="text"
                   value={newCompWebsite}

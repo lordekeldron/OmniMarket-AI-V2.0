@@ -1,21 +1,36 @@
 // @ts-nocheck -- ported from the original OmniMarket repo (looser TS config)
-import React, { useState, useEffect } from 'react';
-import { ArrowRight, Check, X, User, Building, Mail, ShieldCheck, LogIn, UserPlus } from 'lucide-react';
-import { UserProfile } from '../types';
-import { getRegisteredUsers, registerOrUpdateUser, loginUser, findUserByEmail } from '../utils/storage';
+import React, { useState, useEffect } from "react";
+import {
+  ArrowRight,
+  Check,
+  X,
+  User,
+  Building,
+  Mail,
+  ShieldCheck,
+  LogIn,
+  UserPlus,
+} from "lucide-react";
+import { UserProfile } from "../types";
+import {
+  getRegisteredUsers,
+  registerOrUpdateUser,
+  loginUser,
+  findUserByEmail,
+} from "../utils/storage";
 
 type AuthModalProps = {
-  mode: 'signup' | 'login' | null;
+  mode: "signup" | "login" | null;
   onClose: () => void;
   onSuccess: (user: UserProfile, isNew: boolean) => void;
 };
 
 export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSuccess }) => {
-  const [activeTab, setActiveTab] = useState<'signup' | 'login'>('signup');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [company, setCompany] = useState('');
-  const [role, setRole] = useState('Gestor de Marketing');
+  const [activeTab, setActiveTab] = useState<"signup" | "login">("signup");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [company, setCompany] = useState("");
+  const [role, setRole] = useState("Gestor de Marketing");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [savedUsers, setSavedUsers] = useState<UserProfile[]>([]);
 
@@ -28,7 +43,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSuccess }
       if (list.length > 0 && !email) {
         setEmail(list[0].email);
         setName(list[0].name);
-        setCompany(list[0].company || '');
+        setCompany(list[0].company || "");
       }
     }
   }, [mode]);
@@ -48,14 +63,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSuccess }
     setErrorMsg(null);
 
     const cleanEmail = email.trim().toLowerCase();
-    if (!cleanEmail || !cleanEmail.includes('@')) {
-      setErrorMsg('Por favor insira um e-mail válido.');
+    if (!cleanEmail || !cleanEmail.includes("@")) {
+      setErrorMsg("Por favor insira um e-mail válido.");
       return;
     }
 
-    if (activeTab === 'signup') {
+    if (activeTab === "signup") {
       if (!name.trim()) {
-        setErrorMsg('Por favor preencha seu nome completo.');
+        setErrorMsg("Por favor preencha seu nome completo.");
         return;
       }
       const result = registerOrUpdateUser(name, cleanEmail, company, role);
@@ -66,7 +81,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSuccess }
       const existing = findUserByEmail(cleanEmail);
       if (!existing) {
         // If not registered yet, inform and offer seamless registration
-        setErrorMsg('E-mail não encontrado na base local. Clique em "Cadastrar" para criar sua conta.');
+        setErrorMsg(
+          'E-mail não encontrado na base local. Clique em "Cadastrar" para criar sua conta.',
+        );
         return;
       }
       const logged = loginUser(cleanEmail);
@@ -94,20 +111,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSuccess }
           <X className="h-4 w-4" />
         </button>
 
-        <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent">OmniMarket AI</div>
+        <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent">
+          OmniMarket AI
+        </div>
 
         {/* Tab Selector: Cadastrar vs Entrar */}
         <div className="mt-4 flex items-center gap-1 rounded-xl bg-[#ede7dc] p-1 border border-[#ded7cb]">
           <button
             type="button"
             onClick={() => {
-              setActiveTab('signup');
+              setActiveTab("signup");
               setErrorMsg(null);
             }}
             className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-lg transition-all ${
-              activeTab === 'signup'
-                ? 'bg-white text-background shadow-xs'
-                : 'text-[#726c63] hover:text-background'
+              activeTab === "signup"
+                ? "bg-white text-background shadow-xs"
+                : "text-[#726c63] hover:text-background"
             }`}
           >
             <UserPlus className="w-3.5 h-3.5" />
@@ -116,13 +135,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSuccess }
           <button
             type="button"
             onClick={() => {
-              setActiveTab('login');
+              setActiveTab("login");
               setErrorMsg(null);
             }}
             className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-lg transition-all ${
-              activeTab === 'login'
-                ? 'bg-white text-background shadow-xs'
-                : 'text-[#726c63] hover:text-background'
+              activeTab === "login"
+                ? "bg-white text-background shadow-xs"
+                : "text-[#726c63] hover:text-background"
             }`}
           >
             <LogIn className="w-3.5 h-3.5" />
@@ -131,16 +150,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSuccess }
         </div>
 
         <h2 id="auth-title" className="mt-5 text-2xl font-semibold tracking-[-0.05em]">
-          {activeTab === 'signup' ? 'Cadastro Persistente de Usuário' : 'Entrar no Workspace Salvo'}
+          {activeTab === "signup" ? "Cadastro Persistente de Usuário" : "Entrar no Workspace Salvo"}
         </h2>
         <p className="mt-2 text-xs leading-5 text-muted-foreground">
-          {activeTab === 'signup'
-            ? 'Seus dados de perfil, marcas e campanhas serão salvos permanentemente neste navegador.'
-            : 'Acesse seus dados salvos e continue sua operação exatamente de onde parou.'}
+          {activeTab === "signup"
+            ? "Seus dados de perfil, marcas e campanhas serão salvos permanentemente neste navegador."
+            : "Acesse seus dados salvos e continue sua operação exatamente de onde parou."}
         </p>
 
         {/* Saved Accounts Quick Selection (if available) */}
-        {savedUsers.length > 0 && activeTab === 'login' && (
+        {savedUsers.length > 0 && activeTab === "login" && (
           <div className="mt-4 p-3 rounded-xl bg-white/70 border border-muted-foreground">
             <span className="text-[10px] font-bold uppercase tracking-wider text-accent block mb-2">
               Conta salva neste dispositivo
@@ -178,7 +197,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSuccess }
         )}
 
         <form onSubmit={handleSubmit} className="mt-5 space-y-3.5">
-          {activeTab === 'signup' && (
+          {activeTab === "signup" && (
             <div>
               <label className="block text-xs font-semibold text-border mb-1">
                 Nome completo *
@@ -215,7 +234,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSuccess }
             </div>
           </div>
 
-          {activeTab === 'signup' && (
+          {activeTab === "signup" && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-semibold text-border mb-1">
@@ -255,7 +274,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSuccess }
             type="submit"
             className="group mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-background px-4 py-3 text-xs font-semibold text-foreground shadow-md transition-all hover:bg-black hover:-translate-y-0.5"
           >
-            {activeTab === 'signup' ? 'Cadastrar e Salvar Informações' : 'Entrar na Plataforma'}
+            {activeTab === "signup" ? "Cadastrar e Salvar Informações" : "Entrar na Plataforma"}
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </button>
         </form>
@@ -263,7 +282,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSuccess }
         <div className="mt-5 space-y-1.5 border-t border-muted-foreground pt-4 text-[11px] text-[#7b756b]">
           <div className="flex items-center gap-2">
             <Check className="h-3.5 w-3.5 text-accent" />
-            <span>Persistência garantida: seu login e marcas nunca se perdem ao recarregar a página</span>
+            <span>
+              Persistência garantida: seu login e marcas nunca se perdem ao recarregar a página
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-3.5 w-3.5 text-accent" />
