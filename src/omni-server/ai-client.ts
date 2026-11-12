@@ -1,13 +1,21 @@
 // Minimal Gemini-SDK-compatible wrapper around the Lovable AI Gateway.
 export function createAiClient() {
-  const key = process.env['LOVABLE_API_KEY'];
+  const key = process.env["LOVABLE_API_KEY"];
   if (!key) return null;
   return {
     models: {
-      async generateContent({ contents, config }: { model?: string; contents: unknown; config?: any }) {
+      async generateContent({
+        contents,
+        config,
+      }: {
+        model?: string;
+        contents: unknown;
+        config?: any;
+      }) {
         const text = typeof contents === "string" ? contents : JSON.stringify(contents);
         const messages: { role: string; content: string }[] = [];
-        if (config?.systemInstruction) messages.push({ role: "system", content: String(config.systemInstruction) });
+        if (config?.systemInstruction)
+          messages.push({ role: "system", content: String(config.systemInstruction) });
         messages.push({ role: "user", content: text });
         const wantsJson = config?.responseMimeType === "application/json";
         const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {

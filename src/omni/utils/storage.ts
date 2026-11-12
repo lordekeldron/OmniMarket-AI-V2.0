@@ -1,42 +1,50 @@
 // @ts-nocheck -- ported from the original OmniMarket repo (looser TS config)
-import { BrandProfile, CampaignCreative, ChannelPerformanceData, CompetitorData, ScheduledPost, UserProfile, UserWorkspaceData } from '../types';
+import {
+  BrandProfile,
+  CampaignCreative,
+  ChannelPerformanceData,
+  CompetitorData,
+  ScheduledPost,
+  UserProfile,
+  UserWorkspaceData,
+} from "../types";
 
-const STORAGE_KEY_SESSION = 'omnimarket_active_session_v1';
-const STORAGE_KEY_USERS = 'omnimarket_registered_users_v1';
-const STORAGE_KEY_PREFIX_WORKSPACE = 'omnimarket_workspace_';
+const STORAGE_KEY_SESSION = "omnimarket_active_session_v1";
+const STORAGE_KEY_USERS = "omnimarket_registered_users_v1";
+const STORAGE_KEY_PREFIX_WORKSPACE = "omnimarket_workspace_";
 
 // In-memory memory store as reliable fallback (e.g. if localStorage is blocked)
 const memoryStore: Record<string, string> = {};
 
 function safeGetItem(key: string): string | null {
   try {
-    if (typeof window !== 'undefined' && window.localStorage) {
+    if (typeof window !== "undefined" && window.localStorage) {
       return window.localStorage.getItem(key);
     }
   } catch (err) {
-    console.warn('localStorage read warning:', err);
+    console.warn("localStorage read warning:", err);
   }
   return memoryStore[key] || null;
 }
 
 function safeSetItem(key: string, value: string): void {
   try {
-    if (typeof window !== 'undefined' && window.localStorage) {
+    if (typeof window !== "undefined" && window.localStorage) {
       window.localStorage.setItem(key, value);
     }
   } catch (err) {
-    console.warn('localStorage write warning:', err);
+    console.warn("localStorage write warning:", err);
   }
   memoryStore[key] = value;
 }
 
 function safeRemoveItem(key: string): void {
   try {
-    if (typeof window !== 'undefined' && window.localStorage) {
+    if (typeof window !== "undefined" && window.localStorage) {
       window.localStorage.removeItem(key);
     }
   } catch (err) {
-    console.warn('localStorage remove warning:', err);
+    console.warn("localStorage remove warning:", err);
   }
   delete memoryStore[key];
 }
@@ -71,7 +79,7 @@ export function registerOrUpdateUser(
   name: string,
   email: string,
   company?: string,
-  role?: string
+  role?: string,
 ): { user: UserProfile; isNew: boolean } {
   const users = getRegisteredUsers();
   const normalized = email.trim().toLowerCase();
@@ -94,11 +102,11 @@ export function registerOrUpdateUser(
   }
 
   const newUser: UserProfile = {
-    id: 'usr_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
-    name: name.trim() || email.split('@')[0],
+    id: "usr_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7),
+    name: name.trim() || email.split("@")[0],
     email: normalized,
-    company: company?.trim() || 'Minha Empresa',
-    role: role?.trim() || 'Gestor de Marketing',
+    company: company?.trim() || "Minha Empresa",
+    role: role?.trim() || "Gestor de Marketing",
     createdAt: now,
     lastLoginAt: now,
   };
@@ -185,10 +193,10 @@ export function saveUserWorkspace(data: UserWorkspaceData): void {
   safeSetItem(key, JSON.stringify(payload));
 
   // Asynchronously mirror to server persistence if in browser
-  if (typeof window !== 'undefined' && typeof fetch !== 'undefined') {
-    fetch('/api/workspace/save', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+  if (typeof window !== "undefined" && typeof fetch !== "undefined") {
+    fetch("/api/workspace/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     }).catch(() => {
       // Local copy is primary; ignore server mirror errors

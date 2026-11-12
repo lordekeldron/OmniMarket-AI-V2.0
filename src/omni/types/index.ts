@@ -1,5 +1,5 @@
 export interface AgentDefinition {
-  id: 'lifecycle' | 'campaigns' | 'growth' | 'acquisition';
+  id: "lifecycle" | "campaigns" | "growth" | "acquisition";
   name: string;
   source: string;
   summary: string;
@@ -64,7 +64,7 @@ export interface CompetitorData {
   website: string;
   marketShare: string;
   pricingStrategy: string;
-  threatLevel: 'Alta' | 'Média' | 'Baixa' | '';
+  threatLevel: "Alta" | "Média" | "Baixa" | "";
   trafficShare: { channel: string; share: string; threatLevel: string }[];
   spottedAdHooks: string[];
   strengths: string[];
@@ -132,10 +132,10 @@ export interface CampaignCreative {
 
 export interface ScheduledPost {
   id: string;
-  channel: 'instagram' | 'tiktok' | 'linkedin' | 'facebook';
+  channel: "instagram" | "tiktok" | "linkedin" | "facebook";
   caption: string;
   scheduledTime: string;
-  status: 'scheduled' | 'published' | 'draft';
+  status: "scheduled" | "published" | "draft";
   impressions?: number;
   engagementRate?: string;
   likes?: number;
@@ -144,8 +144,8 @@ export interface ScheduledPost {
 
 export interface ChatMessage {
   id: string;
-  sender: 'user' | 'agent' | 'customer';
-  role: 'user' | 'assistant';
+  sender: "user" | "agent" | "customer";
+  role: "user" | "assistant";
   content: string;
   timestamp: string;
 }
@@ -163,7 +163,7 @@ export interface SlideContent {
 export interface LookalikeSegment {
   id: string;
   name: string;
-  tier: '1% Super Afinado' | '2-3% Balanceado' | '5% Escala Ampla';
+  tier: "1% Super Afinado" | "2-3% Balanceado" | "5% Escala Ampla";
   similarityPercentage: number;
   estimatedReach: string;
   channelFocus: string[];
@@ -230,7 +230,7 @@ export interface GoogleTrendSearchData {
     term: string;
     growth: string;
     category: string;
-    searchIntent: 'Transacional' | 'Informacional' | 'Comercial' | 'Navegacional';
+    searchIntent: "Transacional" | "Informacional" | "Comercial" | "Navegacional";
   }[];
   relatedTopics: {
     title: string;

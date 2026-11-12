@@ -17,11 +17,11 @@ export interface AudienceAffinityInputs {
  */
 export function calculateLookalikeReach(
   similarityTierPct: number,
-  baseDigitalPopulation: number = 85000000
+  baseDigitalPopulation: number = 85000000,
 ): { minReach: number; maxReach: number; formattedReach: string } {
   const boundedPct = Math.max(0.5, Math.min(10, similarityTierPct));
   const baseReach = Math.round(baseDigitalPopulation * (boundedPct / 100));
-  
+
   const minReach = Math.round(baseReach * 0.85);
   const maxReach = Math.round(baseReach * 1.15);
 
@@ -45,7 +45,7 @@ export function calculateLookalikeReach(
  */
 export function scoreAudienceAffinity(inputs: AudienceAffinityInputs): {
   affinityScore: number;
-  confidenceRating: 'Ultra-Alta' | 'Alta' | 'Moderada' | 'Experimental';
+  confidenceRating: "Ultra-Alta" | "Alta" | "Moderada" | "Experimental";
 } {
   const normEng = Math.min(inputs.historicalEngagementRate / 5, 1) * 100;
   const normConv = Math.min(inputs.historicalConversionRate / 4, 1) * 100;
@@ -53,20 +53,20 @@ export function scoreAudienceAffinity(inputs: AudienceAffinityInputs): {
   const rawScore =
     inputs.demographicFit * 0.35 +
     inputs.channelAlignmentScore * 0.25 +
-    normEng * 0.20 +
-    normConv * 0.20;
+    normEng * 0.2 +
+    normConv * 0.2;
 
   const affinityScore = Math.min(99, Math.max(20, Math.round(rawScore)));
 
-  let confidenceRating: 'Ultra-Alta' | 'Alta' | 'Moderada' | 'Experimental';
+  let confidenceRating: "Ultra-Alta" | "Alta" | "Moderada" | "Experimental";
   if (affinityScore >= 90) {
-    confidenceRating = 'Ultra-Alta';
+    confidenceRating = "Ultra-Alta";
   } else if (affinityScore >= 75) {
-    confidenceRating = 'Alta';
+    confidenceRating = "Alta";
   } else if (affinityScore >= 50) {
-    confidenceRating = 'Moderada';
+    confidenceRating = "Moderada";
   } else {
-    confidenceRating = 'Experimental';
+    confidenceRating = "Experimental";
   }
 
   return { affinityScore, confidenceRating };
@@ -80,8 +80,8 @@ export function scoreAudienceAffinity(inputs: AudienceAffinityInputs): {
 export function projectSegmentEconomics(
   baselineRoas: number,
   baselineCpa: number,
-  tier: '1% Super Afinado' | '2-3% Balanceado' | '5% Escala Ampla',
-  affinityScore: number
+  tier: "1% Super Afinado" | "2-3% Balanceado" | "5% Escala Ampla",
+  affinityScore: number,
 ): {
   projectedRoas: number;
   projectedCpa: number;
@@ -91,11 +91,11 @@ export function projectSegmentEconomics(
   let cpaMultiplier = 1.0;
   let baseConversion = 3.2;
 
-  if (tier === '1% Super Afinado') {
-    tierMultiplier = 1.30; // +30% ROAS efficiency
+  if (tier === "1% Super Afinado") {
+    tierMultiplier = 1.3; // +30% ROAS efficiency
     cpaMultiplier = 0.72; // -28% CPA
     baseConversion = 4.4;
-  } else if (tier === '2-3% Balanceado') {
+  } else if (tier === "2-3% Balanceado") {
     tierMultiplier = 1.12; // +12% ROAS efficiency
     cpaMultiplier = 0.88; // -12% CPA
     baseConversion = 3.6;
@@ -106,8 +106,12 @@ export function projectSegmentEconomics(
   }
 
   const affinityFactor = affinityScore / 85; // normalized around baseline 85
-  const projectedRoas = Number((baselineRoas * tierMultiplier * Math.pow(affinityFactor, 0.4)).toFixed(2));
-  const projectedCpa = Number((baselineCpa * cpaMultiplier / Math.pow(affinityFactor, 0.4)).toFixed(2));
+  const projectedRoas = Number(
+    (baselineRoas * tierMultiplier * Math.pow(affinityFactor, 0.4)).toFixed(2),
+  );
+  const projectedCpa = Number(
+    ((baselineCpa * cpaMultiplier) / Math.pow(affinityFactor, 0.4)).toFixed(2),
+  );
   const expectedConversionRate = Number((baseConversion * affinityFactor).toFixed(1));
 
   return {
@@ -122,50 +126,50 @@ export function projectSegmentEconomics(
  */
 export function formatAudiencePlatformExport(
   segmentName: string,
-  platform: 'meta' | 'tiktok' | 'google',
+  platform: "meta" | "tiktok" | "google",
   targeting: {
     interests: string[];
     behaviors: string[];
     keywords: string[];
     negativeExclusions: string[];
-  }
+  },
 ): {
   fileName: string;
   payload: string;
 } {
-  const safeName = segmentName.toLowerCase().replace(/[^a-z0-9]/g, '_');
-  
-  if (platform === 'meta') {
+  const safeName = segmentName.toLowerCase().replace(/[^a-z0-9]/g, "_");
+
+  if (platform === "meta") {
     return {
       fileName: `meta_lookalike_${safeName}.json`,
       payload: JSON.stringify(
         {
-          audience_type: 'LOOKALIKE_CUSTOM',
+          audience_type: "LOOKALIKE_CUSTOM",
           target_spec: {
-            country: 'BR',
-            similarity_tier: '1%',
+            country: "BR",
+            similarity_tier: "1%",
             interests: targeting.interests,
             behaviors: targeting.behaviors,
             exclusions: targeting.negativeExclusions,
           },
         },
         null,
-        2
+        2,
       ),
     };
-  } else if (platform === 'tiktok') {
+  } else if (platform === "tiktok") {
     return {
       fileName: `tiktok_lookalike_${safeName}.json`,
       payload: JSON.stringify(
         {
-          audience_type: 'TIKTOK_LOOKALIKE_PACKAGE',
-          optimization_goal: 'PURCHASE',
+          audience_type: "TIKTOK_LOOKALIKE_PACKAGE",
+          optimization_goal: "PURCHASE",
           interests: targeting.interests,
           actions: targeting.behaviors,
           negative_exclusions: targeting.negativeExclusions,
         },
         null,
-        2
+        2,
       ),
     };
   }
@@ -174,13 +178,13 @@ export function formatAudiencePlatformExport(
     fileName: `google_customer_match_${safeName}.json`,
     payload: JSON.stringify(
       {
-        type: 'GOOGLE_CUSTOMER_MATCH_SIMILAR',
+        type: "GOOGLE_CUSTOMER_MATCH_SIMILAR",
         keywords: targeting.keywords,
         affinity_categories: targeting.interests,
         negative_keywords: targeting.negativeExclusions,
       },
       null,
-      2
+      2,
     ),
   };
 }

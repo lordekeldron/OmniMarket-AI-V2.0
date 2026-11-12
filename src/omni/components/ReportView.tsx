@@ -1,5 +1,5 @@
 // @ts-nocheck -- ported from the original OmniMarket repo (looser TS config)
-import React from 'react';
+import React from "react";
 import {
   FileText,
   Printer,
@@ -12,9 +12,15 @@ import {
   CheckCircle2,
   ShieldCheck,
   Zap,
-  Building2
-} from 'lucide-react';
-import { BrandProfile, ChannelPerformanceData, TrendData, CompetitorData, CampaignCreative } from '../types';
+  Building2,
+} from "lucide-react";
+import {
+  BrandProfile,
+  ChannelPerformanceData,
+  TrendData,
+  CompetitorData,
+  CampaignCreative,
+} from "../types";
 
 interface ReportViewProps {
   brand: BrandProfile;
@@ -38,8 +44,8 @@ export const ReportView: React.FC<ReportViewProps> = ({
   const totalSpend = channels.reduce((sum, c) => sum + c.spend, 0);
   const totalRevenue = channels.reduce((sum, c) => sum + c.revenue, 0);
   const totalConversions = channels.reduce((sum, c) => sum + c.conversions, 0);
-  const blendedROAS = totalSpend > 0 ? (totalRevenue / totalSpend).toFixed(2) : '0';
-  const avgCPA = totalConversions > 0 ? (totalSpend / totalConversions).toFixed(2) : '0';
+  const blendedROAS = totalSpend > 0 ? (totalRevenue / totalSpend).toFixed(2) : "0";
+  const avgCPA = totalConversions > 0 ? (totalSpend / totalConversions).toFixed(2) : "0";
 
   return (
     <div className="space-y-6">
@@ -50,10 +56,13 @@ export const ReportView: React.FC<ReportViewProps> = ({
             <span className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400">
               <FileText className="w-5 h-5" />
             </span>
-            <h1 className="text-xl font-bold text-white">Relatório Executivo de Desempenho & Inteligência</h1>
+            <h1 className="text-xl font-bold text-white">
+              Relatório Executivo de Desempenho & Inteligência
+            </h1>
           </div>
           <p className="text-xs sm:text-sm text-slate-300">
-            Documento consolidado de métricas, tendências e projeções preditivas pronto para exportação em PDF.
+            Documento consolidado de métricas, tendências e projeções preditivas pronto para
+            exportação em PDF.
           </p>
         </div>
 
@@ -88,7 +97,7 @@ export const ReportView: React.FC<ReportViewProps> = ({
                 className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white text-sm"
                 style={{ backgroundColor: brand.accentColor }}
               >
-                {brand.logoInitial || 'OM'}
+                {brand.logoInitial || "OM"}
               </div>
               <span className="text-xl font-extrabold tracking-tight text-white print:text-slate-900">
                 {brand.name}
@@ -100,8 +109,20 @@ export const ReportView: React.FC<ReportViewProps> = ({
           </div>
 
           <div className="text-right text-xs text-slate-400 print:text-slate-600 space-y-1">
-            <div>Data: {new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</div>
-            <div>Status: <span className="text-emerald-400 font-bold print:text-emerald-700">Auditado & Otimizado</span></div>
+            <div>
+              Data:{" "}
+              {new Date().toLocaleDateString("pt-BR", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+              })}
+            </div>
+            <div>
+              Status:{" "}
+              <span className="text-emerald-400 font-bold print:text-emerald-700">
+                Auditado & Otimizado
+              </span>
+            </div>
           </div>
         </div>
 
@@ -111,7 +132,21 @@ export const ReportView: React.FC<ReportViewProps> = ({
             1. Resumo Executivo & Conclusões Preditivas
           </span>
           <p className="text-xs sm:text-sm text-slate-200 print:text-slate-800 leading-relaxed">
-            No período recente, a estratégia de marketing de <strong className="text-white print:text-slate-900">{brand.name}</strong> gerou um total de <strong className="text-emerald-400 print:text-emerald-700">R$ {totalRevenue.toLocaleString('pt-BR')}</strong> em faturamento a partir de um investimento de <strong className="text-slate-100 print:text-slate-900">R$ {totalSpend.toLocaleString('pt-BR')}</strong>, consolidando um ROAS global de <strong className="text-white print:text-slate-900">{blendedROAS}x</strong>. A implementação do algoritmo preditivo de rebalanceamento aponta capacidade de expansão para ROAS superior a 4.7x com o redirecionamento de verba para formatos de vídeo dinâmico e retenção qualificada.
+            No período recente, a estratégia de marketing de{" "}
+            <strong className="text-white print:text-slate-900">{brand.name}</strong> gerou um total
+            de{" "}
+            <strong className="text-emerald-400 print:text-emerald-700">
+              R$ {totalRevenue.toLocaleString("pt-BR")}
+            </strong>{" "}
+            em faturamento a partir de um investimento de{" "}
+            <strong className="text-slate-100 print:text-slate-900">
+              R$ {totalSpend.toLocaleString("pt-BR")}
+            </strong>
+            , consolidando um ROAS global de{" "}
+            <strong className="text-white print:text-slate-900">{blendedROAS}x</strong>. A
+            implementação do algoritmo preditivo de rebalanceamento aponta capacidade de expansão
+            para ROAS superior a 4.7x com o redirecionamento de verba para formatos de vídeo
+            dinâmico e retenção qualificada.
           </p>
         </div>
 
@@ -122,28 +157,36 @@ export const ReportView: React.FC<ReportViewProps> = ({
           </span>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div className="p-4 bg-slate-800/40 rounded-xl border border-slate-800 print:bg-slate-50 print:border-slate-300">
-              <span className="text-[11px] text-slate-400 print:text-slate-500 uppercase">Receita Bruta</span>
+              <span className="text-[11px] text-slate-400 print:text-slate-500 uppercase">
+                Receita Bruta
+              </span>
               <div className="text-xl font-bold font-mono text-white print:text-slate-900 mt-1">
-                R$ {totalRevenue.toLocaleString('pt-BR')}
+                R$ {totalRevenue.toLocaleString("pt-BR")}
               </div>
             </div>
 
             <div className="p-4 bg-slate-800/40 rounded-xl border border-slate-800 print:bg-slate-50 print:border-slate-300">
-              <span className="text-[11px] text-slate-400 print:text-slate-500 uppercase">Investimento em Mídia</span>
+              <span className="text-[11px] text-slate-400 print:text-slate-500 uppercase">
+                Investimento em Mídia
+              </span>
               <div className="text-xl font-bold font-mono text-white print:text-slate-900 mt-1">
-                R$ {totalSpend.toLocaleString('pt-BR')}
+                R$ {totalSpend.toLocaleString("pt-BR")}
               </div>
             </div>
 
             <div className="p-4 bg-slate-800/40 rounded-xl border border-slate-800 print:bg-slate-50 print:border-slate-300">
-              <span className="text-[11px] text-slate-400 print:text-slate-500 uppercase">ROAS Blended</span>
+              <span className="text-[11px] text-slate-400 print:text-slate-500 uppercase">
+                ROAS Blended
+              </span>
               <div className="text-xl font-bold font-mono text-emerald-400 print:text-emerald-700 mt-1">
                 {blendedROAS}x
               </div>
             </div>
 
             <div className="p-4 bg-slate-800/40 rounded-xl border border-slate-800 print:bg-slate-50 print:border-slate-300">
-              <span className="text-[11px] text-slate-400 print:text-slate-500 uppercase">CPA Médio Global</span>
+              <span className="text-[11px] text-slate-400 print:text-slate-500 uppercase">
+                CPA Médio Global
+              </span>
               <div className="text-xl font-bold font-mono text-purple-400 print:text-purple-700 mt-1">
                 R$ {avgCPA}
               </div>
@@ -172,15 +215,19 @@ export const ReportView: React.FC<ReportViewProps> = ({
               <tbody className="divide-y divide-slate-800 print:divide-slate-200">
                 {channels.map((c) => (
                   <tr key={c.id} className="hover:bg-slate-800/40">
-                    <td className="py-3 px-4 font-bold text-white print:text-slate-900">{c.name}</td>
-                    <td className="py-3 px-4 font-mono">R$ {c.spend.toLocaleString('pt-BR')}</td>
+                    <td className="py-3 px-4 font-bold text-white print:text-slate-900">
+                      {c.name}
+                    </td>
+                    <td className="py-3 px-4 font-mono">R$ {c.spend.toLocaleString("pt-BR")}</td>
                     <td className="py-3 px-4 font-mono text-emerald-400 print:text-emerald-700 font-bold">
-                      R$ {c.revenue.toLocaleString('pt-BR')}
+                      R$ {c.revenue.toLocaleString("pt-BR")}
                     </td>
                     <td className="py-3 px-4 font-mono">{c.conversions}</td>
                     <td className="py-3 px-4 font-mono">{c.ctr}%</td>
                     <td className="py-3 px-4 font-mono">R$ {c.cpa}</td>
-                    <td className="py-3 px-4 font-mono font-bold text-indigo-400 print:text-indigo-700">{c.roas}x</td>
+                    <td className="py-3 px-4 font-mono font-bold text-indigo-400 print:text-indigo-700">
+                      {c.roas}x
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -199,7 +246,12 @@ export const ReportView: React.FC<ReportViewProps> = ({
               {trends.macroTrends.map((t, idx) => (
                 <li key={idx} className="flex items-start gap-2">
                   <span className="text-emerald-400 font-bold">✓</span>
-                  <span><strong>{t.name} ({t.growthRate}):</strong> {t.recommendedAction}</span>
+                  <span>
+                    <strong>
+                      {t.name} ({t.growthRate}):
+                    </strong>{" "}
+                    {t.recommendedAction}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -214,7 +266,12 @@ export const ReportView: React.FC<ReportViewProps> = ({
               {competitors.map((comp) => (
                 <li key={comp.id} className="flex items-start gap-2">
                   <span className="text-rose-400 font-bold">»</span>
-                  <span><strong>{comp.name} ({comp.marketShare} share):</strong> {comp.counterStrategy}</span>
+                  <span>
+                    <strong>
+                      {comp.name} ({comp.marketShare} share):
+                    </strong>{" "}
+                    {comp.counterStrategy}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -227,9 +284,14 @@ export const ReportView: React.FC<ReportViewProps> = ({
             6. Plano de Ação Imediato para Escala de ROI
           </span>
           <p className="text-xs text-slate-300 print:text-slate-700 leading-relaxed">
-            1. Escalar orçamento em Instagram Reels e TikTok Spark Ads em até +40% aproveitando os ganchos visuais gerados pelo Campaign Studio.<br />
-            2. Ativar as 3 regras de engajamento social automatizado para recuperar clientes em potencial em menos de 60 segundos.<br />
-            3. Veicular campanhas de fundo de funil destacando as vulnerabilidades de pós-venda dos concorrentes diretos.
+            1. Escalar orçamento em Instagram Reels e TikTok Spark Ads em até +40% aproveitando os
+            ganchos visuais gerados pelo Campaign Studio.
+            <br />
+            2. Ativar as 3 regras de engajamento social automatizado para recuperar clientes em
+            potencial em menos de 60 segundos.
+            <br />
+            3. Veicular campanhas de fundo de funil destacando as vulnerabilidades de pós-venda dos
+            concorrentes diretos.
           </p>
         </div>
 

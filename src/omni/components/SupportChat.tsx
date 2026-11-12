@@ -1,5 +1,5 @@
 // @ts-nocheck -- ported from the original OmniMarket repo (looser TS config)
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   MessageSquare,
   Send,
@@ -8,9 +8,9 @@ import {
   User,
   ShieldCheck,
   Zap,
-  HelpCircle
-} from 'lucide-react';
-import { BrandProfile, ChatMessage } from '../types';
+  HelpCircle,
+} from "lucide-react";
+import { BrandProfile, ChatMessage } from "../types";
 
 interface SupportChatProps {
   brand: BrandProfile;
@@ -18,7 +18,7 @@ interface SupportChatProps {
 
 export const SupportChat: React.FC<SupportChatProps> = ({ brand }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [inputText, setInputText] = useState('');
+  const [inputText, setInputText] = useState("");
   const [loading, setLoading] = useState(false);
 
   const predefinedQueries: string[] = [];
@@ -28,26 +28,26 @@ export const SupportChat: React.FC<SupportChatProps> = ({ brand }) => {
     if (!text.trim() || loading) return;
 
     const userMsg: ChatMessage = {
-      id: 'msg_' + Date.now(),
-      sender: 'customer',
-      role: 'user',
+      id: "msg_" + Date.now(),
+      sender: "customer",
+      role: "user",
       content: text.trim(),
-      timestamp: 'Agora',
+      timestamp: "Agora",
     };
 
     const newMessages = [...messages, userMsg];
     setMessages(newMessages);
-    setInputText('');
+    setInputText("");
     setLoading(true);
 
     try {
-      const res = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/ai/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: newMessages.map((m) => ({ role: m.role, content: m.content })),
           brandProfile: brand,
-          customerContext: 'Cliente em busca de informações no chat do site',
+          customerContext: "Cliente em busca de informações no chat do site",
         }),
       });
       const data = await res.json();
@@ -58,23 +58,23 @@ export const SupportChat: React.FC<SupportChatProps> = ({ brand }) => {
       setMessages((prev) => [
         ...prev,
         {
-          id: 'agent_' + Date.now(),
-          sender: 'agent',
-          role: 'assistant',
+          id: "agent_" + Date.now(),
+          sender: "agent",
+          role: "assistant",
           content: replyText,
-          timestamp: 'Agora',
+          timestamp: "Agora",
         },
       ]);
     } catch (err) {
-      console.error('Chat error:', err);
+      console.error("Chat error:", err);
       setMessages((prev) => [
         ...prev,
         {
-          id: 'agent_' + Date.now(),
-          sender: 'agent',
-          role: 'assistant',
+          id: "agent_" + Date.now(),
+          sender: "agent",
+          role: "assistant",
           content: `Estamos à disposição para garantir a melhor experiência com a ${brand.name}! Como posso te auxiliar em seguida?`,
-          timestamp: 'Agora',
+          timestamp: "Agora",
         },
       ]);
     } finally {
@@ -91,10 +91,13 @@ export const SupportChat: React.FC<SupportChatProps> = ({ brand }) => {
             <span className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400">
               <Bot className="w-5 h-5" />
             </span>
-            <h1 className="text-xl font-bold text-white">Central de Atendimento & Conversão via Chat IA</h1>
+            <h1 className="text-xl font-bold text-white">
+              Central de Atendimento & Conversão via Chat IA
+            </h1>
           </div>
           <p className="text-xs sm:text-sm text-slate-300">
-            Agente inteligente treinado no tom de voz de <strong className="text-white">{brand.name}</strong> ({brand.tone}).
+            Agente inteligente treinado no tom de voz de{" "}
+            <strong className="text-white">{brand.name}</strong> ({brand.tone}).
           </p>
         </div>
 
@@ -126,31 +129,33 @@ export const SupportChat: React.FC<SupportChatProps> = ({ brand }) => {
         {/* Message Thread */}
         <div className="flex-1 overflow-y-auto py-4 space-y-4 pr-1">
           {messages.map((msg) => {
-            const isAgent = msg.sender === 'agent';
+            const isAgent = msg.sender === "agent";
             return (
               <div
                 key={msg.id}
-                className={`flex items-start gap-3 ${isAgent ? '' : 'flex-row-reverse'}`}
+                className={`flex items-start gap-3 ${isAgent ? "" : "flex-row-reverse"}`}
               >
                 <div
                   className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 text-xs font-bold ${
                     isAgent
-                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20'
-                      : 'bg-slate-700 text-slate-200'
+                      ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/20"
+                      : "bg-slate-700 text-slate-200"
                   }`}
                 >
-                  {isAgent ? brand.logoInitial || 'IA' : <User className="w-4 h-4" />}
+                  {isAgent ? brand.logoInitial || "IA" : <User className="w-4 h-4" />}
                 </div>
 
                 <div
                   className={`max-w-[80%] rounded-2xl p-4 text-xs sm:text-sm leading-relaxed ${
                     isAgent
-                      ? 'bg-slate-800/90 text-slate-100 border border-slate-700/60'
-                      : 'bg-indigo-600 text-white shadow-md shadow-indigo-600/10'
+                      ? "bg-slate-800/90 text-slate-100 border border-slate-700/60"
+                      : "bg-indigo-600 text-white shadow-md shadow-indigo-600/10"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-4 mb-1 text-[10px] opacity-75">
-                    <span className="font-bold">{isAgent ? `${brand.name} Assistente` : 'Cliente'}</span>
+                    <span className="font-bold">
+                      {isAgent ? `${brand.name} Assistente` : "Cliente"}
+                    </span>
                     <span>{msg.timestamp}</span>
                   </div>
                   <p className="whitespace-pre-wrap">{msg.content}</p>

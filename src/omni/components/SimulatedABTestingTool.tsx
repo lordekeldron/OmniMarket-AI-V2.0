@@ -1,5 +1,5 @@
 // @ts-nocheck -- ported from the original OmniMarket repo (looser TS config)
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Sparkles,
   Trophy,
@@ -18,23 +18,27 @@ import {
   HelpCircle,
   Plus,
   Trash2,
-  Share2
-} from 'lucide-react';
-import { BrandProfile, CampaignCreative } from '../types';
+  Share2,
+} from "lucide-react";
+import { BrandProfile, CampaignCreative } from "../types";
 import {
   AdVariationInput,
   HistoricalBenchmark,
   ABComparisonResult,
   runABTestingPrediction,
   VisualType,
-  EmotionalAngle
-} from '../utils/abTestingEngine';
+  EmotionalAngle,
+} from "../utils/abTestingEngine";
 
 interface SimulatedABTestingToolProps {
   brand: BrandProfile;
   campaign: CampaignCreative;
   channel: string;
-  onApplyWinningVariation: (winningHeadline: string, winningHook: string, winningCta: string) => void;
+  onApplyWinningVariation: (
+    winningHeadline: string,
+    winningHook: string,
+    winningCta: string,
+  ) => void;
 }
 
 export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
@@ -50,18 +54,20 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
     avgOrderValue: 210,
     avgCPC: 1.18,
     topPerformingHooks: [
-      'Ganchos reflexivos e de contraste nos primeiros 3s',
-      'Formatos de prova social com clientes reais (UGC)',
-      'Ofertas diretas com redução de risco percebido (Garantia/Troca)',
+      "Ganchos reflexivos e de contraste nos primeiros 3s",
+      "Formatos de prova social com clientes reais (UGC)",
+      "Ofertas diretas com redução de risco percebido (Garantia/Troca)",
     ],
     fatiguedAngles: [
-      'Anúncios estáticos institucionais sem gancho de parada',
+      "Anúncios estáticos institucionais sem gancho de parada",
       'CTAs genéricos ("Clique aqui", "Compre já")',
     ],
   });
 
   // Target Channel for Simulation
-  const [targetChannel, setTargetChannel] = useState<string>(channel || 'Instagram Reels & Stories');
+  const [targetChannel, setTargetChannel] = useState<string>(
+    channel || "Instagram Reels & Stories",
+  );
   const [simulatedImpressions, setSimulatedImpressions] = useState<number>(10000);
   const [isSimulating, setIsSimulating] = useState(false);
   const [appliedNotification, setAppliedNotification] = useState(false);
@@ -69,22 +75,29 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
   // Variations list
   const [variations, setVariations] = useState<AdVariationInput[]>([
     {
-      id: 'var_a',
-      name: 'Variante A (Gancho Psicológico & UGC)',
-      headline: campaign.channels?.instagram?.hook || 'Você já reparou que as pessoas mais elegantes nunca parecem estar se esforçando?',
-      bodyCopy: campaign.channels?.instagram?.caption || 'Descubra a combinação exclusiva que elimina o desperdício e garante durabilidade vitalícia com caimento impecável.',
-      ctaText: campaign.channels?.instagram?.cta || 'Garantir com Desconto Exclusivo',
-      visualType: 'video_ugc',
-      emotionalAngle: 'curiosity_hook',
+      id: "var_a",
+      name: "Variante A (Gancho Psicológico & UGC)",
+      headline:
+        campaign.channels?.instagram?.hook ||
+        "Você já reparou que as pessoas mais elegantes nunca parecem estar se esforçando?",
+      bodyCopy:
+        campaign.channels?.instagram?.caption ||
+        "Descubra a combinação exclusiva que elimina o desperdício e garante durabilidade vitalícia com caimento impecável.",
+      ctaText: campaign.channels?.instagram?.cta || "Garantir com Desconto Exclusivo",
+      visualType: "video_ugc",
+      emotionalAngle: "curiosity_hook",
     },
     {
-      id: 'var_b',
-      name: 'Variante B (Racional & Oferta Direta)',
-      headline: campaign.abTestVariants?.[0]?.hook || 'Economize até 40% do seu tempo com a solução definitiva da categoria.',
-      bodyCopy: 'Peças com certificação premium e envio expresso para todo o Brasil. Primeira troca grátis garantida.',
-      ctaText: 'Comprar Agora',
-      visualType: 'static_minimal',
-      emotionalAngle: 'rational_savings',
+      id: "var_b",
+      name: "Variante B (Racional & Oferta Direta)",
+      headline:
+        campaign.abTestVariants?.[0]?.hook ||
+        "Economize até 40% do seu tempo com a solução definitiva da categoria.",
+      bodyCopy:
+        "Peças com certificação premium e envio expresso para todo o Brasil. Primeira troca grátis garantida.",
+      ctaText: "Comprar Agora",
+      visualType: "static_minimal",
+      emotionalAngle: "rational_savings",
     },
   ]);
 
@@ -93,22 +106,29 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
     runABTestingPrediction(
       [
         {
-          id: 'var_a',
-          name: 'Variante A (Gancho Psicológico & UGC)',
-          headline: campaign.channels?.instagram?.hook || 'Você já reparou que as pessoas mais elegantes nunca parecem estar se esforçando?',
-          bodyCopy: campaign.channels?.instagram?.caption || 'Descubra a combinação exclusiva que elimina o desperdício e garante durabilidade vitalícia com caimento impecável.',
-          ctaText: campaign.channels?.instagram?.cta || 'Garantir com Desconto Exclusivo',
-          visualType: 'video_ugc',
-          emotionalAngle: 'curiosity_hook',
+          id: "var_a",
+          name: "Variante A (Gancho Psicológico & UGC)",
+          headline:
+            campaign.channels?.instagram?.hook ||
+            "Você já reparou que as pessoas mais elegantes nunca parecem estar se esforçando?",
+          bodyCopy:
+            campaign.channels?.instagram?.caption ||
+            "Descubra a combinação exclusiva que elimina o desperdício e garante durabilidade vitalícia com caimento impecável.",
+          ctaText: campaign.channels?.instagram?.cta || "Garantir com Desconto Exclusivo",
+          visualType: "video_ugc",
+          emotionalAngle: "curiosity_hook",
         },
         {
-          id: 'var_b',
-          name: 'Variante B (Racional & Oferta Direta)',
-          headline: campaign.abTestVariants?.[0]?.hook || 'Economize até 40% do seu tempo com a solução definitiva da categoria.',
-          bodyCopy: 'Peças com certificação premium e envio expresso para todo o Brasil. Primeira troca grátis garantida.',
-          ctaText: 'Comprar Agora',
-          visualType: 'static_minimal',
-          emotionalAngle: 'rational_savings',
+          id: "var_b",
+          name: "Variante B (Racional & Oferta Direta)",
+          headline:
+            campaign.abTestVariants?.[0]?.hook ||
+            "Economize até 40% do seu tempo com a solução definitiva da categoria.",
+          bodyCopy:
+            "Peças com certificação premium e envio expresso para todo o Brasil. Primeira troca grátis garantida.",
+          ctaText: "Comprar Agora",
+          visualType: "static_minimal",
+          emotionalAngle: "rational_savings",
         },
       ],
       {
@@ -116,19 +136,17 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
         baselineConvRate: 2.6,
         avgOrderValue: 210,
         avgCPC: 1.18,
-        topPerformingHooks: ['Ganchos reflexivos nos primeiros 3s', 'UGC autêntico'],
-        fatiguedAngles: ['Anúncios estáticos institucionais'],
+        topPerformingHooks: ["Ganchos reflexivos nos primeiros 3s", "UGC autêntico"],
+        fatiguedAngles: ["Anúncios estáticos institucionais"],
       },
       targetChannel,
       brand.targetAudience,
-      10000
-    )
+      10000,
+    ),
   );
 
   const handleUpdateVariation = (id: string, updates: Partial<AdVariationInput>) => {
-    setVariations((prev) =>
-      prev.map((v) => (v.id === id ? { ...v, ...updates } : v))
-    );
+    setVariations((prev) => prev.map((v) => (v.id === id ? { ...v, ...updates } : v)));
   };
 
   const handleAddVariation = () => {
@@ -138,10 +156,11 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
       id: `var_${Date.now()}`,
       name: `Variante ${nextLetter} (Prova Social)`,
       headline: `Mais de 12.000 clientes já adotaram a ${brand.name}. Veja o porquê...`,
-      bodyCopy: 'Resultados comprovados com avaliações 5 estrelas e entrega garantida para todo o Brasil.',
-      ctaText: 'Experimentar Sem Riscos',
-      visualType: 'carousel',
-      emotionalAngle: 'social_proof',
+      bodyCopy:
+        "Resultados comprovados com avaliações 5 estrelas e entrega garantida para todo o Brasil.",
+      ctaText: "Experimentar Sem Riscos",
+      visualType: "carousel",
+      emotionalAngle: "social_proof",
     };
     setVariations((prev) => [...prev, newVar]);
   };
@@ -159,7 +178,7 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
         benchmark,
         targetChannel,
         brand.targetAudience,
-        simulatedImpressions
+        simulatedImpressions,
       );
       setResult(newResult);
       setIsSimulating(false);
@@ -189,7 +208,8 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
             </h3>
           </div>
           <p className="text-xs text-slate-300">
-            Prevê qual copy e variação de criativo terá melhor desempenho com base nos dados históricos de engajamento de {brand.name}.
+            Prevê qual copy e variação de criativo terá melhor desempenho com base nos dados
+            históricos de engajamento de {brand.name}.
           </p>
         </div>
 
@@ -210,8 +230,8 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
             disabled={isSimulating}
             className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-900 text-white text-xs sm:text-sm font-semibold shadow-md shadow-indigo-600/20 transition-all whitespace-nowrap"
           >
-            <Play className={`w-3.5 h-3.5 ${isSimulating ? 'animate-spin' : ''}`} />
-            <span>{isSimulating ? 'Simulando Coorte...' : 'Executar Simulação Preditiva'}</span>
+            <Play className={`w-3.5 h-3.5 ${isSimulating ? "animate-spin" : ""}`} />
+            <span>{isSimulating ? "Simulando Coorte..." : "Executar Simulação Preditiva"}</span>
           </button>
         </div>
       </div>
@@ -257,7 +277,9 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
           <div className="flex items-center gap-2 pt-1">
             <span className="font-mono font-bold text-white">CTR {benchmark.baselineCTR}%</span>
             <span className="text-slate-500">·</span>
-            <span className="font-mono font-bold text-emerald-400">Conv. {benchmark.baselineConvRate}%</span>
+            <span className="font-mono font-bold text-emerald-400">
+              Conv. {benchmark.baselineConvRate}%
+            </span>
             <span className="text-slate-500">·</span>
             <span className="font-mono text-slate-300">Ticket R${benchmark.avgOrderValue}</span>
           </div>
@@ -297,7 +319,9 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
 
           <div className="flex items-center gap-3">
             <div className="text-right">
-              <span className="text-[10px] text-slate-400 block uppercase">Vantagem em Conversões</span>
+              <span className="text-[10px] text-slate-400 block uppercase">
+                Vantagem em Conversões
+              </span>
               <span className="text-lg font-mono font-extrabold text-emerald-400">
                 +{result.conversionUpliftPct}%
               </span>
@@ -309,7 +333,9 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
               className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-md transition-all whitespace-nowrap"
             >
               <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>{appliedNotification ? 'Aplicado na Campanha!' : 'Aplicar Vencedor na Campanha'}</span>
+              <span>
+                {appliedNotification ? "Aplicado na Campanha!" : "Aplicar Vencedor na Campanha"}
+              </span>
             </button>
           </div>
         </div>
@@ -330,8 +356,8 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
               key={v.id}
               className={`rounded-2xl p-5 border flex flex-col justify-between transition-all ${
                 isWinner
-                  ? 'bg-slate-900 border-emerald-500/80 shadow-md shadow-emerald-500/10'
-                  : 'bg-slate-900/80 border-slate-800 hover:border-slate-700'
+                  ? "bg-slate-900 border-emerald-500/80 shadow-md shadow-emerald-500/10"
+                  : "bg-slate-900/80 border-slate-800 hover:border-slate-700"
               }`}
             >
               <div className="space-y-4">
@@ -340,7 +366,7 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
                   <div className="flex items-center gap-2">
                     <span
                       className={`w-2.5 h-2.5 rounded-full ${
-                        isWinner ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'
+                        isWinner ? "bg-emerald-400 animate-pulse" : "bg-slate-500"
                       }`}
                     />
                     <span className="font-bold text-sm text-white">{v.name}</span>
@@ -368,18 +394,22 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
                   <div className="grid grid-cols-4 gap-2 text-center p-3 bg-slate-950/70 rounded-xl border border-slate-800">
                     <div>
                       <span className="text-[10px] text-slate-400 uppercase block">Score IA</span>
-                      <strong className={`font-mono text-sm ${isWinner ? 'text-emerald-400' : 'text-slate-200'}`}>
+                      <strong
+                        className={`font-mono text-sm ${isWinner ? "text-emerald-400" : "text-slate-200"}`}
+                      >
                         {pred.overallScore}/100
                       </strong>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 uppercase block">CTR Previsto</span>
-                      <strong className="font-mono text-sm text-white">
-                        {pred.predictedCTR}%
-                      </strong>
+                      <span className="text-[10px] text-slate-400 uppercase block">
+                        CTR Previsto
+                      </span>
+                      <strong className="font-mono text-sm text-white">{pred.predictedCTR}%</strong>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 uppercase block">CPA Previsto</span>
+                      <span className="text-[10px] text-slate-400 uppercase block">
+                        CPA Previsto
+                      </span>
                       <strong className="font-mono text-sm text-indigo-300">
                         R$ {pred.predictedCPA}
                       </strong>
@@ -438,7 +468,9 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
                       </label>
                       <select
                         value={v.visualType}
-                        onChange={(e) => handleUpdateVariation(v.id, { visualType: e.target.value as VisualType })}
+                        onChange={(e) =>
+                          handleUpdateVariation(v.id, { visualType: e.target.value as VisualType })
+                        }
                         className="w-full px-2.5 py-1 text-xs bg-slate-800 border border-slate-700 rounded-lg text-white"
                       >
                         <option value="video_ugc">Vídeo UGC Autêntico</option>
@@ -454,7 +486,11 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
                       </label>
                       <select
                         value={v.emotionalAngle}
-                        onChange={(e) => handleUpdateVariation(v.id, { emotionalAngle: e.target.value as EmotionalAngle })}
+                        onChange={(e) =>
+                          handleUpdateVariation(v.id, {
+                            emotionalAngle: e.target.value as EmotionalAngle,
+                          })
+                        }
                         className="w-full px-2.5 py-1 text-xs bg-slate-800 border border-slate-700 rounded-lg text-white"
                       >
                         <option value="curiosity_hook">Curiosidade / Quebra de Padrão</option>
@@ -471,24 +507,33 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
                 {pred && (
                   <div className="p-3 bg-slate-800/40 rounded-xl border border-slate-800 space-y-2 text-xs">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
-                      Simulação da Coorte ({simulatedImpressions.toLocaleString('pt-BR')} impressões)
+                      Simulação da Coorte ({simulatedImpressions.toLocaleString("pt-BR")}{" "}
+                      impressões)
                     </span>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                       <div>
                         <span className="text-slate-400 text-[10px] block">Cliques Previstos</span>
-                        <strong className="text-white font-mono">{pred.simulatedCohort.clicks.toLocaleString('pt-BR')}</strong>
+                        <strong className="text-white font-mono">
+                          {pred.simulatedCohort.clicks.toLocaleString("pt-BR")}
+                        </strong>
                       </div>
                       <div>
                         <span className="text-slate-400 text-[10px] block">Vendas Previstas</span>
-                        <strong className="text-emerald-400 font-mono">{pred.simulatedCohort.conversions}</strong>
+                        <strong className="text-emerald-400 font-mono">
+                          {pred.simulatedCohort.conversions}
+                        </strong>
                       </div>
                       <div>
                         <span className="text-slate-400 text-[10px] block">Gasto Estimado</span>
-                        <strong className="text-slate-300 font-mono">R$ {pred.simulatedCohort.spend.toLocaleString('pt-BR')}</strong>
+                        <strong className="text-slate-300 font-mono">
+                          R$ {pred.simulatedCohort.spend.toLocaleString("pt-BR")}
+                        </strong>
                       </div>
                       <div>
                         <span className="text-slate-400 text-[10px] block">Receita Estimada</span>
-                        <strong className="text-emerald-400 font-mono font-bold">R$ {pred.simulatedCohort.revenue.toLocaleString('pt-BR')}</strong>
+                        <strong className="text-emerald-400 font-mono font-bold">
+                          R$ {pred.simulatedCohort.revenue.toLocaleString("pt-BR")}
+                        </strong>
                       </div>
                     </div>
                   </div>
@@ -521,9 +566,14 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
       <div className="p-4 bg-slate-950/70 border border-slate-800 rounded-xl flex items-start gap-3 text-xs text-slate-300">
         <Sparkles className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
         <div>
-          <strong className="text-white block mb-0.5">Metodologia Preditiva Baseada em Dados Históricos:</strong>
+          <strong className="text-white block mb-0.5">
+            Metodologia Preditiva Baseada em Dados Históricos:
+          </strong>
           <p className="leading-relaxed text-slate-400">
-            {result.historicalContextInsight} As taxas de conversão e custo por clique foram ajustadas considerando o histórico real da conta de {brand.name} no canal "{targetChannel}", aplicando modelagem de significância Z-score para garantir reprodutibilidade em campanhas reais.
+            {result.historicalContextInsight} As taxas de conversão e custo por clique foram
+            ajustadas considerando o histórico real da conta de {brand.name} no canal "
+            {targetChannel}", aplicando modelagem de significância Z-score para garantir
+            reprodutibilidade em campanhas reais.
           </p>
         </div>
       </div>
