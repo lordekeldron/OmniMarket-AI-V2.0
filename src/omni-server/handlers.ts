@@ -1,5 +1,8 @@
 // @ts-nocheck
 // Ported from the original Express server. Handlers run unchanged via a tiny Express-like shim.
+import { generateText, Output } from "ai";
+import { z } from "zod";
+import { AGENT_DIRECTORY } from "../omni/agentRegistry";
 import { createAiClient } from "./ai-client";
 import { FirecrawlRequestError, searchFirecrawlTrends } from "./firecrawl-trends.server";
 import {
@@ -17,7 +20,56 @@ const app = {
   post: (path: string, handler: Handler) => routes.push({ method: "POST", path, handler }),
 };
 const ai: any = createAiClient();
+const AI_MODEL = "google/gemini-3.8-flash";
+const agentRequestRateLimits = new Map<string, { count: number; resetAt: number }>();
 const firecrawlRateLimits = new Map<string, { count: number; resetAt: number }>();
+
+function cleanInputText(value: unknown, maxLength = 500): string {
+  return typeof value === "string" ? value.trim().slice(0, maxLength) : "";
+}
+
+function isAiGatewayBillingRequired(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return (
+    message.includes("customer_verification_required") ||
+    message.includes("requires a valid credit card on file")
+  );
+}
+
+function getSafeBrandContext(profile: unknown) {
+  const value = profile && typeof profile === "object" ? (profile as Record<string, unknown>) : {};
+  return {
+    name: cleanInputText(value.name, 100) || "Marca não informada",
+    industry: cleanInputText(value.industry, 140) || "Nicho não informado",
+    tagline: cleanInputText(value.tagline, 200),
+    tone: cleanInputText(value.tone, 120),
+    targetAudience: cleanInputText(value.targetAudience, 240),
+    valueProposition: cleanInputText(value.valueProposition, 300),
+  };
+}
+
+function isAgentRequestRateLimited(req: Request): boolean {
+  const clientIp =
+    req.headers?.get("x-forwarded-for")?.split(",")[0].trim() ||
+    req.headers?.get("x-real-ip")?.trim();
+  if (!clientIp) return false;
+
+  const now = Date.now();
+  const current = agentRequestRateLimits.get(clientIp);
+  if (current && current.resetAt > now) {
+    if (current.count >= 8) return true;
+    current.count += 1;
+    return false;
+  }
+
+  agentRequestRateLimits.set(clientIp, { count: 1, resetAt: now + 60_000 });
+  if (agentRequestRateLimits.size > 1_000) {
+    for (const [ip, limit] of agentRequestRateLimits) {
+      if (limit.resetAt <= now) agentRequestRateLimits.delete(ip);
+    }
+  }
+  return false;
+}
 
 function isFirecrawlRateLimited(req: Request): boolean {
   const clientIp =
@@ -46,7 +98,8 @@ const imageGenerationRateLimits = new Map<string, { count: number; resetAt: numb
 
 function isImageGenerationRateLimited(req: Request): boolean {
   const clientIp =
-    req.headers?.get("x-forwarded-for")?.split(",")[0].trim() || req.headers?.get("x-real-ip")?.trim();
+    req.headers?.get("x-forwarded-for")?.split(",")[0].trim() ||
+    req.headers?.get("x-real-ip")?.trim();
   if (!clientIp) return false;
 
   const now = Date.now();
@@ -344,9 +397,7 @@ app.post("/api/ai/image", async (req: Request, res: Response) => {
     return res.status(400).json({ success: false, error: "Selecione um tipo de produto válido." });
   }
   if (!CAMPAIGN_IMAGE_ART_DIRECTIONS.includes(artDirection)) {
-    return res
-      .status(400)
-      .json({ success: false, error: "Selecione uma direção de arte válida." });
+    return res.status(400).json({ success: false, error: "Selecione uma direção de arte válida." });
   }
   if (!CAMPAIGN_IMAGE_ASPECT_RATIOS.includes(aspectRatio)) {
     return res
@@ -826,25 +877,25 @@ app.post("/api/ai/agent", async (req: Request, res: Response) => {
     const { agentId, objective, brandProfile } = req.body;
     const roles: Record<string, { name: string; mission: string; skills: string[] }> = {
       lifecycle: {
-        name: "Orquestrador de Lifecycle",
+        name: "Arquiteto de Relacionamento",
         mission:
           "Desenhar segmentação, lead scoring e uma jornada acionável baseada em comportamento e consentimento.",
         skills: ["segmentação", "lead scoring", "jornadas", "próxima melhor ação"],
       },
       campaigns: {
-        name: "Operador de Campanhas",
+        name: "Estrategista de Campanhas",
         mission:
           "Planejar uma campanha de relacionamento ou newsletter com hipótese, cadência, variações e medição.",
         skills: ["newsletter", "entregabilidade", "cadência", "métricas"],
       },
       growth: {
-        name: "Estrategista de Conversão",
+        name: "Arquiteto de Conversão",
         mission:
           "Encontrar o maior ganho de conversão na oferta, no copy ou no fluxo e propor um experimento claro.",
         skills: ["CRO", "copywriting", "signup", "onboarding"],
       },
       acquisition: {
-        name: "Radar de Aquisição",
+        name: "Estrategista de Aquisição",
         mission:
           "Priorizar um plano de aquisição combinando SEO, conteúdo, mídia, analytics, atribuição e concorrência.",
         skills: ["SEO", "analytics", "ads", "competidores"],
@@ -893,6 +944,199 @@ Nunca envie mensagens, altere contatos ou ative campanhas automaticamente.`;
     return res
       .status(500)
       .json({ success: false, error: "Não foi possível executar o agente agora." });
+  }
+});
+
+app.post("/api/ai/agents/chat", async (req: Request, res: Response) => {
+  if (isAgentRequestRateLimited(req)) {
+    return res.status(429).json({
+      success: false,
+      error: "Limite de solicitações atingido. Tente novamente em um minuto.",
+    });
+  }
+
+  const requestBody = (req.body ?? {}) as Record<string, unknown>;
+  const message = cleanInputText(requestBody.message, 1_000);
+  if (!message) {
+    return res.status(400).json({ success: false, error: "Escreva uma demanda antes de enviar." });
+  }
+
+  try {
+    const brand = getSafeBrandContext(requestBody.brandProfile);
+    const rawHistory = Array.isArray(requestBody.history) ? requestBody.history.slice(-10) : [];
+    const history = rawHistory.flatMap((value) => {
+      if (!value || typeof value !== "object") return [];
+      const entry = value as Record<string, unknown>;
+      const role = entry.role;
+      const content = cleanInputText(entry.content, 1_000);
+      if ((role !== "user" && role !== "assistant") || !content) return [];
+      return [{ role, content }];
+    });
+    const autoPilot = requestBody.autoPilot === true;
+    const requestedAgentId =
+      typeof requestBody.selectedAgentId === "string" ? requestBody.selectedAgentId : undefined;
+    let agent = AGENT_DIRECTORY.find(({ id }) => id === requestedAgentId) ?? null;
+    let routingReason = "Agente escolhido manualmente pelo usuário.";
+
+    if (autoPilot) {
+      const routing = await generateText({
+        model: AI_MODEL,
+        instructions:
+          "Você é o roteador de uma equipe de especialistas em marketing. Escolha exatamente um agente para responder à última demanda. Use o nicho, o público e o histórico somente como contexto; não invente fatos. Selecione lifecycle para jornadas/segmentação/relacionamento, campaigns para planejamento de campanhas, growth para oferta/copy/conversão e acquisition para SEO/mídia/canais/concorrência. Responda no formato estruturado solicitado.",
+        output: Output.object({
+          name: "agent_route",
+          description: "Agente especialista adequado e justificativa curta do roteamento.",
+          schema: z.object({
+            agentId: z.enum(["lifecycle", "campaigns", "growth", "acquisition"]),
+            routingReason: z.string().min(1).max(240),
+          }),
+        }),
+        prompt: JSON.stringify({
+          brand,
+          availableAgents: AGENT_DIRECTORY.map(({ id, name, mission, skills }) => ({
+            id,
+            name,
+            mission,
+            skills,
+          })),
+          recentConversation: history,
+          latestDemand: message,
+        }),
+        maxRetries: 1,
+        timeout: { totalMs: 20_000 },
+      });
+
+      agent = AGENT_DIRECTORY.find(({ id }) => id === routing.output?.agentId) ?? null;
+      routingReason = cleanInputText(routing.output?.routingReason, 240);
+    }
+
+    if (!agent) {
+      return res.status(autoPilot ? 502 : 400).json({
+        success: false,
+        error: autoPilot
+          ? "A IA não conseguiu selecionar um agente. Tente novamente."
+          : "Selecione um agente válido.",
+      });
+    }
+
+    const response = await generateText({
+      model: AI_MODEL,
+      instructions: `Você é ${agent.name}, especialista da OmniMarket AI. Sua missão: ${agent.mission}.\n\nContexto da marca: ${JSON.stringify(brand)}.\n\nResponda em Português do Brasil, com tom ${brand.tone || "claro e profissional"}. Considere explicitamente o nicho ${brand.industry} e o público ${brand.targetAudience || "não informado"}. Use apenas fatos fornecidos; não invente métricas, preços, resultados, garantias, depoimentos ou integrações. Ofereça diagnóstico e ações práticas, indique incertezas e peça confirmação antes de qualquer publicação, envio ou ativação.`,
+      messages: [...history, { role: "user", content: message }],
+      maxOutputTokens: 900,
+      maxRetries: 1,
+      timeout: { totalMs: 25_000 },
+    });
+
+    if (!response.text.trim()) {
+      return res
+        .status(502)
+        .json({ success: false, error: "O agente não retornou uma resposta. Tente novamente." });
+    }
+
+    return res.json({
+      success: true,
+      agentId: agent.id,
+      agentName: agent.name,
+      routingReason,
+      reply: response.text.trim(),
+    });
+  } catch (error) {
+    console.error("Error in /api/ai/agents/chat:", error);
+    const billingRequired = isAiGatewayBillingRequired(error);
+    return res.status(billingRequired ? 503 : 502).json({
+      success: false,
+      error: billingRequired
+        ? "A geração com IA está bloqueada pela configuração de cobrança do Vercel AI Gateway. Configure uma forma de pagamento válida no time e tente novamente."
+        : "Não foi possível consultar a IA agora. Tente novamente em instantes.",
+    });
+  }
+});
+
+app.post("/api/ai/ab-variations", async (req: Request, res: Response) => {
+  if (isAgentRequestRateLimited(req)) {
+    return res.status(429).json({
+      success: false,
+      error: "Limite de gerações atingido. Tente novamente em um minuto.",
+    });
+  }
+
+  try {
+    const requestBody = (req.body ?? {}) as Record<string, unknown>;
+    const brand = getSafeBrandContext(requestBody.brandProfile);
+    const targetChannel =
+      cleanInputText(requestBody.targetChannel, 120) || "Instagram Reels & Stories";
+    const campaignInput =
+      requestBody.campaign && typeof requestBody.campaign === "object"
+        ? (requestBody.campaign as Record<string, unknown>)
+        : {};
+    const campaignContext = {
+      campaignName: cleanInputText(campaignInput.campaignName, 120),
+      tagline: cleanInputText(campaignInput.tagline, 200),
+      concept: cleanInputText(campaignInput.concept, 300),
+      currentHeadline: cleanInputText(campaignInput.currentHeadline, 180),
+      currentCopy: cleanInputText(campaignInput.currentCopy, 500),
+      currentCta: cleanInputText(campaignInput.currentCta, 100),
+      alternateHook: cleanInputText(campaignInput.alternateHook, 180),
+    };
+
+    const variationSchema = z.object({
+      variant: z.enum(["A", "B"]),
+      focus: z.string().min(2).max(100),
+      headline: z.string().min(5).max(140),
+      bodyCopy: z.string().min(10).max(600),
+      ctaText: z.string().min(2).max(80),
+      visualType: z.enum(["video_ugc", "static_minimal", "carousel", "editorial_luxury"]),
+      emotionalAngle: z.enum([
+        "rational_savings",
+        "social_proof",
+        "urgency_scarcity",
+        "aspirational_status",
+        "curiosity_hook",
+      ]),
+    });
+
+    const result = await generateText({
+      model: AI_MODEL,
+      instructions:
+        "Você é um copywriter de performance. Gere duas variantes realmente distintas e específicas ao contexto informado, sempre em Português do Brasil. A variante A explora uma tensão ou benefício central do nicho; a B apresenta outro ângulo, como clareza racional, redução de fricção ou valor percebido. Não use textos genéricos de moda/e-commerce quando esse não for o nicho. Não invente preços, descontos, números, garantias, depoimentos, certificações ou resultados; só mencione uma oferta se ela estiver explicitamente no briefing. Não repita frases prontas entre marcas. Ajuste formato, vocabulário e CTA ao canal. Retorne somente os campos do schema.",
+      output: Output.object({
+        name: "contextual_ab_variations",
+        description: "Duas copies de anúncio contextualizadas para um teste A/B.",
+        schema: z.object({ variations: z.array(variationSchema).length(2) }),
+      }),
+      prompt: JSON.stringify({
+        brand,
+        channel: targetChannel,
+        campaign: campaignContext,
+        audience: brand.targetAudience,
+        voice: brand.tone,
+        valueProposition: brand.valueProposition,
+      }),
+      temperature: 0.75,
+      maxOutputTokens: 1_300,
+      maxRetries: 1,
+      timeout: { totalMs: 25_000 },
+    });
+
+    const variations = result.output?.variations;
+    if (!variations || variations.length !== 2 || variations[0].variant === variations[1].variant) {
+      return res.status(502).json({
+        success: false,
+        error: "A IA não retornou duas variantes válidas. Tente novamente.",
+      });
+    }
+
+    return res.json({ success: true, data: { variations } });
+  } catch (error) {
+    console.error("Error in /api/ai/ab-variations:", error);
+    const billingRequired = isAiGatewayBillingRequired(error);
+    return res.status(billingRequired ? 503 : 502).json({
+      success: false,
+      error: billingRequired
+        ? "A geração com IA está bloqueada pela configuração de cobrança do Vercel AI Gateway. Configure uma forma de pagamento válida no time e tente novamente."
+        : "Não foi possível gerar as variantes com IA agora. Tente novamente em instantes.",
+    });
   }
 });
 

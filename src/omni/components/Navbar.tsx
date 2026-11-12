@@ -49,7 +49,7 @@ export const navGroups = [
   {
     label: "Execução",
     items: [
-      { id: "agents", label: "Agentes", icon: Bot },
+      { id: "agents", label: "Agentes IA", icon: Bot },
       { id: "campaigns", label: "Campanhas", icon: Sparkles },
       { id: "social", label: "Social", icon: Share2 },
       { id: "support", label: "Atendimento", icon: MessageSquare },
