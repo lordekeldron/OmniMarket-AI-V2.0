@@ -1,7 +1,7 @@
 // @ts-nocheck -- ported from the original OmniMarket repo (looser TS config)
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import Globe from 'react-globe.gl';
-import { APIProvider, Map, Marker, useMap } from '@vis.gl/react-google-maps';
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import Globe from "react-globe.gl";
+import { APIProvider, Map, Marker, useMap } from "@vis.gl/react-google-maps";
 import {
   Globe as GlobeIcon,
   Map as MapIcon,
@@ -14,17 +14,20 @@ import {
   Layers,
   MapPin,
   CheckCircle2,
-} from 'lucide-react';
-import { BrandProfile, GoogleTrendCountry, GoogleTrendRegion, GoogleTrendSearchData, MacroTrend } from '../types';
+} from "lucide-react";
 import {
-  SEED_COUNTRIES,
-  generateDefaultGoogleTrendsData,
-} from '../utils/googleTrendsMath';
+  BrandProfile,
+  GoogleTrendCountry,
+  GoogleTrendRegion,
+  GoogleTrendSearchData,
+  MacroTrend,
+} from "../types";
+import { SEED_COUNTRIES, generateDefaultGoogleTrendsData } from "../utils/googleTrendsMath";
 
 const GEO_URL =
-  'https://unpkg.com/three-globe@2.31.1/example/country-polygons/ne_110m_admin_0_countries.geojson';
+  "https://unpkg.com/three-globe@2.31.1/example/country-polygons/ne_110m_admin_0_countries.geojson";
 // Google Earth / Blue Marble high-res satellite imagery texture
-const EARTH_URL = 'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg';
+const EARTH_URL = "https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg";
 
 interface GlobalTrendHeatmapProps {
   brand: BrandProfile;
@@ -46,7 +49,7 @@ class GlobeErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: any) {
-    console.warn('Globe WebGL rendering gracefully recovered:', error);
+    console.warn("Globe WebGL rendering gracefully recovered:", error);
   }
 
   render() {
@@ -81,20 +84,20 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
 
   // Explicit View Mode ('3d' for 3D Globe, '2d' for 2D Google Earth Map)
   // Switching is controlled strictly via the top-right button toggle
-  const [viewMode, setViewMode] = useState<'3d' | '2d'>('3d');
+  const [viewMode, setViewMode] = useState<"3d" | "2d">("3d");
 
   // Google Maps Platform API Key state
   const [mapsApiKey, setMapsApiKey] = useState<string>(
-    (import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string) || ''
+    (import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string) || "",
   );
   const [mapsError, setMapsError] = useState(false);
 
   // Google Trends State
-  const [searchQuery, setSearchQuery] = useState(brand.industry || 'Inteligência de Mercado');
-  const [activeCountryCode, setActiveCountryCode] = useState('BR');
-  const [activeRegionCode, setActiveRegionCode] = useState<string>('SP');
+  const [searchQuery, setSearchQuery] = useState(brand.industry || "Inteligência de Mercado");
+  const [activeCountryCode, setActiveCountryCode] = useState("BR");
+  const [activeRegionCode, setActiveRegionCode] = useState<string>("SP");
   const [trendsData, setTrendsData] = useState<GoogleTrendSearchData>(() =>
-    generateDefaultGoogleTrendsData(brand.industry || 'Inteligência de Mercado', 'Brasil')
+    generateDefaultGoogleTrendsData(brand.industry || "Inteligência de Mercado", "Brasil"),
   );
   const [loadingTrends, setLoadingTrends] = useState(false);
 
@@ -108,7 +111,9 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
   }, [trendsData, activeCountryCode]);
 
   const currentRegion = useMemo<GoogleTrendRegion | undefined>(() => {
-    return currentCountry.regions.find((r) => r.code === activeRegionCode) || currentCountry.regions[0];
+    return (
+      currentCountry.regions.find((r) => r.code === activeRegionCode) || currentCountry.regions[0]
+    );
   }, [currentCountry, activeRegionCode]);
 
   // Center coordinates for map view
@@ -122,7 +127,7 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
   // Load API Key from server if missing in client env
   useEffect(() => {
     if (!mapsApiKey) {
-      fetch('/api/config')
+      fetch("/api/config")
         .then((res) => res.json())
         .then((data) => {
           if (data.googleMapsApiKey) {
@@ -151,7 +156,7 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
     let cancelled = false;
     fetch(GEO_URL)
       .then((res) => {
-        if (!res.ok) throw new Error('geo');
+        if (!res.ok) throw new Error("geo");
         return res.json();
       })
       .then((data) => {
@@ -167,7 +172,7 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
 
   // Rotate 3D Globe Camera on Country Change (only active in 3D mode)
   useEffect(() => {
-    if (viewMode === '3d' && globeRef.current) {
+    if (viewMode === "3d" && globeRef.current) {
       const timer = setTimeout(() => {
         try {
           globeRef.current?.pointOfView?.(
@@ -176,7 +181,7 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
               lng: currentCountry.lng,
               altitude: 1.8,
             },
-            700
+            700,
           );
         } catch {
           // ignore transient animation race conditions
@@ -190,9 +195,9 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
   const fetchGoogleTrends = async (termToSearch: string, countryName: string) => {
     setLoadingTrends(true);
     try {
-      const res = await fetch('/api/ai/google-trends', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/ai/google-trends", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           query: termToSearch,
           country: countryName,
@@ -206,7 +211,7 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
         setTrendsData(json.data);
       }
     } catch (err) {
-      console.error('Failed to load Google Trends:', err);
+      console.error("Failed to load Google Trends:", err);
     } finally {
       setLoadingTrends(false);
     }
@@ -220,7 +225,7 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
 
   const handleSelectCountry = (country: GoogleTrendCountry) => {
     setActiveCountryCode(country.code);
-    setActiveRegionCode(country.regions[0]?.code || '');
+    setActiveRegionCode(country.regions[0]?.code || "");
   };
 
   const handleSelectRegion = (region: GoogleTrendRegion) => {
@@ -234,11 +239,11 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
         name: breakoutTerm,
         growthRate: currentRegion?.growthRate || currentCountry.growthRate,
         sentiment: currentCountry.sentiment,
-        category: 'Google Trends (Busca em Ascensão)',
+        category: "Google Trends (Busca em Ascensão)",
         description: `Tendência identificada no Google Trends com alto volume de busca em ${currentRegion?.name || currentCountry.name}. Intenção comercial verificada.`,
-        predictedImpact: 'Muito Alto',
-        recommendedAction: `Veicular anúncios focados nas palavras-chave "${breakoutTerm}" nas regiões com maior Opportunity Score (${currentRegion?.name || 'SP, RJ'}).`,
-        relevantKeywords: [breakoutTerm, currentCountry.name, 'Google Search', 'Alta Demanda'],
+        predictedImpact: "Muito Alto",
+        recommendedAction: `Veicular anúncios focados nas palavras-chave "${breakoutTerm}" nas regiões com maior Opportunity Score (${currentRegion?.name || "SP, RJ"}).`,
+        relevantKeywords: [breakoutTerm, currentCountry.name, "Google Search", "Alta Demanda"],
       });
     } else {
       onFocusTopic(breakoutTerm);
@@ -250,9 +255,9 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
     return (feature: any) => {
       const iso = feature.properties?.ISO_A2;
       if (iso === activeCountryCode) {
-        return 'rgba(239, 68, 68, 0.45)'; // Active country highlighted
+        return "rgba(239, 68, 68, 0.45)"; // Active country highlighted
       }
-      return 'rgba(56, 189, 248, 0.16)';
+      return "rgba(56, 189, 248, 0.16)";
     };
   }, [activeCountryCode]);
 
@@ -273,7 +278,8 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
             </h2>
           </div>
           <p className="text-xs text-slate-300">
-            Acompanhe o volume de buscas no Google por países e regiões. Alterne entre o Globo 3D e o Mapa 2D de Satélite.
+            Acompanhe o volume de buscas no Google por países e regiões. Alterne entre o Globo 3D e
+            o Mapa 2D de Satélite.
           </p>
         </div>
 
@@ -294,8 +300,8 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
             disabled={loadingTrends}
             className="flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-900 text-white text-xs font-semibold rounded-xl shadow-md transition-all whitespace-nowrap"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loadingTrends ? 'animate-spin' : ''}`} />
-            <span>{loadingTrends ? 'Buscando...' : 'Atualizar Trends'}</span>
+            <RefreshCw className={`w-3.5 h-3.5 ${loadingTrends ? "animate-spin" : ""}`} />
+            <span>{loadingTrends ? "Buscando..." : "Atualizar Trends"}</span>
           </button>
         </form>
       </div>
@@ -313,13 +319,27 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
                 onClick={() => handleSelectCountry(country)}
                 className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg transition-all ${
                   activeCountryCode === country.code
-                    ? 'bg-emerald-600 text-white shadow-sm font-semibold'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                    ? "bg-emerald-600 text-white shadow-sm font-semibold"
+                    : "text-slate-400 hover:text-white hover:bg-slate-800"
                 }`}
               >
-                <span>{country.code === 'BR' ? '🇧🇷' : country.code === 'US' ? '🇺🇸' : country.code === 'UK' ? '🇬🇧' : country.code === 'DE' ? '🇩🇪' : country.code === 'JP' ? '🇯🇵' : '🌐'}</span>
+                <span>
+                  {country.code === "BR"
+                    ? "🇧🇷"
+                    : country.code === "US"
+                      ? "🇺🇸"
+                      : country.code === "UK"
+                        ? "🇬🇧"
+                        : country.code === "DE"
+                          ? "🇩🇪"
+                          : country.code === "JP"
+                            ? "🇯🇵"
+                            : "🌐"}
+                </span>
                 <span>{country.name}</span>
-                <span className="text-[10px] opacity-75 font-mono">({country.searchVolumeIndex})</span>
+                <span className="text-[10px] opacity-75 font-mono">
+                  ({country.searchVolumeIndex})
+                </span>
               </button>
             ))}
           </div>
@@ -328,11 +348,11 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
           <div className="pointer-events-auto flex items-center gap-1.5 p-1 bg-slate-900/95 border border-slate-800 rounded-xl backdrop-blur-md shadow-lg">
             <button
               type="button"
-              onClick={() => setViewMode('3d')}
+              onClick={() => setViewMode("3d")}
               className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                viewMode === '3d'
-                  ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                viewMode === "3d"
+                  ? "bg-indigo-600 text-white shadow-sm"
+                  : "text-slate-400 hover:text-white hover:bg-slate-800"
               }`}
             >
               <GlobeIcon className="w-3.5 h-3.5" />
@@ -340,11 +360,11 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
             </button>
             <button
               type="button"
-              onClick={() => setViewMode('2d')}
+              onClick={() => setViewMode("2d")}
               className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                viewMode === '2d'
-                  ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                viewMode === "2d"
+                  ? "bg-emerald-600 text-white shadow-sm"
+                  : "text-slate-400 hover:text-white hover:bg-slate-800"
               }`}
             >
               <MapIcon className="w-3.5 h-3.5" />
@@ -358,7 +378,7 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
           {/* VIEW 1: Photorealistic 3D Google Earth Globe */}
           <div
             className="absolute inset-0"
-            style={{ display: viewMode === '3d' ? 'block' : 'none' }}
+            style={{ display: viewMode === "3d" ? "block" : "none" }}
           >
             {!loadError && (
               <GlobeErrorBoundary
@@ -368,12 +388,15 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
                       className="w-96 h-96 rounded-full shadow-2xl border-2 border-sky-400/30 bg-cover bg-center animate-pulse"
                       style={{
                         backgroundImage: `url(${EARTH_URL})`,
-                        boxShadow: '0 0 60px rgba(56, 189, 248, 0.35), inset 0 0 40px rgba(0,0,0,0.8)',
+                        boxShadow:
+                          "0 0 60px rgba(56, 189, 248, 0.35), inset 0 0 40px rgba(0,0,0,0.8)",
                       }}
                     />
                     <div className="absolute bottom-6 text-center bg-slate-900/80 px-4 py-2 rounded-xl border border-slate-700">
                       <p className="text-xs text-slate-300 font-medium">
-                        Google Earth 3D ativo · Clique em <span className="text-emerald-400 font-bold">Mapa 2D</span> para navegar pelas regiões
+                        Google Earth 3D ativo · Clique em{" "}
+                        <span className="text-emerald-400 font-bold">Mapa 2D</span> para navegar
+                        pelas regiões
                       </p>
                     </div>
                   </div>
@@ -390,10 +413,10 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
                   polygonsData={countriesGeo}
                   polygonAltitude={0.012}
                   polygonCapColor={capColor}
-                  polygonSideColor={() => 'rgba(15, 23, 42, 0.5)'}
-                  polygonStrokeColor={() => 'rgba(255, 255, 255, 0.3)'}
+                  polygonSideColor={() => "rgba(15, 23, 42, 0.5)"}
+                  polygonStrokeColor={() => "rgba(255, 255, 255, 0.3)"}
                   polygonsTransitionDuration={300}
-                  polygonLabel={(d: any) => `${d.properties?.NAME || 'País'}`}
+                  polygonLabel={(d: any) => `${d.properties?.NAME || "País"}`}
                   onPolygonClick={(feature: any) => {
                     const iso = feature?.properties?.ISO_A2;
                     const match = trendsData.countries.find((c) => c.code === iso);
@@ -407,7 +430,8 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
 
             {loadError && (
               <div className="absolute inset-0 flex items-center justify-center text-sm text-slate-400">
-                Não foi possível carregar o mapa poligonal. Alternando para visão direta de tendências.
+                Não foi possível carregar o mapa poligonal. Alternando para visão direta de
+                tendências.
               </div>
             )}
           </div>
@@ -415,12 +439,12 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
           {/* VIEW 2: 2D Google Earth Satellite Map (Full interactive click-drag and mouse wheel zoom) */}
           <div
             className="absolute inset-0 w-full h-full"
-            style={{ display: viewMode === '2d' ? 'block' : 'none' }}
+            style={{ display: viewMode === "2d" ? "block" : "none" }}
           >
             {mapsApiKey && !mapsError ? (
               <APIProvider
                 apiKey={mapsApiKey}
-                {...({ internalUsageAttributionIds: ['gmp_mcp_codeassist_v1_aistudio'] } as any)}
+                {...({ internalUsageAttributionIds: ["gmp_mcp_codeassist_v1_aistudio"] } as any)}
                 onError={() => setMapsError(true)}
               >
                 <Map
@@ -453,7 +477,7 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
                   className="absolute inset-0 opacity-40 bg-cover bg-center"
                   style={{
                     backgroundImage: `url(${EARTH_URL})`,
-                    filter: 'contrast(120%) brightness(85%)',
+                    filter: "contrast(120%) brightness(85%)",
                   }}
                 />
                 <div className="relative z-10 max-w-md bg-slate-900/90 border border-slate-700 p-5 rounded-2xl backdrop-blur-md shadow-2xl text-center">
@@ -464,24 +488,34 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
                     Visualização 2D Satélite Google Earth: {currentCountry.name}
                   </h3>
                   <p className="text-xs text-slate-300 mb-4">
-                    Região Ativa: <span className="text-emerald-400 font-semibold">{currentRegion?.name}</span> (Coordenadas: {currentRegion?.lat.toFixed(2)}, {currentRegion?.lng.toFixed(2)}).
+                    Região Ativa:{" "}
+                    <span className="text-emerald-400 font-semibold">{currentRegion?.name}</span>{" "}
+                    (Coordenadas: {currentRegion?.lat.toFixed(2)}, {currentRegion?.lng.toFixed(2)}).
                   </p>
 
                   <div className="grid grid-cols-2 gap-2 text-left text-xs mb-4">
                     <div className="p-2.5 bg-slate-800/80 rounded-xl border border-slate-700">
-                      <span className="text-slate-400 text-[10px] uppercase font-bold block">Volume Google</span>
-                      <span className="text-lg font-bold text-emerald-400">{currentRegion?.searchVolumeIndex} / 100</span>
+                      <span className="text-slate-400 text-[10px] uppercase font-bold block">
+                        Volume Google
+                      </span>
+                      <span className="text-lg font-bold text-emerald-400">
+                        {currentRegion?.searchVolumeIndex} / 100
+                      </span>
                     </div>
                     <div className="p-2.5 bg-slate-800/80 rounded-xl border border-slate-700">
-                      <span className="text-slate-400 text-[10px] uppercase font-bold block">Opportunity Score</span>
-                      <span className="text-lg font-bold text-indigo-400">{currentRegion?.opportunityScore} pts</span>
+                      <span className="text-slate-400 text-[10px] uppercase font-bold block">
+                        Opportunity Score
+                      </span>
+                      <span className="text-lg font-bold text-indigo-400">
+                        {currentRegion?.opportunityScore} pts
+                      </span>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-center gap-2">
                     <button
                       type="button"
-                      onClick={() => setViewMode('3d')}
+                      onClick={() => setViewMode("3d")}
                       className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-xl border border-slate-700"
                     >
                       Voltar ao Globo 3D
@@ -508,15 +542,16 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
                 <span
                   className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                     currentRegion.isBreakout
-                      ? 'bg-red-500/20 text-red-400 border border-red-500/30'
-                      : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                      ? "bg-red-500/20 text-red-400 border border-red-500/30"
+                      : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
                   }`}
                 >
-                  {currentRegion.isBreakout ? 'Breakout +140%' : currentRegion.growthRate}
+                  {currentRegion.isBreakout ? "Breakout +140%" : currentRegion.growthRate}
                 </span>
               </div>
               <p className="text-[11px] text-slate-300 mt-1 line-clamp-1">
-                Consulta em alta: <span className="text-amber-300 font-medium">"{currentRegion.topRisingQuery}"</span>
+                Consulta em alta:{" "}
+                <span className="text-amber-300 font-medium">"{currentRegion.topRisingQuery}"</span>
               </p>
             </div>
           )}
@@ -547,8 +582,8 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
                 onClick={() => handleSelectRegion(reg)}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs transition-all border ${
                   isSelected
-                    ? 'bg-emerald-600/20 border-emerald-500 text-white font-semibold shadow-md'
-                    : 'bg-slate-800/80 border-slate-700/60 text-slate-300 hover:text-white hover:border-slate-600'
+                    ? "bg-emerald-600/20 border-emerald-500 text-white font-semibold shadow-md"
+                    : "bg-slate-800/80 border-slate-700/60 text-slate-300 hover:text-white hover:border-slate-600"
                 }`}
               >
                 <span>{reg.name}</span>
@@ -654,7 +689,9 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
                   className="flex items-center justify-between p-2 rounded-lg bg-slate-800/40 text-xs"
                 >
                   <span className="text-slate-200">{top.title}</span>
-                  <span className="text-slate-400 font-mono text-[11px]">{top.relevanceScore}% rel</span>
+                  <span className="text-slate-400 font-mono text-[11px]">
+                    {top.relevanceScore}% rel
+                  </span>
                 </div>
               ))}
             </div>
@@ -683,7 +720,7 @@ export const GlobalTrendHeatmap: React.FC<GlobalTrendHeatmapProps> = ({
             <div className="space-y-2 text-xs text-slate-300">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Geolocalização prioritária: {currentRegion?.name || 'São Paulo'}</span>
+                <span>Geolocalização prioritária: {currentRegion?.name || "São Paulo"}</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />

@@ -1,20 +1,20 @@
 // @ts-nocheck -- ported from the original OmniMarket repo (looser TS config)
-import React, { useState, useEffect } from 'react';
-import { Navbar } from './components/Navbar';
-import { DashboardOverview } from './components/DashboardOverview';
-import { TrendsView } from './components/TrendsView';
-import { CampaignStudio } from './components/CampaignStudio';
-import { AudienceIntelligence } from './components/AudienceIntelligence';
-import { RoiEngine } from './components/RoiEngine';
-import { CompetitorMonitor } from './components/CompetitorMonitor';
-import { SocialAutomation } from './components/SocialAutomation';
-import { SupportChat } from './components/SupportChat';
-import { ReportView } from './components/ReportView';
-import { BrandProfileModal } from './components/BrandProfileModal';
-import { SlideDeckModal } from './components/SlideDeckModal';
-import { LandingPage } from './components/LandingPage';
-import { AuthModal } from './components/AuthModal';
-import { AgentWorkbench } from './components/AgentWorkbench';
+import React, { useState, useEffect } from "react";
+import { Navbar } from "./components/Navbar";
+import { DashboardOverview } from "./components/DashboardOverview";
+import { TrendsView } from "./components/TrendsView";
+import { CampaignStudio } from "./components/CampaignStudio";
+import { AudienceIntelligence } from "./components/AudienceIntelligence";
+import { RoiEngine } from "./components/RoiEngine";
+import { CompetitorMonitor } from "./components/CompetitorMonitor";
+import { SocialAutomation } from "./components/SocialAutomation";
+import { SupportChat } from "./components/SupportChat";
+import { ReportView } from "./components/ReportView";
+import { BrandProfileModal } from "./components/BrandProfileModal";
+import { SlideDeckModal } from "./components/SlideDeckModal";
+import { LandingPage } from "./components/LandingPage";
+import { AuthModal } from "./components/AuthModal";
+import { AgentWorkbench } from "./components/AgentWorkbench";
 
 import {
   BrandProfile,
@@ -26,46 +26,46 @@ import {
   MacroTrend,
   LookalikeSegment,
   UserProfile,
-} from './types';
-import { optimizeChannelAllocations } from './utils/marketingMath';
+} from "./types";
+import { optimizeChannelAllocations } from "./utils/marketingMath";
 import {
   getCurrentSession,
   clearCurrentSession,
   loadUserWorkspace,
   saveUserWorkspace,
   registerOrUpdateUser,
-} from './utils/storage';
+} from "./utils/storage";
 
 const emptyTrendData: TrendData = {
-  summary: '',
+  summary: "",
   macroTrends: [],
   viralHooks: [],
-  roiOpportunity: '',
+  roiOpportunity: "",
 };
 
 const emptyCampaign: CampaignCreative = {
-  campaignName: '',
-  tagline: '',
-  concept: '',
+  campaignName: "",
+  tagline: "",
+  concept: "",
   channels: {
-    instagram: { hook: '', caption: '', cta: '', hashtags: [] },
-    tiktok: { hook: '', caption: '', cta: '' },
-    linkedin: { headline: '', copy: '', cta: '' },
+    instagram: { hook: "", caption: "", cta: "", hashtags: [] },
+    tiktok: { hook: "", caption: "", cta: "" },
+    linkedin: { headline: "", copy: "", cta: "" },
     googleAds: { headlines: [], descriptions: [] },
   },
   designDirectives: {
-    productDesign: { concept: '', colorPalette: [], visualStyle: '', recommendedElements: [] },
-    adBannerCreative: { mainHeadline: '', badgeText: '', ctaButtonText: '', visualPrompt: '' },
+    productDesign: { concept: "", colorPalette: [], visualStyle: "", recommendedElements: [] },
+    adBannerCreative: { mainHeadline: "", badgeText: "", ctaButtonText: "", visualPrompt: "" },
   },
   abTestVariants: [],
-  expectedMetrics: { estimatedCTR: '', estimatedCPA: '', projectedROAS: '' },
+  expectedMetrics: { estimatedCTR: "", estimatedCPA: "", projectedROAS: "" },
 };
 
 export default function App() {
   // Active authenticated user session
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => getCurrentSession());
   const [showLanding, setShowLanding] = useState<boolean>(() => !getCurrentSession());
-  const [authMode, setAuthMode] = useState<'signup' | 'login' | null>(null);
+  const [authMode, setAuthMode] = useState<"signup" | "login" | null>(null);
 
   // Workspace data loaded from persistent storage
   const [brands, setBrands] = useState<BrandProfile[]>(() => {
@@ -88,7 +88,7 @@ export default function App() {
     return null;
   });
 
-  const [activeTab, setActiveTab] = useState<string>('overview');
+  const [activeTab, setActiveTab] = useState<string>("overview");
   const [trends, setTrends] = useState<TrendData>(emptyTrendData);
 
   const [channels, setChannels] = useState<ChannelPerformanceData[]>(() => {
@@ -191,9 +191,9 @@ export default function App() {
     let user = currentUser;
     if (!user) {
       const res = registerOrUpdateUser(
-        newBrand.name + ' Admin',
-        'admin@' + newBrand.name.toLowerCase().replace(/[^a-z0-9]/g, '') + '.com',
-        newBrand.name
+        newBrand.name + " Admin",
+        "admin@" + newBrand.name.toLowerCase().replace(/[^a-z0-9]/g, "") + ".com",
+        newBrand.name,
       );
       user = res.user;
       setCurrentUser(user);
@@ -236,13 +236,13 @@ export default function App() {
   // Navigate to Campaign Studio prefilled from a Trend
   const handleSelectTrendForCampaign = (trend: MacroTrend) => {
     setPrefillTrendTopic(`${trend.name}: ${trend.recommendedAction}`);
-    setActiveTab('campaigns');
+    setActiveTab("campaigns");
   };
 
   // Navigate to Campaign Studio from Competitor Counter-Strategy
   const handleSelectCounterStrategy = (strategy: string) => {
     setPrefillTrendTopic(`Contra-Estratégia: ${strategy}`);
-    setActiveTab('campaigns');
+    setActiveTab("campaigns");
   };
 
   // Add Scheduled Post
@@ -257,14 +257,14 @@ export default function App() {
         p.id === id
           ? {
               ...p,
-              status: 'published',
-              scheduledTime: 'Publicado agora',
+              status: "published",
+              scheduledTime: "Publicado agora",
               impressions: Math.floor(Math.random() * 5000) + 1200,
               likes: Math.floor(Math.random() * 400) + 85,
-              engagementRate: (Math.random() * 3 + 4).toFixed(1) + '%',
+              engagementRate: (Math.random() * 3 + 4).toFixed(1) + "%",
             }
-          : p
-      )
+          : p,
+      ),
     );
   };
 
@@ -301,12 +301,12 @@ export default function App() {
         projectedROAS: segment.projectedMetrics.projectedROAS,
       },
     }));
-    setActiveTab('campaigns');
+    setActiveTab("campaigns");
   };
 
   // Print Handler
   const handleTriggerPrint = () => {
-    setActiveTab('report');
+    setActiveTab("report");
     setTimeout(() => {
       window.print();
     }, 200);
@@ -315,7 +315,7 @@ export default function App() {
   if (showLanding) {
     return (
       <>
-        <LandingPage onSignUp={() => setAuthMode('signup')} onLogIn={() => setAuthMode('login')} />
+        <LandingPage onSignUp={() => setAuthMode("signup")} onLogIn={() => setAuthMode("login")} />
         <AuthModal
           mode={authMode}
           onClose={() => setAuthMode(null)}
@@ -343,124 +343,125 @@ export default function App() {
       )}
 
       <div className="flex-1 flex flex-col lg:pl-64">
-      <main className="flex-1 max-w-[1400px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {!activeBrand ? (
-          <section className="min-h-[60vh] flex flex-col items-center justify-center text-center">
-            <p className="text-xs uppercase tracking-[0.2em] text-primary">OmniMarket AI</p>
-            <h1 className="mt-4 text-3xl font-semibold text-foreground">Comece pelo perfil da sua marca</h1>
-            <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
-              Cadastre os dados da sua empresa para liberar análises, campanhas e relatórios baseados exclusivamente nas informações da sua plataforma.
-            </p>
-            <button
-              type="button"
-              onClick={() => setIsBrandModalOpen(true)}
-              className="mt-6 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-glow"
-            >
-              Adicionar perfil da marca
-            </button>
-          </section>
-        ) : (
-          <>
-            {activeTab === 'agents' && activeBrand && <AgentWorkbench brand={activeBrand} />}
+        <main className="flex-1 max-w-[1400px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {!activeBrand ? (
+            <section className="min-h-[60vh] flex flex-col items-center justify-center text-center">
+              <p className="text-xs uppercase tracking-[0.2em] text-primary">OmniMarket AI</p>
+              <h1 className="mt-4 text-3xl font-semibold text-foreground">
+                Comece pelo perfil da sua marca
+              </h1>
+              <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
+                Cadastre os dados da sua empresa para liberar análises, campanhas e relatórios
+                baseados exclusivamente nas informações da sua plataforma.
+              </p>
+              <button
+                type="button"
+                onClick={() => setIsBrandModalOpen(true)}
+                className="mt-6 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-glow"
+              >
+                Adicionar perfil da marca
+              </button>
+            </section>
+          ) : (
+            <>
+              {activeTab === "agents" && activeBrand && <AgentWorkbench brand={activeBrand} />}
 
-            {activeTab === 'overview' && (
-              <DashboardOverview
-            brand={activeBrand}
-            channels={channels}
-            trends={trends}
-            onNavigateTab={setActiveTab}
-            onApplyOptimization={handleApplyOptimization}
-            optimizationApplied={optimizationApplied}
-          />
-        )}
+              {activeTab === "overview" && (
+                <DashboardOverview
+                  brand={activeBrand}
+                  channels={channels}
+                  trends={trends}
+                  onNavigateTab={setActiveTab}
+                  onApplyOptimization={handleApplyOptimization}
+                  optimizationApplied={optimizationApplied}
+                />
+              )}
 
-        {activeTab === 'trends' && (
-          <TrendsView
-            brand={activeBrand}
-            trends={trends}
-            onUpdateTrends={setTrends}
-            onSelectTrendForCampaign={handleSelectTrendForCampaign}
-          />
-        )}
+              {activeTab === "trends" && (
+                <TrendsView
+                  brand={activeBrand}
+                  trends={trends}
+                  onUpdateTrends={setTrends}
+                  onSelectTrendForCampaign={handleSelectTrendForCampaign}
+                />
+              )}
 
-        {activeTab === 'campaigns' && (
-          <CampaignStudio
-            brand={activeBrand}
-            campaign={campaign}
-            onUpdateCampaign={setCampaign}
-            prefillTrendTopic={prefillTrendTopic}
-          />
-        )}
+              {activeTab === "campaigns" && (
+                <CampaignStudio
+                  brand={activeBrand}
+                  campaign={campaign}
+                  onUpdateCampaign={setCampaign}
+                  prefillTrendTopic={prefillTrendTopic}
+                />
+              )}
 
-        {activeTab === 'audience' && (
-          <AudienceIntelligence
-            brand={activeBrand}
-            channels={channels}
-            onApplyAudienceToCampaign={handleApplyAudienceToCampaign}
-            campaign={campaign}
-          />
-        )}
+              {activeTab === "audience" && (
+                <AudienceIntelligence
+                  brand={activeBrand}
+                  channels={channels}
+                  onApplyAudienceToCampaign={handleApplyAudienceToCampaign}
+                  campaign={campaign}
+                />
+              )}
 
-        {activeTab === 'roi' && (
-          <RoiEngine
-            brand={activeBrand}
-            channels={channels}
-            onApplyNewAllocations={(newCh) => {
-              setChannels(newCh);
-              setOptimizationApplied(true);
-            }}
-          />
-        )}
+              {activeTab === "roi" && (
+                <RoiEngine
+                  brand={activeBrand}
+                  channels={channels}
+                  onApplyNewAllocations={(newCh) => {
+                    setChannels(newCh);
+                    setOptimizationApplied(true);
+                  }}
+                />
+              )}
 
-        {activeTab === 'competitors' && (
-          <CompetitorMonitor
-            brand={activeBrand}
-            competitors={competitors}
-            onAddCompetitor={handleAddCompetitor}
-            onSelectCounterStrategy={handleSelectCounterStrategy}
-          />
-        )}
+              {activeTab === "competitors" && (
+                <CompetitorMonitor
+                  brand={activeBrand}
+                  competitors={competitors}
+                  onAddCompetitor={handleAddCompetitor}
+                  onSelectCounterStrategy={handleSelectCounterStrategy}
+                />
+              )}
 
-        {activeTab === 'social' && (
-          <SocialAutomation
-            brand={activeBrand}
-            scheduledPosts={scheduledPosts}
-            onAddPost={handleAddPost}
-            onPublishPostNow={handlePublishPostNow}
-          />
-        )}
+              {activeTab === "social" && (
+                <SocialAutomation
+                  brand={activeBrand}
+                  scheduledPosts={scheduledPosts}
+                  onAddPost={handleAddPost}
+                  onPublishPostNow={handlePublishPostNow}
+                />
+              )}
 
-        {activeTab === 'support' && (
-          <SupportChat brand={activeBrand} />
-        )}
+              {activeTab === "support" && <SupportChat brand={activeBrand} />}
 
-        {activeTab === 'report' && (
-          <ReportView
-            brand={activeBrand}
-            channels={channels}
-            trends={trends}
-            competitors={competitors}
-            campaign={campaign}
-            onOpenSlideDeck={() => setIsSlideDeckOpen(true)}
-            onTriggerPrint={handleTriggerPrint}
-          />
-        )}
-          </>
-        )}
-      </main>
+              {activeTab === "report" && (
+                <ReportView
+                  brand={activeBrand}
+                  channels={channels}
+                  trends={trends}
+                  competitors={competitors}
+                  campaign={campaign}
+                  onOpenSlideDeck={() => setIsSlideDeckOpen(true)}
+                  onTriggerPrint={handleTriggerPrint}
+                />
+              )}
+            </>
+          )}
+        </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border py-5 text-center text-xs text-slate-500 print:hidden">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-            <span>OmniMarket AI Especialista · Otimização Preditiva de ROI & Marketing Autônomo</span>
+        {/* Footer */}
+        <footer className="border-t border-border py-5 text-center text-xs text-slate-500 print:hidden">
+          <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+              <span>
+                OmniMarket AI Especialista · Otimização Preditiva de ROI & Marketing Autônomo
+              </span>
+            </div>
+            <div>Monitorando {brands.length} perfis de marca simultaneamente em tempo real.</div>
           </div>
-          <div>
-            Monitorando {brands.length} perfis de marca simultaneamente em tempo real.
-          </div>
-        </div>
-      </footer>
+        </footer>
       </div>
 
       {/* Brand Profile Modal */}

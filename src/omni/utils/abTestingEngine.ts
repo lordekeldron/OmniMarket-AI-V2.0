@@ -13,8 +13,13 @@ export interface HistoricalBenchmark {
   fatiguedAngles: string[];
 }
 
-export type VisualType = 'video_ugc' | 'static_minimal' | 'carousel' | 'editorial_luxury';
-export type EmotionalAngle = 'rational_savings' | 'social_proof' | 'urgency_scarcity' | 'aspirational_status' | 'curiosity_hook';
+export type VisualType = "video_ugc" | "static_minimal" | "carousel" | "editorial_luxury";
+export type EmotionalAngle =
+  | "rational_savings"
+  | "social_proof"
+  | "urgency_scarcity"
+  | "aspirational_status"
+  | "curiosity_hook";
 
 export interface AdVariationInput {
   id: string;
@@ -65,15 +70,38 @@ export interface ABComparisonResult {
 
 // Power words historically boosting CTR in performance marketing
 const HIGH_CONVERTING_KEYWORDS = [
-  'exclusiv', 'garant', 'segredo', 'prov', 'desconto', 'econom', 'agora',
-  'transform', 'resultado', 'comprovad', 'oficial', 'grátis', 'gratis',
-  'rápido', 'rapido', 'natural', 'apenas', 'hoje', 'direto', 'você', 'voce'
+  "exclusiv",
+  "garant",
+  "segredo",
+  "prov",
+  "desconto",
+  "econom",
+  "agora",
+  "transform",
+  "resultado",
+  "comprovad",
+  "oficial",
+  "grátis",
+  "gratis",
+  "rápido",
+  "rapido",
+  "natural",
+  "apenas",
+  "hoje",
+  "direto",
+  "você",
+  "voce",
 ];
 
 // Words that trigger ad fatigue / skepticism historically
 const HIGH_FRICTION_KEYWORDS = [
-  'clique aqui', 'compre já', 'imperdível', 'o melhor do mundo', '100% milagroso',
-  'arraste para cima', 'não perca'
+  "clique aqui",
+  "compre já",
+  "imperdível",
+  "o melhor do mundo",
+  "100% milagroso",
+  "arraste para cima",
+  "não perca",
 ];
 
 /**
@@ -82,7 +110,7 @@ const HIGH_FRICTION_KEYWORDS = [
 export function analyzeCopyMetrics(
   variation: AdVariationInput,
   channel: string,
-  audience: string
+  audience: string,
 ): {
   hookStrength: number;
   clarity: number;
@@ -103,17 +131,28 @@ export function analyzeCopyMetrics(
   const headlineWords = variation.headline.trim().split(/\s+/).length;
   if (headlineWords >= 4 && headlineWords <= 12) {
     hookStrength += 12;
-    positiveDrivers.push('Tamanho de título ideal para escaneabilidade visual rápida (4-12 palavras)');
+    positiveDrivers.push(
+      "Tamanho de título ideal para escaneabilidade visual rápida (4-12 palavras)",
+    );
   } else if (headlineWords > 16) {
     hookStrength -= 10;
-    riskFactors.push('Título excessivamente longo para mobile; risco de truncamento nos primeiros 3 segundos');
+    riskFactors.push(
+      "Título excessivamente longo para mobile; risco de truncamento nos primeiros 3 segundos",
+    );
   }
 
   // Interrogative / Question hook or curiosity
-  if (headlineLower.includes('?') || headlineLower.includes('como') || headlineLower.includes('por que') || headlineLower.includes('você')) {
+  if (
+    headlineLower.includes("?") ||
+    headlineLower.includes("como") ||
+    headlineLower.includes("por que") ||
+    headlineLower.includes("você")
+  ) {
     hookStrength += 15;
     emotionalResonance += 10;
-    positiveDrivers.push('Abertura com pergunta/reflexão gera gap de curiosidade comprovado historicamente (+24% retenção)');
+    positiveDrivers.push(
+      "Abertura com pergunta/reflexão gera gap de curiosidade comprovado historicamente (+24% retenção)",
+    );
   }
 
   // 2. Power words check
@@ -121,48 +160,72 @@ export function analyzeCopyMetrics(
   if (matchedPowerWords.length >= 2) {
     clarity += 12;
     hookStrength += 8;
-    positiveDrivers.push(`Presença de termos com alta tração histórica: "${matchedPowerWords.slice(0, 3).join(', ')}"`);
+    positiveDrivers.push(
+      `Presença de termos com alta tração histórica: "${matchedPowerWords.slice(0, 3).join(", ")}"`,
+    );
   } else if (matchedPowerWords.length === 0) {
     hookStrength -= 8;
-    riskFactors.push('Falta de gatilhos psicológicos diretos de valor ou diferenciação');
+    riskFactors.push("Falta de gatilhos psicológicos diretos de valor ou diferenciação");
   }
 
   // 3. Friction words check
   const matchedFriction = HIGH_FRICTION_KEYWORDS.filter((w) => fullText.includes(w));
   if (matchedFriction.length > 0) {
     clarity -= 15;
-    riskFactors.push(`Termos com fadiga de anúncio detectados ("${matchedFriction.join(', ')}"); geram ceticismo no público moderno`);
+    riskFactors.push(
+      `Termos com fadiga de anúncio detectados ("${matchedFriction.join(", ")}"); geram ceticismo no público moderno`,
+    );
   }
 
   // 4. Visual type & Channel fit
   const ch = channel.toLowerCase();
-  if ((ch.includes('tiktok') || ch.includes('reels') || ch.includes('instagram')) && variation.visualType === 'video_ugc') {
+  if (
+    (ch.includes("tiktok") || ch.includes("reels") || ch.includes("instagram")) &&
+    variation.visualType === "video_ugc"
+  ) {
     hookStrength += 16;
     emotionalResonance += 15;
-    positiveDrivers.push('Formato Vídeo UGC alinhado com o canal: gera 3.2x mais engajamento do que posts institucionais estáticos');
-  } else if (ch.includes('linkedin') && variation.visualType === 'editorial_luxury') {
+    positiveDrivers.push(
+      "Formato Vídeo UGC alinhado com o canal: gera 3.2x mais engajamento do que posts institucionais estáticos",
+    );
+  } else if (ch.includes("linkedin") && variation.visualType === "editorial_luxury") {
     clarity += 15;
     emotionalResonance += 12;
-    positiveDrivers.push('Estilo editorial de alto padrão fortalece autoridade B2B');
-  } else if ((ch.includes('tiktok') || ch.includes('reels')) && variation.visualType === 'static_minimal') {
+    positiveDrivers.push("Estilo editorial de alto padrão fortalece autoridade B2B");
+  } else if (
+    (ch.includes("tiktok") || ch.includes("reels")) &&
+    variation.visualType === "static_minimal"
+  ) {
     hookStrength -= 12;
-    riskFactors.push('Imagens estáticas em feeds de vídeo curto sofrem de baixa retenção e CTR inferior');
+    riskFactors.push(
+      "Imagens estáticas em feeds de vídeo curto sofrem de baixa retenção e CTR inferior",
+    );
   }
 
   // 5. Emotional angle alignment
-  if (variation.emotionalAngle === 'social_proof' || variation.emotionalAngle === 'curiosity_hook') {
+  if (
+    variation.emotionalAngle === "social_proof" ||
+    variation.emotionalAngle === "curiosity_hook"
+  ) {
     emotionalResonance += 14;
-    positiveDrivers.push('Ângulo de Prova Social / Curiosidade tem histórico de menor CPA no nicho');
-  } else if (variation.emotionalAngle === 'urgency_scarcity') {
+    positiveDrivers.push(
+      "Ângulo de Prova Social / Curiosidade tem histórico de menor CPA no nicho",
+    );
+  } else if (variation.emotionalAngle === "urgency_scarcity") {
     clarity += 10;
     emotionalResonance += 8;
   }
 
   // 6. CTA Actionability
   const ctaLower = variation.ctaText.toLowerCase();
-  if (ctaLower.includes('garant') || ctaLower.includes('desconto') || ctaLower.includes('exclusiv') || ctaLower.includes('experimentar')) {
+  if (
+    ctaLower.includes("garant") ||
+    ctaLower.includes("desconto") ||
+    ctaLower.includes("exclusiv") ||
+    ctaLower.includes("experimentar")
+  ) {
     clarity += 10;
-    positiveDrivers.push('CTA orientado a benefício tangível imediato com redução de atrito');
+    positiveDrivers.push("CTA orientado a benefício tangível imediato com redução de atrito");
   }
 
   return {
@@ -182,15 +245,13 @@ export function predictVariationPerformance(
   benchmark: HistoricalBenchmark,
   channel: string,
   audience: string,
-  simulatedImpressions = 10000
+  simulatedImpressions = 10000,
 ): VariationPrediction {
   const metrics = analyzeCopyMetrics(variation, channel, audience);
 
   // Overall Score (0-100)
   const overallScore = Math.round(
-    metrics.hookStrength * 0.4 +
-    metrics.clarity * 0.3 +
-    metrics.emotionalResonance * 0.3
+    metrics.hookStrength * 0.4 + metrics.clarity * 0.3 + metrics.emotionalResonance * 0.3,
   );
 
   // Performance Multiplier relative to baseline (normalized around score 65 = 1.0)
@@ -247,14 +308,14 @@ export function runABTestingPrediction(
   benchmark: HistoricalBenchmark,
   channel: string,
   audience: string,
-  simulatedImpressions = 10000
+  simulatedImpressions = 10000,
 ): ABComparisonResult {
   if (variations.length === 0) {
-    throw new Error('At least one variation is required for A/B testing');
+    throw new Error("At least one variation is required for A/B testing");
   }
 
   const predictions = variations.map((v) =>
-    predictVariationPerformance(v, benchmark, channel, audience, simulatedImpressions)
+    predictVariationPerformance(v, benchmark, channel, audience, simulatedImpressions),
   );
 
   // Sort by projected ROAS and overall score
@@ -283,8 +344,8 @@ export function runABTestingPrediction(
 
   // Two-proportion Z-score test approximation for confidence
   const n = simulatedImpressions;
-  const p1 = (runnerUp.simulatedCohort.clicks / n);
-  const p2 = (winner.simulatedCohort.clicks / n);
+  const p1 = runnerUp.simulatedCohort.clicks / n;
+  const p2 = winner.simulatedCohort.clicks / n;
   const pPool = (runnerUp.simulatedCohort.clicks + winner.simulatedCohort.clicks) / (2 * n);
   const se = Math.sqrt(pPool * (1 - pPool) * (2 / n));
   const z = se > 0 ? Math.abs(p2 - p1) / se : 0;
@@ -298,7 +359,7 @@ export function runABTestingPrediction(
   else if (z >= 1.28) confidenceLevel = 80.0;
   else confidenceLevel = Number((50 + z * 22).toFixed(1));
 
-  const summaryRationale = `Com base no histórico de engajamento do canal "${channel}", a ${winner.name} superou as alternativas com um ganho estimado de ${conversionUpliftPct > 0 ? `+${conversionUpliftPct}%` : 'performance superior'} em conversões e ROAS projetado de ${winner.predictedROAS}x (vs ${runnerUp.predictedROAS}x). A combinação de gancho de alta curiosidade com prova de valor reduziu o CPA projetado para R$ ${winner.predictedCPA}.`;
+  const summaryRationale = `Com base no histórico de engajamento do canal "${channel}", a ${winner.name} superou as alternativas com um ganho estimado de ${conversionUpliftPct > 0 ? `+${conversionUpliftPct}%` : "performance superior"} em conversões e ROAS projetado de ${winner.predictedROAS}x (vs ${runnerUp.predictedROAS}x). A combinação de gancho de alta curiosidade com prova de valor reduziu o CPA projetado para R$ ${winner.predictedCPA}.`;
 
   const historicalContextInsight = `Dados históricos de ${audience} apontam que ganchos centrados em benefícios com prova social clara e formato dinâmico convertem com 34% menos atrito que abordagens meramente descritivas.`;
 

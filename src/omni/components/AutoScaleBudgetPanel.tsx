@@ -1,5 +1,5 @@
 // @ts-nocheck -- ported from the original OmniMarket repo (looser TS config)
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   TrendingUp,
   Zap,
@@ -17,9 +17,9 @@ import {
   Layers,
   Check,
   ChevronDown,
-  ChevronUp
-} from 'lucide-react';
-import { ChannelPerformanceData } from '../types';
+  ChevronUp,
+} from "lucide-react";
+import { ChannelPerformanceData } from "../types";
 import {
   PerformanceSpike,
   AutoScaleSettings,
@@ -28,7 +28,7 @@ import {
   calculateDynamicBudgetScale,
   applyAutoScaleSpike,
   generateSyntheticSpike,
-} from '../utils/marketingMath';
+} from "../utils/marketingMath";
 
 interface AutoScaleBudgetPanelProps {
   channels: ChannelPerformanceData[];
@@ -47,7 +47,7 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
 
   // Spikes state - initialized from real channel metrics
   const [spikes, setSpikes] = useState<PerformanceSpike[]>(() =>
-    detectPerformanceSpikes(channels, DEFAULT_AUTOSCALE_SETTINGS)
+    detectPerformanceSpikes(channels, DEFAULT_AUTOSCALE_SETTINGS),
   );
 
   // Audit history of applied scale actions
@@ -64,24 +64,24 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
     }>
   >([
     {
-      id: 'log-seed-1',
-      timestamp: 'Há 45 min',
-      channelName: 'Instagram',
+      id: "log-seed-1",
+      timestamp: "Há 45 min",
+      channelName: "Instagram",
       prevDaily: 150,
       newDaily: 195,
       deltaDaily: 45,
       projectedRev: 270,
-      spikeType: 'Surge de ROAS (+35%)',
+      spikeType: "Surge de ROAS (+35%)",
     },
     {
-      id: 'log-seed-2',
-      timestamp: 'Há 2 horas',
-      channelName: 'TikTok Ads',
+      id: "log-seed-2",
+      timestamp: "Há 2 horas",
+      channelName: "TikTok Ads",
       prevDaily: 120,
       newDaily: 156,
       deltaDaily: 36,
       projectedRev: 215,
-      spikeType: 'Velocidade Viral de CTR (+42%)',
+      spikeType: "Velocidade Viral de CTR (+42%)",
     },
   ]);
 
@@ -102,11 +102,11 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
     // Recalculate pending spikes with new settings
     setSpikes((prev) =>
       prev.map((s) => {
-        if (s.status !== 'pending') return s;
+        if (s.status !== "pending") return s;
         const calc = calculateDynamicBudgetScale(
           s.currentDailyBudget,
           { spikeType: s.spikeType, currentRoas: s.currentValue, deltaPct: s.deltaPct },
-          next
+          next,
         );
         return {
           ...s,
@@ -116,7 +116,7 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
             calc.projectedRevenue - Math.round(s.currentDailyBudget * s.currentValue),
           projectedNewRoas: calc.projectedRoas,
         };
-      })
+      }),
     );
   };
 
@@ -125,15 +125,14 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
     const updatedChannels = applyAutoScaleSpike(channels, spike);
     onApplyScaledChannels(updatedChannels);
 
-    setSpikes((prev) =>
-      prev.map((s) => (s.id === spike.id ? { ...s, status: 'applied' } : s))
-    );
+    setSpikes((prev) => prev.map((s) => (s.id === spike.id ? { ...s, status: "applied" } : s)));
 
     // Add to audit log
     const now = new Date();
-    const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(
-      now.getMinutes()
-    ).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+    const timeStr = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(
+      2,
+      "0",
+    )}:${String(now.getSeconds()).padStart(2, "0")}`;
 
     setAuditLog((prev) => [
       {
@@ -150,28 +149,27 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
     ]);
 
     showToast(
-      `Orçamento de ${spike.channelName} escalonado para R$ ${spike.suggestedDailyBudget}/dia (+R$ ${spike.budgetDelta}/dia)!`
+      `Orçamento de ${spike.channelName} escalonado para R$ ${spike.suggestedDailyBudget}/dia (+R$ ${spike.budgetDelta}/dia)!`,
     );
   };
 
   // Dismiss a spike
   const handleDismissSpike = (spikeId: string) => {
-    setSpikes((prev) =>
-      prev.map((s) => (s.id === spikeId ? { ...s, status: 'dismissed' } : s))
-    );
+    setSpikes((prev) => prev.map((s) => (s.id === spikeId ? { ...s, status: "dismissed" } : s)));
   };
 
   // Apply all pending spikes at once
   const handleApplyAllPending = () => {
-    const pendingList = spikes.filter((s) => s.status === 'pending');
+    const pendingList = spikes.filter((s) => s.status === "pending");
     if (pendingList.length === 0) return;
 
     let updated = [...channels];
     const newLogs: typeof auditLog = [];
     const now = new Date();
-    const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(
-      now.getMinutes()
-    ).padStart(2, '0')}`;
+    const timeStr = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(
+      2,
+      "0",
+    )}`;
 
     pendingList.forEach((spike) => {
       updated = applyAutoScaleSpike(updated, spike);
@@ -189,26 +187,26 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
 
     onApplyScaledChannels(updated);
     setSpikes((prev) =>
-      prev.map((s) => (s.status === 'pending' ? { ...s, status: 'applied' } : s))
+      prev.map((s) => (s.status === "pending" ? { ...s, status: "applied" } : s)),
     );
     setAuditLog((prev) => [...newLogs, ...prev]);
     showToast(`${pendingList.length} escalonamentos dinâmicos aprovados e sincronizados!`);
   };
 
   // Simulate on-demand synthetic spike
-  const handleSimulateLiveSpike = (type: 'roas' | 'viral') => {
+  const handleSimulateLiveSpike = (type: "roas" | "viral") => {
     const newSpike = generateSyntheticSpike(channels, type, settings);
 
     // If autoMode is true, auto apply directly!
     if (settings.autoMode) {
       const updated = applyAutoScaleSpike(channels, newSpike);
       onApplyScaledChannels(updated);
-      setSpikes((prev) => [{ ...newSpike, status: 'applied' }, ...prev]);
+      setSpikes((prev) => [{ ...newSpike, status: "applied" }, ...prev]);
 
       const now = new Date();
-      const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(
-        now.getMinutes()
-      ).padStart(2, '0')}`;
+      const timeStr = `${String(now.getHours()).padStart(2, "0")}:${String(
+        now.getMinutes(),
+      ).padStart(2, "0")}`;
 
       setAuditLog((prev) => [
         {
@@ -225,24 +223,24 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
       ]);
 
       showToast(
-        `[Piloto Automático] Spike detectado em ${newSpike.channelName}: Orçamento diário auto-escalonado para R$ ${newSpike.suggestedDailyBudget}/dia!`
+        `[Piloto Automático] Spike detectado em ${newSpike.channelName}: Orçamento diário auto-escalonado para R$ ${newSpike.suggestedDailyBudget}/dia!`,
       );
     } else {
       setSpikes((prev) => [newSpike, ...prev]);
       showToast(
-        `Novo spike em tempo real detectado em ${newSpike.channelName}! Ajuste diário sugerido disponível para aprovação.`
+        `Novo spike em tempo real detectado em ${newSpike.channelName}! Ajuste diário sugerido disponível para aprovação.`,
       );
     }
   };
 
-  const pendingSpikes = spikes.filter((s) => s.status === 'pending');
+  const pendingSpikes = spikes.filter((s) => s.status === "pending");
   const totalSuggestedIncrementalSpend = pendingSpikes.reduce(
     (acc, s) => acc + (s.budgetDelta > 0 ? s.budgetDelta : 0),
-    0
+    0,
   );
   const totalProjectedDailyRevenue = pendingSpikes.reduce(
     (acc, s) => acc + (s.projectedIncrementalRevenue > 0 ? s.projectedIncrementalRevenue : 0),
-    0
+    0,
   );
 
   return (
@@ -279,8 +277,9 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
             </span>
           </div>
           <p className="text-xs sm:text-sm text-slate-300">
-            Monitora a velocidade de conversão e picos repentinos de ROAS para {brandName}, sugerindo e aplicando
-            escalonamentos diários para capturar receita marginal antes do pico arrefecer.
+            Monitora a velocidade de conversão e picos repentinos de ROAS para {brandName},
+            sugerindo e aplicando escalonamentos diários para capturar receita marginal antes do
+            pico arrefecer.
           </p>
         </div>
 
@@ -293,8 +292,8 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
               onClick={() => handleUpdateSettings({ autoMode: false })}
               className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
                 !settings.autoMode
-                  ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? "bg-indigo-600 text-white shadow-sm"
+                  : "text-slate-400 hover:text-slate-200"
               }`}
             >
               Aprovação Manual
@@ -304,11 +303,13 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
               onClick={() => handleUpdateSettings({ autoMode: true })}
               className={`px-3 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5 ${
                 settings.autoMode
-                  ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? "bg-emerald-600 text-white shadow-sm"
+                  : "text-slate-400 hover:text-slate-200"
               }`}
             >
-              <span className={`w-2 h-2 rounded-full ${settings.autoMode ? 'bg-white animate-pulse' : 'bg-slate-500'}`} />
+              <span
+                className={`w-2 h-2 rounded-full ${settings.autoMode ? "bg-white animate-pulse" : "bg-slate-500"}`}
+              />
               <span>Piloto Automático</span>
             </button>
           </div>
@@ -316,7 +317,7 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
           {/* Simulate Live Spike Demo Button */}
           <button
             type="button"
-            onClick={() => handleSimulateLiveSpike('roas')}
+            onClick={() => handleSimulateLiveSpike("roas")}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors whitespace-nowrap"
             title="Injeta um spike de performance simulado para testar o algoritmo"
           >
@@ -332,7 +333,11 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
           >
             <Sliders className="w-3.5 h-3.5 text-indigo-400" />
             <span>Guardrails</span>
-            {showConfig ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            {showConfig ? (
+              <ChevronUp className="w-3.5 h-3.5" />
+            ) : (
+              <ChevronDown className="w-3.5 h-3.5" />
+            )}
           </button>
         </div>
       </div>
@@ -347,35 +352,39 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
                 Travas de Segurança & Guardrails do Auto-Scale
               </span>
             </div>
-            <span className="text-[11px] text-slate-400">Proteção ativa contra queima de orçamento</span>
+            <span className="text-[11px] text-slate-400">
+              Proteção ativa contra queima de orçamento
+            </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Aggressiveness Level */}
             <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg space-y-1.5">
-              <span className="text-xs font-bold text-slate-300 block">Agressividade de Escala</span>
+              <span className="text-xs font-bold text-slate-300 block">
+                Agressividade de Escala
+              </span>
               <div className="grid grid-cols-3 gap-1 pt-1">
-                {(['conservative', 'moderate', 'aggressive'] as const).map((lvl) => (
+                {(["conservative", "moderate", "aggressive"] as const).map((lvl) => (
                   <button
                     key={lvl}
                     type="button"
                     onClick={() => handleUpdateSettings({ aggressiveness: lvl })}
                     className={`py-1.5 px-2 rounded-md text-[11px] font-bold text-center transition-all ${
                       settings.aggressiveness === lvl
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+                        ? "bg-indigo-600 text-white"
+                        : "bg-slate-800 text-slate-400 hover:text-slate-200"
                     }`}
                   >
-                    {lvl === 'conservative' ? '+15%' : lvl === 'moderate' ? '+30%' : '+50%'}
+                    {lvl === "conservative" ? "+15%" : lvl === "moderate" ? "+30%" : "+50%"}
                   </button>
                 ))}
               </div>
               <span className="text-[10px] text-slate-400 block pt-1">
-                {settings.aggressiveness === 'conservative'
-                  ? 'Conservador: incrementos moderados (+15%) com menor exposição.'
-                  : settings.aggressiveness === 'moderate'
-                  ? 'Moderado (Recomendado): escala ótima (+30%) balanceando saturação.'
-                  : 'Agressivo: aceleração máxima (+50%) para capturar virais rápidos.'}
+                {settings.aggressiveness === "conservative"
+                  ? "Conservador: incrementos moderados (+15%) com menor exposição."
+                  : settings.aggressiveness === "moderate"
+                    ? "Moderado (Recomendado): escala ótima (+30%) balanceando saturação."
+                    : "Agressivo: aceleração máxima (+50%) para capturar virais rápidos."}
               </span>
             </div>
 
@@ -383,7 +392,9 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
             <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg space-y-1.5">
               <div className="flex items-center justify-between text-xs font-bold text-slate-300">
                 <span>Piso Mínimo de ROAS</span>
-                <span className="font-mono text-emerald-400">{settings.minRoasFloor.toFixed(1)}x</span>
+                <span className="font-mono text-emerald-400">
+                  {settings.minRoasFloor.toFixed(1)}x
+                </span>
               </div>
               <input
                 type="range"
@@ -395,7 +406,8 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
                 className="w-full accent-emerald-500 cursor-pointer"
               />
               <span className="text-[10px] text-slate-400 block">
-                Se o canal registrar ROAS inferior a {settings.minRoasFloor.toFixed(1)}x, qualquer escalonamento é congelado.
+                Se o canal registrar ROAS inferior a {settings.minRoasFloor.toFixed(1)}x, qualquer
+                escalonamento é congelado.
               </span>
             </div>
 
@@ -403,7 +415,9 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
             <div className="p-3 bg-slate-900 border border-slate-800 rounded-lg space-y-1.5">
               <div className="flex items-center justify-between text-xs font-bold text-slate-300">
                 <span>Teto Máximo Diário / Canal</span>
-                <span className="font-mono text-indigo-400">R$ {settings.maxDailyCap.toLocaleString('pt-BR')}/dia</span>
+                <span className="font-mono text-indigo-400">
+                  R$ {settings.maxDailyCap.toLocaleString("pt-BR")}/dia
+                </span>
               </div>
               <input
                 type="range"
@@ -429,7 +443,9 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
             Spikes Ativos Detectados
           </span>
           <div className="flex items-center gap-2">
-            <span className="text-xl font-extrabold text-white font-mono">{pendingSpikes.length}</span>
+            <span className="text-xl font-extrabold text-white font-mono">
+              {pendingSpikes.length}
+            </span>
             {pendingSpikes.length > 0 && (
               <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
             )}
@@ -442,7 +458,7 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
             Incremento Diário Sugerido
           </span>
           <div className="text-xl font-extrabold text-amber-400 font-mono">
-            +R$ {totalSuggestedIncrementalSpend.toLocaleString('pt-BR')}/dia
+            +R$ {totalSuggestedIncrementalSpend.toLocaleString("pt-BR")}/dia
           </div>
           <span className="text-[11px] text-slate-400">Rebalanceamento imediato</span>
         </div>
@@ -452,7 +468,7 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
             Receita Diária Adicional Prevista
           </span>
           <div className="text-xl font-extrabold text-emerald-400 font-mono">
-            +R$ {totalProjectedDailyRevenue.toLocaleString('pt-BR')}/dia
+            +R$ {totalProjectedDailyRevenue.toLocaleString("pt-BR")}/dia
           </div>
           <span className="text-[11px] text-slate-400">Modelagem econométrica</span>
         </div>
@@ -486,34 +502,33 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
             <Layers className="w-4 h-4 text-amber-400" />
             <span>Fila de Picos em Tempo Real & Sugestões de Escala</span>
           </h3>
-          <span className="text-xs text-slate-400">
-            Atualizado continuamente via telemetria
-          </span>
+          <span className="text-xs text-slate-400">Atualizado continuamente via telemetria</span>
         </div>
 
         {spikes.length === 0 ? (
           <div className="p-8 text-center bg-slate-950/40 rounded-xl border border-slate-800 text-slate-400 text-sm">
-            Nenhum spike ativo no momento. Clique em &quot;Simular Spike ao Vivo&quot; para disparar um evento sob demanda.
+            Nenhum spike ativo no momento. Clique em &quot;Simular Spike ao Vivo&quot; para disparar
+            um evento sob demanda.
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {spikes.map((spike) => {
-              const isPending = spike.status === 'pending';
-              const isApplied = spike.status === 'applied';
-              const isDismissed = spike.status === 'dismissed';
-              const isProtective = spike.spikeType === 'cpa_spike_fatigue';
+              const isPending = spike.status === "pending";
+              const isApplied = spike.status === "applied";
+              const isDismissed = spike.status === "dismissed";
+              const isProtective = spike.spikeType === "cpa_spike_fatigue";
 
               return (
                 <div
                   key={spike.id}
                   className={`p-5 rounded-xl border transition-all space-y-4 ${
                     isApplied
-                      ? 'bg-slate-950/60 border-emerald-900/40 opacity-80'
+                      ? "bg-slate-950/60 border-emerald-900/40 opacity-80"
                       : isDismissed
-                      ? 'bg-slate-950/30 border-slate-800/40 opacity-40'
-                      : isProtective
-                      ? 'bg-gradient-to-br from-slate-900 to-amber-950/30 border-amber-800/60 shadow-sm'
-                      : 'bg-gradient-to-br from-slate-900 to-indigo-950/40 border-indigo-800/60 shadow-md'
+                        ? "bg-slate-950/30 border-slate-800/40 opacity-40"
+                        : isProtective
+                          ? "bg-gradient-to-br from-slate-900 to-amber-950/30 border-amber-800/60 shadow-sm"
+                          : "bg-gradient-to-br from-slate-900 to-indigo-950/40 border-indigo-800/60 shadow-md"
                   }`}
                 >
                   {/* Card Header: Channel & Badge */}
@@ -526,17 +541,17 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
                         <span
                           className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full ${
                             isProtective
-                              ? 'bg-amber-950 text-amber-300 border border-amber-700/60'
-                              : spike.spikeType === 'viral_creative'
-                              ? 'bg-pink-950 text-pink-300 border border-pink-700/60'
-                              : 'bg-emerald-950 text-emerald-300 border border-emerald-700/60'
+                              ? "bg-amber-950 text-amber-300 border border-amber-700/60"
+                              : spike.spikeType === "viral_creative"
+                                ? "bg-pink-950 text-pink-300 border border-pink-700/60"
+                                : "bg-emerald-950 text-emerald-300 border border-emerald-700/60"
                           }`}
                         >
                           {isProtective
-                            ? 'PROTEÇÃO CONTRA FADIGA'
-                            : spike.spikeType === 'viral_creative'
-                            ? 'VELOCIDADE VIRAL'
-                            : 'SURGE DE CONVERSÃO'}
+                            ? "PROTEÇÃO CONTRA FADIGA"
+                            : spike.spikeType === "viral_creative"
+                              ? "VELOCIDADE VIRAL"
+                              : "SURGE DE CONVERSÃO"}
                         </span>
                         <span className="text-[11px] text-slate-400 flex items-center gap-1">
                           <Clock className="w-3 h-3" />
@@ -565,9 +580,10 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
                     <div className="flex items-center justify-between pt-1 border-t border-slate-800 text-[11px]">
                       <span className="text-slate-400">{spike.metricName}:</span>
                       <strong className="text-white font-mono">
-                        {spike.benchmarkValue}x ➔{' '}
-                        <span className={isProtective ? 'text-amber-400' : 'text-emerald-400'}>
-                          {spike.currentValue}x ({spike.deltaPct > 0 ? `+${spike.deltaPct}%` : `${spike.deltaPct}%`})
+                        {spike.benchmarkValue}x ➔{" "}
+                        <span className={isProtective ? "text-amber-400" : "text-emerald-400"}>
+                          {spike.currentValue}x (
+                          {spike.deltaPct > 0 ? `+${spike.deltaPct}%` : `${spike.deltaPct}%`})
                         </span>
                       </strong>
                     </div>
@@ -583,13 +599,13 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
                         R$ {spike.currentDailyBudget}/dia
                       </div>
                       <span className="text-[10px] text-slate-400">
-                        R$ {(spike.currentDailyBudget * 30).toLocaleString('pt-BR')}/mês
+                        R$ {(spike.currentDailyBudget * 30).toLocaleString("pt-BR")}/mês
                       </span>
                     </div>
 
                     <div>
                       <span className="text-[10px] uppercase font-bold text-indigo-300 block mb-0.5">
-                        {isProtective ? 'Orçamento Protegido' : 'Orçamento Sugerido'}
+                        {isProtective ? "Orçamento Protegido" : "Orçamento Sugerido"}
                       </span>
                       <div className="font-mono text-sm sm:text-base font-extrabold text-emerald-400">
                         R$ {spike.suggestedDailyBudget}/dia
@@ -612,14 +628,13 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
 
                   {/* Projected Financial Impact & Confidence */}
                   <div className="text-xs space-y-1.5 text-slate-300">
-                    <p className="text-[11px] text-slate-400 leading-relaxed">
-                      {spike.rationale}
-                    </p>
+                    <p className="text-[11px] text-slate-400 leading-relaxed">{spike.rationale}</p>
 
                     <div className="flex items-center justify-between text-[11px] pt-1 border-t border-slate-800">
                       <span>Receita Diária Estimada:</span>
                       <strong className="text-emerald-400 font-mono">
-                        +R$ {spike.projectedIncrementalRevenue.toLocaleString('pt-BR')}/dia (ROAS {spike.projectedNewRoas}x)
+                        +R$ {spike.projectedIncrementalRevenue.toLocaleString("pt-BR")}/dia (ROAS{" "}
+                        {spike.projectedNewRoas}x)
                       </strong>
                     </div>
 
@@ -639,12 +654,16 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
                         onClick={() => handleApplySpike(spike)}
                         className={`flex-1 py-2 px-3 rounded-xl font-bold text-xs text-white shadow-md transition-all flex items-center justify-center gap-1.5 ${
                           isProtective
-                            ? 'bg-amber-600 hover:bg-amber-500 shadow-amber-900/30'
-                            : 'bg-indigo-600 hover:bg-indigo-500 shadow-indigo-900/30'
+                            ? "bg-amber-600 hover:bg-amber-500 shadow-amber-900/30"
+                            : "bg-indigo-600 hover:bg-indigo-500 shadow-indigo-900/30"
                         }`}
                       >
                         <Zap className="w-3.5 h-3.5" />
-                        <span>{isProtective ? 'Aplicar Redução Protetiva' : 'Aprovar Escalonamento Diário'}</span>
+                        <span>
+                          {isProtective
+                            ? "Aplicar Redução Protetiva"
+                            : "Aprovar Escalonamento Diário"}
+                        </span>
                       </button>
 
                       <button
@@ -688,9 +707,10 @@ export const AutoScaleBudgetPanel: React.FC<AutoScaleBudgetPanelProps> = ({
                 <span className="font-bold text-white">{log.channelName}</span>
                 <span className="text-slate-400">·</span>
                 <span className="text-slate-300 font-mono">
-                  R$ {log.prevDaily}/dia ➔{' '}
-                  <strong className="text-emerald-400">R$ {log.newDaily}/dia</strong>{' '}
-                  ({log.deltaDaily > 0 ? `+R$ ${log.deltaDaily}` : `-R$ ${Math.abs(log.deltaDaily)}`}/dia)
+                  R$ {log.prevDaily}/dia ➔{" "}
+                  <strong className="text-emerald-400">R$ {log.newDaily}/dia</strong> (
+                  {log.deltaDaily > 0 ? `+R$ ${log.deltaDaily}` : `-R$ ${Math.abs(log.deltaDaily)}`}
+                  /dia)
                 </span>
                 <span className="text-[11px] text-indigo-300 bg-indigo-950/80 px-1.5 py-0.5 rounded border border-indigo-800/50">
                   {log.spikeType}

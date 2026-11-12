@@ -1,7 +1,7 @@
 // @ts-nocheck -- ported from the original OmniMarket repo (looser TS config)
-import React, { useState } from 'react';
-import { X, Check, Building2, Sparkles } from 'lucide-react';
-import { BrandProfile } from '../types';
+import React, { useState } from "react";
+import { X, Check, Building2, Sparkles } from "lucide-react";
+import { BrandProfile } from "../types";
 
 interface BrandProfileModalProps {
   isOpen: boolean;
@@ -14,24 +14,33 @@ export const BrandProfileModal: React.FC<BrandProfileModalProps> = ({
   onClose,
   onSaveBrand,
 }) => {
-  const [name, setName] = useState('');
-  const [industry, setIndustry] = useState('');
-  const [tagline, setTagline] = useState('');
-  const [tone, setTone] = useState('');
-  const [targetAudience, setTargetAudience] = useState('');
-  const [valueProposition, setValueProposition] = useState('');
-  const [monthlyBudget, setMonthlyBudget] = useState<number | ''>('');
-  const [instagram, setInstagram] = useState('');
-  const [accentColor, setAccentColor] = useState('#6366F1');
+  const [name, setName] = useState("");
+  const [industry, setIndustry] = useState("");
+  const [tagline, setTagline] = useState("");
+  const [tone, setTone] = useState("");
+  const [targetAudience, setTargetAudience] = useState("");
+  const [valueProposition, setValueProposition] = useState("");
+  const [monthlyBudget, setMonthlyBudget] = useState<number | "">("");
+  const [instagram, setInstagram] = useState("");
+  const [accentColor, setAccentColor] = useState("#6366F1");
 
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !industry.trim() || !tagline.trim() || !tone.trim() || !targetAudience.trim() || !valueProposition.trim() || monthlyBudget === '') return;
+    if (
+      !name.trim() ||
+      !industry.trim() ||
+      !tagline.trim() ||
+      !tone.trim() ||
+      !targetAudience.trim() ||
+      !valueProposition.trim() ||
+      monthlyBudget === ""
+    )
+      return;
 
     const brand: BrandProfile = {
-      id: 'brand_' + Date.now(),
+      id: "brand_" + Date.now(),
       name: name.trim(),
       industry: industry.trim(),
       tagline: tagline.trim(),
@@ -39,11 +48,15 @@ export const BrandProfileModal: React.FC<BrandProfileModalProps> = ({
       targetAudience: targetAudience.trim(),
       valueProposition: valueProposition.trim(),
       monthlyBudget: Number(monthlyBudget),
-      currency: 'BRL',
+      currency: "BRL",
       accentColor: accentColor,
       logoInitial: name.trim().slice(0, 2).toUpperCase(),
       socialHandles: {
-        instagram: instagram.trim() ? (instagram.startsWith('@') ? instagram : '@' + instagram) : undefined,
+        instagram: instagram.trim()
+          ? instagram.startsWith("@")
+            ? instagram
+            : "@" + instagram
+          : undefined,
       },
     };
 
@@ -61,7 +74,9 @@ export const BrandProfileModal: React.FC<BrandProfileModalProps> = ({
             </div>
             <div>
               <h2 className="text-lg font-bold text-white">Adicionar Perfil de Marca</h2>
-              <p className="text-xs text-slate-400">Configure um novo ecossistema de marketing autônomo</p>
+              <p className="text-xs text-slate-400">
+                Configure um novo ecossistema de marketing autônomo
+              </p>
             </div>
           </div>
           <button
@@ -77,7 +92,9 @@ export const BrandProfileModal: React.FC<BrandProfileModalProps> = ({
         <form onSubmit={handleSubmit} className="mt-5 space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">Nome da Marca *</label>
+              <label className="block text-xs font-medium text-slate-300 mb-1">
+                Nome da Marca *
+              </label>
               <input
                 type="text"
                 required
@@ -88,7 +105,9 @@ export const BrandProfileModal: React.FC<BrandProfileModalProps> = ({
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">Setor de Atuação *</label>
+              <label className="block text-xs font-medium text-slate-300 mb-1">
+                Setor de Atuação *
+              </label>
               <input
                 type="text"
                 required
@@ -101,7 +120,9 @@ export const BrandProfileModal: React.FC<BrandProfileModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">Slogan ou Tagline *</label>
+            <label className="block text-xs font-medium text-slate-300 mb-1">
+              Slogan ou Tagline *
+            </label>
             <input
               type="text"
               required
@@ -114,7 +135,9 @@ export const BrandProfileModal: React.FC<BrandProfileModalProps> = ({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">Tom de Voz da IA *</label>
+              <label className="block text-xs font-medium text-slate-300 mb-1">
+                Tom de Voz da IA *
+              </label>
               <input
                 type="text"
                 required
@@ -125,21 +148,25 @@ export const BrandProfileModal: React.FC<BrandProfileModalProps> = ({
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">Orçamento Mensal (R$) *</label>
+              <label className="block text-xs font-medium text-slate-300 mb-1">
+                Orçamento Mensal (R$) *
+              </label>
               <input
                 type="number"
                 min="1000"
                 step="500"
                 value={monthlyBudget}
                 required
-                onChange={(e) => setMonthlyBudget(e.target.value ? Number(e.target.value) : '')}
+                onChange={(e) => setMonthlyBudget(e.target.value ? Number(e.target.value) : "")}
                 className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">Público-Alvo Principal *</label>
+            <label className="block text-xs font-medium text-slate-300 mb-1">
+              Público-Alvo Principal *
+            </label>
             <input
               type="text"
               required
@@ -151,7 +178,9 @@ export const BrandProfileModal: React.FC<BrandProfileModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">Proposta Única de Valor (Diferencial) *</label>
+            <label className="block text-xs font-medium text-slate-300 mb-1">
+              Proposta Única de Valor (Diferencial) *
+            </label>
             <textarea
               rows={2}
               required
@@ -174,7 +203,9 @@ export const BrandProfileModal: React.FC<BrandProfileModalProps> = ({
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">Cor Primária da Marca</label>
+              <label className="block text-xs font-medium text-slate-300 mb-1">
+                Cor Primária da Marca
+              </label>
               <div className="flex items-center gap-3">
                 <input
                   type="color"

@@ -1,5 +1,5 @@
 // @ts-nocheck -- ported from the original OmniMarket repo (looser TS config)
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Share2,
   Calendar,
@@ -16,9 +16,9 @@ import {
   TrendingUp,
   Heart,
   Eye,
-  Check
-} from 'lucide-react';
-import { BrandProfile, ScheduledPost } from '../types';
+  Check,
+} from "lucide-react";
+import { BrandProfile, ScheduledPost } from "../types";
 
 interface SocialAutomationProps {
   brand: BrandProfile;
@@ -33,7 +33,9 @@ export const SocialAutomation: React.FC<SocialAutomationProps> = ({
   onAddPost,
   onPublishPostNow,
 }) => {
-  const [selectedChannel, setSelectedChannel] = useState<'all' | 'instagram' | 'tiktok' | 'linkedin' | 'facebook'>('all');
+  const [selectedChannel, setSelectedChannel] = useState<
+    "all" | "instagram" | "tiktok" | "linkedin" | "facebook"
+  >("all");
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [publishedToast, setPublishedToast] = useState<string | null>(null);
 
@@ -43,13 +45,15 @@ export const SocialAutomation: React.FC<SocialAutomationProps> = ({
   const [ruleSentimentAlert, setRuleSentimentAlert] = useState(true);
 
   // New Post Modal State
-  const [newTitle, setNewTitle] = useState('');
-  const [newCaption, setNewCaption] = useState('');
-  const [newChannel, setNewChannel] = useState<'instagram' | 'tiktok' | 'linkedin' | 'facebook'>('instagram');
-  const [newTime, setNewTime] = useState('Amanhã às 18:00');
+  const [newTitle, setNewTitle] = useState("");
+  const [newCaption, setNewCaption] = useState("");
+  const [newChannel, setNewChannel] = useState<"instagram" | "tiktok" | "linkedin" | "facebook">(
+    "instagram",
+  );
+  const [newTime, setNewTime] = useState("Amanhã às 18:00");
 
   const filteredPosts = scheduledPosts.filter(
-    (p) => selectedChannel === 'all' || p.channel === selectedChannel
+    (p) => selectedChannel === "all" || p.channel === selectedChannel,
   );
 
   const handleCreatePost = (e: React.FormEvent) => {
@@ -57,21 +61,21 @@ export const SocialAutomation: React.FC<SocialAutomationProps> = ({
     if (!newCaption.trim()) return;
 
     const post: ScheduledPost = {
-      id: 'post_' + Date.now(),
+      id: "post_" + Date.now(),
       channel: newChannel,
-      creativeTitle: newTitle.trim() || 'Nova Publicação ' + brand.name,
+      creativeTitle: newTitle.trim() || "Nova Publicação " + brand.name,
       caption: newCaption.trim(),
-      scheduledTime: newTime.trim() || 'Agendado para breve',
-      status: 'scheduled',
+      scheduledTime: newTime.trim() || "Agendado para breve",
+      status: "scheduled",
       impressions: 0,
-      engagementRate: '0%',
+      engagementRate: "0%",
       likes: 0,
     };
 
     onAddPost(post);
     setShowScheduleModal(false);
-    setNewTitle('');
-    setNewCaption('');
+    setNewTitle("");
+    setNewCaption("");
   };
 
   const handleInstantPublish = (id: string, title: string) => {
@@ -97,10 +101,13 @@ export const SocialAutomation: React.FC<SocialAutomationProps> = ({
             <span className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400">
               <Share2 className="w-5 h-5" />
             </span>
-            <h1 className="text-xl font-bold text-white">Automação de Redes Sociais & Engajamento</h1>
+            <h1 className="text-xl font-bold text-white">
+              Automação de Redes Sociais & Engajamento
+            </h1>
           </div>
           <p className="text-xs sm:text-sm text-slate-300">
-            Agendamento multicanal automático e regras de engajamento personalizado para {brand.name}.
+            Agendamento multicanal automático e regras de engajamento personalizado para{" "}
+            {brand.name}.
           </p>
         </div>
 
@@ -136,28 +143,40 @@ export const SocialAutomation: React.FC<SocialAutomationProps> = ({
                 onClick={() => setRuleAutoCoupon(!ruleAutoCoupon)}
                 className="text-indigo-400 hover:text-indigo-300"
               >
-                {ruleAutoCoupon ? <ToggleRight className="w-6 h-6 text-emerald-400" /> : <ToggleLeft className="w-6 h-6 text-slate-500" />}
+                {ruleAutoCoupon ? (
+                  <ToggleRight className="w-6 h-6 text-emerald-400" />
+                ) : (
+                  <ToggleLeft className="w-6 h-6 text-slate-500" />
+                )}
               </button>
             </div>
             <p className="text-[11px] text-slate-300 leading-relaxed">
-              Detecta perguntas como "qual o valor?", "onde compro?" e responde automaticamente no direct com link e cupom exclusivo.
+              Detecta perguntas como "qual o valor?", "onde compro?" e responde automaticamente no
+              direct com link e cupom exclusivo.
             </p>
           </div>
 
           {/* Rule 2 */}
           <div className="p-4 bg-slate-800/60 border border-slate-800 rounded-xl space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-white">Qualificação Instantânea de Leads</span>
+              <span className="text-xs font-bold text-white">
+                Qualificação Instantânea de Leads
+              </span>
               <button
                 type="button"
                 onClick={() => setRuleLeadCapture(!ruleLeadCapture)}
                 className="text-indigo-400 hover:text-indigo-300"
               >
-                {ruleLeadCapture ? <ToggleRight className="w-6 h-6 text-emerald-400" /> : <ToggleLeft className="w-6 h-6 text-slate-500" />}
+                {ruleLeadCapture ? (
+                  <ToggleRight className="w-6 h-6 text-emerald-400" />
+                ) : (
+                  <ToggleLeft className="w-6 h-6 text-slate-500" />
+                )}
               </button>
             </div>
             <p className="text-[11px] text-slate-300 leading-relaxed">
-              Envia perguntas de triagem no LinkedIn e Instagram Direct para pedidos no atacado ou parcerias comerciais.
+              Envia perguntas de triagem no LinkedIn e Instagram Direct para pedidos no atacado ou
+              parcerias comerciais.
             </p>
           </div>
 
@@ -170,11 +189,16 @@ export const SocialAutomation: React.FC<SocialAutomationProps> = ({
                 onClick={() => setRuleSentimentAlert(!ruleSentimentAlert)}
                 className="text-indigo-400 hover:text-indigo-300"
               >
-                {ruleSentimentAlert ? <ToggleRight className="w-6 h-6 text-emerald-400" /> : <ToggleLeft className="w-6 h-6 text-slate-500" />}
+                {ruleSentimentAlert ? (
+                  <ToggleRight className="w-6 h-6 text-emerald-400" />
+                ) : (
+                  <ToggleLeft className="w-6 h-6 text-slate-500" />
+                )}
               </button>
             </div>
             <p className="text-[11px] text-slate-300 leading-relaxed">
-              Identifica comentários negativos ou dúvidas sobre atraso de pedido e direciona prioritariamente para atendimento VIP.
+              Identifica comentários negativos ou dúvidas sobre atraso de pedido e direciona
+              prioritariamente para atendimento VIP.
             </p>
           </div>
         </div>
@@ -183,11 +207,11 @@ export const SocialAutomation: React.FC<SocialAutomationProps> = ({
       {/* Post Channel Filter Bar */}
       <div className="flex items-center gap-1.5 p-1 bg-slate-900 border border-slate-800 rounded-xl overflow-x-auto">
         {[
-          { id: 'all', label: 'Todos os Canais' },
-          { id: 'instagram', label: 'Instagram' },
-          { id: 'tiktok', label: 'TikTok' },
-          { id: 'linkedin', label: 'LinkedIn' },
-          { id: 'facebook', label: 'Facebook' },
+          { id: "all", label: "Todos os Canais" },
+          { id: "instagram", label: "Instagram" },
+          { id: "tiktok", label: "TikTok" },
+          { id: "linkedin", label: "LinkedIn" },
+          { id: "facebook", label: "Facebook" },
         ].map((ch) => (
           <button
             key={ch.id}
@@ -195,8 +219,8 @@ export const SocialAutomation: React.FC<SocialAutomationProps> = ({
             onClick={() => setSelectedChannel(ch.id as any)}
             className={`px-3.5 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap ${
               selectedChannel === ch.id
-                ? 'bg-indigo-600 text-white font-semibold'
-                : 'text-slate-400 hover:text-white'
+                ? "bg-indigo-600 text-white font-semibold"
+                : "text-slate-400 hover:text-white"
             }`}
           >
             {ch.label}
@@ -207,7 +231,7 @@ export const SocialAutomation: React.FC<SocialAutomationProps> = ({
       {/* Post Feed & Scheduling Queue */}
       <div className="space-y-4">
         {filteredPosts.map((post) => {
-          const isPublished = post.status === 'published';
+          const isPublished = post.status === "published";
           return (
             <div
               key={post.id}
@@ -226,10 +250,10 @@ export const SocialAutomation: React.FC<SocialAutomationProps> = ({
                   <span className="text-slate-500">·</span>
                   <span
                     className={`text-[11px] font-semibold ${
-                      isPublished ? 'text-emerald-400' : 'text-amber-400'
+                      isPublished ? "text-emerald-400" : "text-amber-400"
                     }`}
                   >
-                    {isPublished ? 'Publicado' : 'Agendado no Cron'}
+                    {isPublished ? "Publicado" : "Agendado no Cron"}
                   </span>
                 </div>
 
@@ -277,14 +301,18 @@ export const SocialAutomation: React.FC<SocialAutomationProps> = ({
       {showScheduleModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 text-slate-100 shadow-2xl">
-            <h3 className="text-base font-bold text-white mb-2">Agendar Nova Postagem Automática</h3>
+            <h3 className="text-base font-bold text-white mb-2">
+              Agendar Nova Postagem Automática
+            </h3>
             <p className="text-xs text-slate-400 mb-4">
               Configure a legenda e a data para a IA disparar a publicação.
             </p>
 
             <form onSubmit={handleCreatePost} className="space-y-3.5">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Título do Post</label>
+                <label className="block text-xs font-medium text-slate-300 mb-1">
+                  Título do Post
+                </label>
                 <input
                   type="text"
                   required
@@ -310,7 +338,9 @@ export const SocialAutomation: React.FC<SocialAutomationProps> = ({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">Horário Previsto</label>
+                  <label className="block text-xs font-medium text-slate-300 mb-1">
+                    Horário Previsto
+                  </label>
                   <input
                     type="text"
                     value={newTime}
@@ -322,7 +352,9 @@ export const SocialAutomation: React.FC<SocialAutomationProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Legenda / Copy</label>
+                <label className="block text-xs font-medium text-slate-300 mb-1">
+                  Legenda / Copy
+                </label>
                 <textarea
                   rows={4}
                   required

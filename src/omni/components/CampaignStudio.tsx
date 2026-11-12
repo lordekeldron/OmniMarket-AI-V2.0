@@ -1,5 +1,5 @@
 // @ts-nocheck -- ported from the original OmniMarket repo (looser TS config)
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 import {
   Sparkles,
   Download,
@@ -19,10 +19,10 @@ import {
   CheckCircle2,
   ExternalLink,
   Trophy,
-  ArrowRight
-} from 'lucide-react';
-import { BrandProfile, CampaignCreative } from '../types';
-import { SimulatedABTestingTool } from './SimulatedABTestingTool';
+  ArrowRight,
+} from "lucide-react";
+import { BrandProfile, CampaignCreative } from "../types";
+import { SimulatedABTestingTool } from "./SimulatedABTestingTool";
 
 interface CampaignStudioProps {
   brand: BrandProfile;
@@ -38,24 +38,34 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
   prefillTrendTopic,
 }) => {
   // Campaign Form State
-  const [productFocus, setProductFocus] = useState(prefillTrendTopic || '');
-  const [objective, setObjective] = useState('');
+  const [productFocus, setProductFocus] = useState(prefillTrendTopic || "");
+  const [objective, setObjective] = useState("");
   const [audience, setAudience] = useState(brand.targetAudience);
   const [tone, setTone] = useState(brand.tone);
-  const [budget, setBudget] = useState('');
+  const [budget, setBudget] = useState("");
   const [loading, setLoading] = useState(false);
-  const [activeChannelTab, setActiveChannelTab] = useState<'instagram' | 'tiktok' | 'linkedin' | 'googleAds'>('instagram');
+  const [activeChannelTab, setActiveChannelTab] = useState<
+    "instagram" | "tiktok" | "linkedin" | "googleAds"
+  >("instagram");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   // Creative Canvas Studio State
-  const [format, setFormat] = useState<'1:1' | '9:16' | '16:9' | '3:1'>('1:1');
-  const [visualTheme, setVisualTheme] = useState<'minimalist' | 'luxury' | 'cyber' | 'eco'>('luxury');
-  const [productType, setProductType] = useState<'bottle' | 'box' | 'device' | 'bag'>('bottle');
-  const [headline, setHeadline] = useState(campaign.designDirectives?.adBannerCreative?.mainHeadline || '');
-  const [badgeText, setBadgeText] = useState(campaign.designDirectives?.adBannerCreative?.badgeText || '');
-  const [ctaText, setCtaText] = useState(campaign.designDirectives?.adBannerCreative?.ctaButtonText || '');
-  const [priceTag, setPriceTag] = useState('');
-  const [accentColor, setAccentColor] = useState(brand.accentColor || '#4F46E5');
+  const [format, setFormat] = useState<"1:1" | "9:16" | "16:9" | "3:1">("1:1");
+  const [visualTheme, setVisualTheme] = useState<"minimalist" | "luxury" | "cyber" | "eco">(
+    "luxury",
+  );
+  const [productType, setProductType] = useState<"bottle" | "box" | "device" | "bag">("bottle");
+  const [headline, setHeadline] = useState(
+    campaign.designDirectives?.adBannerCreative?.mainHeadline || "",
+  );
+  const [badgeText, setBadgeText] = useState(
+    campaign.designDirectives?.adBannerCreative?.badgeText || "",
+  );
+  const [ctaText, setCtaText] = useState(
+    campaign.designDirectives?.adBannerCreative?.ctaButtonText || "",
+  );
+  const [priceTag, setPriceTag] = useState("");
+  const [accentColor, setAccentColor] = useState(brand.accentColor || "#4F46E5");
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -69,14 +79,14 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
   const handleGenerateCampaign = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/ai/campaign', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/ai/campaign", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           brandName: brand.name,
           industry: brand.industry,
           objective,
-          channels: ['Instagram', 'TikTok', 'LinkedIn', 'Google Ads'],
+          channels: ["Instagram", "TikTok", "LinkedIn", "Google Ads"],
           budget,
           audience,
           tone,
@@ -97,7 +107,7 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
         }
       }
     } catch (err) {
-      console.error('Failed to generate campaign:', err);
+      console.error("Failed to generate campaign:", err);
     } finally {
       setLoading(false);
     }
@@ -109,7 +119,11 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
     setTimeout(() => setCopiedKey(null), 2000);
   };
 
-  const handleApplyWinningVariation = (winningHeadline: string, winningHook: string, winningCta: string) => {
+  const handleApplyWinningVariation = (
+    winningHeadline: string,
+    winningHook: string,
+    winningCta: string,
+  ) => {
     setHeadline(winningHeadline);
     setCtaText(winningCta);
     onUpdateCampaign({
@@ -137,18 +151,18 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     let width = 1080;
     let height = 1080;
-    if (format === '9:16') {
+    if (format === "9:16") {
       width = 1080;
       height = 1920;
-    } else if (format === '16:9') {
+    } else if (format === "16:9") {
       width = 1920;
       height = 1080;
-    } else if (format === '3:1') {
+    } else if (format === "3:1") {
       width = 1500;
       height = 500;
     }
@@ -158,23 +172,23 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
 
     // 1. Background Gradient
     const bgGradient = ctx.createLinearGradient(0, 0, width, height);
-    if (visualTheme === 'minimalist') {
-      bgGradient.addColorStop(0, '#0F172A');
-      bgGradient.addColorStop(0.6, '#1E293B');
-      bgGradient.addColorStop(1, '#020617');
-    } else if (visualTheme === 'luxury') {
-      bgGradient.addColorStop(0, '#18181B');
-      bgGradient.addColorStop(0.5, '#27272A');
-      bgGradient.addColorStop(1, '#09090B');
-    } else if (visualTheme === 'cyber') {
-      bgGradient.addColorStop(0, '#0B0F19');
-      bgGradient.addColorStop(0.5, '#1E1B4B');
-      bgGradient.addColorStop(1, '#030712');
+    if (visualTheme === "minimalist") {
+      bgGradient.addColorStop(0, "#0F172A");
+      bgGradient.addColorStop(0.6, "#1E293B");
+      bgGradient.addColorStop(1, "#020617");
+    } else if (visualTheme === "luxury") {
+      bgGradient.addColorStop(0, "#18181B");
+      bgGradient.addColorStop(0.5, "#27272A");
+      bgGradient.addColorStop(1, "#09090B");
+    } else if (visualTheme === "cyber") {
+      bgGradient.addColorStop(0, "#0B0F19");
+      bgGradient.addColorStop(0.5, "#1E1B4B");
+      bgGradient.addColorStop(1, "#030712");
     } else {
       // eco
-      bgGradient.addColorStop(0, '#064E3B');
-      bgGradient.addColorStop(0.5, '#065F46');
-      bgGradient.addColorStop(1, '#022C22');
+      bgGradient.addColorStop(0, "#064E3B");
+      bgGradient.addColorStop(0.5, "#065F46");
+      bgGradient.addColorStop(1, "#022C22");
     }
     ctx.fillStyle = bgGradient;
     ctx.fillRect(0, 0, width, height);
@@ -186,15 +200,15 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
       50,
       width * 0.7,
       height * 0.4,
-      width * 0.6
+      width * 0.6,
     );
     orbGradient.addColorStop(0, `${accentColor}55`);
-    orbGradient.addColorStop(1, 'transparent');
+    orbGradient.addColorStop(1, "transparent");
     ctx.fillStyle = orbGradient;
     ctx.fillRect(0, 0, width, height);
 
     // 3. Subtle Grid / Texture
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.04)";
     ctx.lineWidth = 1;
     const step = 60;
     for (let x = 0; x < width; x += step) {
@@ -211,9 +225,9 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
     }
 
     // 4. Draw Product Silhouette / Illustration
-    const prodCenterX = format === '3:1' ? width * 0.75 : width * 0.68;
-    const prodCenterY = format === '9:16' ? height * 0.52 : height * 0.5;
-    const prodScale = (format === '9:16' ? 1.3 : format === '3:1' ? 0.7 : 1) * (height / 1080);
+    const prodCenterX = format === "3:1" ? width * 0.75 : width * 0.68;
+    const prodCenterY = format === "9:16" ? height * 0.52 : height * 0.5;
+    const prodScale = (format === "9:16" ? 1.3 : format === "3:1" ? 0.7 : 1) * (height / 1080);
 
     ctx.save();
     ctx.translate(prodCenterX, prodCenterY);
@@ -221,72 +235,95 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
     // Pedestal Glow & Shadow
     ctx.beginPath();
     ctx.ellipse(0, 190 * prodScale, 160 * prodScale, 30 * prodScale, 0, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.fillStyle = "rgba(0,0,0,0.45)";
     ctx.fill();
 
     // Draw chosen product
-    if (productType === 'bottle') {
+    if (productType === "bottle") {
       // Cosmetic Dropper Bottle
       // Glass Body
       const bottleGrad = ctx.createLinearGradient(-70 * prodScale, 0, 70 * prodScale, 0);
-      bottleGrad.addColorStop(0, 'rgba(255,255,255,0.15)');
-      bottleGrad.addColorStop(0.3, 'rgba(255,255,255,0.4)');
+      bottleGrad.addColorStop(0, "rgba(255,255,255,0.15)");
+      bottleGrad.addColorStop(0.3, "rgba(255,255,255,0.4)");
       bottleGrad.addColorStop(0.7, `${accentColor}99`);
-      bottleGrad.addColorStop(1, 'rgba(20,20,30,0.8)');
+      bottleGrad.addColorStop(1, "rgba(20,20,30,0.8)");
 
       ctx.fillStyle = bottleGrad;
       ctx.beginPath();
-      ctx.roundRect(-60 * prodScale, -60 * prodScale, 120 * prodScale, 240 * prodScale, 24 * prodScale);
+      ctx.roundRect(
+        -60 * prodScale,
+        -60 * prodScale,
+        120 * prodScale,
+        240 * prodScale,
+        24 * prodScale,
+      );
       ctx.fill();
 
       // Bottle Cap / Dropper
-      ctx.fillStyle = visualTheme === 'luxury' ? '#F59E0B' : '#E2E8F0';
+      ctx.fillStyle = visualTheme === "luxury" ? "#F59E0B" : "#E2E8F0";
       ctx.fillRect(-24 * prodScale, -110 * prodScale, 48 * prodScale, 50 * prodScale);
       ctx.beginPath();
       ctx.ellipse(0, -125 * prodScale, 18 * prodScale, 20 * prodScale, 0, 0, Math.PI * 2);
-      ctx.fillStyle = '#1E293B';
+      ctx.fillStyle = "#1E293B";
       ctx.fill();
 
       // Bottle Label
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
       ctx.beginPath();
       ctx.roundRect(-42 * prodScale, 0, 84 * prodScale, 130 * prodScale, 8 * prodScale);
       ctx.fill();
 
-      ctx.fillStyle = '#0F172A';
+      ctx.fillStyle = "#0F172A";
       ctx.font = `bold ${14 * prodScale}px sans-serif`;
-      ctx.textAlign = 'center';
+      ctx.textAlign = "center";
       ctx.fillText(brand.name.slice(0, 16).toUpperCase(), 0, 45 * prodScale);
       ctx.font = `${10 * prodScale}px sans-serif`;
-      ctx.fillText('BIO-ACTIVE FORMULA', 0, 68 * prodScale);
-      ctx.fillText('30ml / 1.0 fl. oz', 0, 95 * prodScale);
-    } else if (productType === 'box') {
+      ctx.fillText("BIO-ACTIVE FORMULA", 0, 68 * prodScale);
+      ctx.fillText("30ml / 1.0 fl. oz", 0, 95 * prodScale);
+    } else if (productType === "box") {
       // Luxury Package Box
-      const boxGrad = ctx.createLinearGradient(-100 * prodScale, -100 * prodScale, 100 * prodScale, 100 * prodScale);
-      boxGrad.addColorStop(0, '#1E293B');
-      boxGrad.addColorStop(0.5, '#334155');
+      const boxGrad = ctx.createLinearGradient(
+        -100 * prodScale,
+        -100 * prodScale,
+        100 * prodScale,
+        100 * prodScale,
+      );
+      boxGrad.addColorStop(0, "#1E293B");
+      boxGrad.addColorStop(0.5, "#334155");
       boxGrad.addColorStop(1, accentColor);
       ctx.fillStyle = boxGrad;
       ctx.beginPath();
-      ctx.roundRect(-100 * prodScale, -100 * prodScale, 200 * prodScale, 260 * prodScale, 16 * prodScale);
+      ctx.roundRect(
+        -100 * prodScale,
+        -100 * prodScale,
+        200 * prodScale,
+        260 * prodScale,
+        16 * prodScale,
+      );
       ctx.fill();
 
       // Gold Ribbon or Accent Line
-      ctx.fillStyle = '#F59E0B';
+      ctx.fillStyle = "#F59E0B";
       ctx.fillRect(-100 * prodScale, -10 * prodScale, 200 * prodScale, 16 * prodScale);
 
-      ctx.fillStyle = '#FFFFFF';
+      ctx.fillStyle = "#FFFFFF";
       ctx.font = `bold ${18 * prodScale}px sans-serif`;
-      ctx.textAlign = 'center';
+      ctx.textAlign = "center";
       ctx.fillText(brand.name.toUpperCase(), 0, 40 * prodScale);
       ctx.font = `${12 * prodScale}px sans-serif`;
-      ctx.fillStyle = 'rgba(255,255,255,0.7)';
-      ctx.fillText('EDITION PRESTIGE', 0, 70 * prodScale);
-    } else if (productType === 'device') {
+      ctx.fillStyle = "rgba(255,255,255,0.7)";
+      ctx.fillText("EDITION PRESTIGE", 0, 70 * prodScale);
+    } else if (productType === "device") {
       // Tech Device / Smart Watch
-      ctx.fillStyle = '#0F172A';
+      ctx.fillStyle = "#0F172A";
       ctx.beginPath();
-      ctx.roundRect(-75 * prodScale, -110 * prodScale, 150 * prodScale, 220 * prodScale, 36 * prodScale);
+      ctx.roundRect(
+        -75 * prodScale,
+        -110 * prodScale,
+        150 * prodScale,
+        220 * prodScale,
+        36 * prodScale,
+      );
       ctx.fill();
       ctx.strokeStyle = accentColor;
       ctx.lineWidth = 4 * prodScale;
@@ -294,78 +331,90 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
 
       // Screen glow
       const screenGrad = ctx.createLinearGradient(0, -90 * prodScale, 0, 90 * prodScale);
-      screenGrad.addColorStop(0, '#1E1B4B');
-      screenGrad.addColorStop(1, '#0284C7');
+      screenGrad.addColorStop(0, "#1E1B4B");
+      screenGrad.addColorStop(1, "#0284C7");
       ctx.fillStyle = screenGrad;
       ctx.beginPath();
-      ctx.roundRect(-60 * prodScale, -95 * prodScale, 120 * prodScale, 190 * prodScale, 24 * prodScale);
+      ctx.roundRect(
+        -60 * prodScale,
+        -95 * prodScale,
+        120 * prodScale,
+        190 * prodScale,
+        24 * prodScale,
+      );
       ctx.fill();
 
-      ctx.fillStyle = '#FFFFFF';
+      ctx.fillStyle = "#FFFFFF";
       ctx.font = `bold ${24 * prodScale}px sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.fillText('98.4%', 0, -20 * prodScale);
+      ctx.textAlign = "center";
+      ctx.fillText("98.4%", 0, -20 * prodScale);
       ctx.font = `${11 * prodScale}px sans-serif`;
-      ctx.fillStyle = 'rgba(255,255,255,0.8)';
-      ctx.fillText('ROI EFFICIENCY', 0, 10 * prodScale);
+      ctx.fillStyle = "rgba(255,255,255,0.8)";
+      ctx.fillText("ROI EFFICIENCY", 0, 10 * prodScale);
     } else {
       // Fashion Bag / Tote
       ctx.fillStyle = accentColor;
       ctx.beginPath();
-      ctx.roundRect(-100 * prodScale, -60 * prodScale, 200 * prodScale, 200 * prodScale, 20 * prodScale);
+      ctx.roundRect(
+        -100 * prodScale,
+        -60 * prodScale,
+        200 * prodScale,
+        200 * prodScale,
+        20 * prodScale,
+      );
       ctx.fill();
 
       // Handles
-      ctx.strokeStyle = '#F59E0B';
+      ctx.strokeStyle = "#F59E0B";
       ctx.lineWidth = 12 * prodScale;
       ctx.beginPath();
       ctx.arc(0, -60 * prodScale, 60 * prodScale, Math.PI, 0, false);
       ctx.stroke();
 
-      ctx.fillStyle = '#FFFFFF';
+      ctx.fillStyle = "#FFFFFF";
       ctx.font = `bold ${16 * prodScale}px sans-serif`;
-      ctx.textAlign = 'center';
+      ctx.textAlign = "center";
       ctx.fillText(brand.name.toUpperCase(), 0, 40 * prodScale);
     }
     ctx.restore();
 
     // 5. Typography & Text Overlay on Left
     const textStartX = width * 0.08;
-    const textStartY = format === '9:16' ? height * 0.16 : height * 0.28;
+    const textStartY = format === "9:16" ? height * 0.16 : height * 0.28;
 
     // Brand Label
-    ctx.textAlign = 'left';
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-    ctx.font = `bold ${format === '3:1' ? 14 : 20}px sans-serif`;
+    ctx.textAlign = "left";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+    ctx.font = `bold ${format === "3:1" ? 14 : 20}px sans-serif`;
     ctx.fillText(brand.name.toUpperCase(), textStartX, textStartY);
 
     // Badge
-    const badgeY = textStartY + (format === '3:1' ? 32 : 46);
+    const badgeY = textStartY + (format === "3:1" ? 32 : 46);
     ctx.fillStyle = accentColor;
     const badgeWidth = ctx.measureText(badgeText).width + 36;
     ctx.beginPath();
     ctx.roundRect(textStartX, badgeY - 20, badgeWidth + 10, 32, 6);
     ctx.fill();
 
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = `bold ${format === '3:1' ? 12 : 14}px sans-serif`;
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = `bold ${format === "3:1" ? 12 : 14}px sans-serif`;
     ctx.fillText(badgeText.toUpperCase(), textStartX + 18, badgeY + 1);
 
     // Main Headline (with auto-wrap)
-    ctx.fillStyle = '#FFFFFF';
-    const headlineFontSize = format === '3:1' ? 32 : format === '9:16' ? 52 : 44;
+    ctx.fillStyle = "#FFFFFF";
+    const headlineFontSize = format === "3:1" ? 32 : format === "9:16" ? 52 : 44;
     ctx.font = `800 ${headlineFontSize}px sans-serif`;
-    const maxTextWidth = format === '3:1' ? width * 0.5 : width * 0.52;
-    const words = headline.split(' ');
-    let line = '';
-    let curY = badgeY + (format === '3:1' ? 44 : 64);
+    const maxTextWidth = format === "3:1" ? width * 0.5 : width * 0.52;
+    const words = headline.split(" ");
+    let line = "";
+    let curY = badgeY + (format === "3:1" ? 44 : 64);
 
     for (let n = 0; n < words.length; n++) {
-      const testLine = line + words[n] + ' ';
+      const testLine = line + words[n] + " ";
       const metrics = ctx.measureText(testLine);
       if (metrics.width > maxTextWidth && n > 0) {
         ctx.fillText(line, textStartX, curY);
-        line = words[n] + ' ';
+        line = words[n] + " ";
         curY += headlineFontSize * 1.15;
       } else {
         line = testLine;
@@ -374,34 +423,48 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
     ctx.fillText(line, textStartX, curY);
 
     // Price / Offer Tag
-    curY += format === '3:1' ? 32 : 46;
-    ctx.fillStyle = '#34D399';
-    ctx.font = `bold ${format === '3:1' ? 18 : 24}px sans-serif`;
+    curY += format === "3:1" ? 32 : 46;
+    ctx.fillStyle = "#34D399";
+    ctx.font = `bold ${format === "3:1" ? 18 : 24}px sans-serif`;
     ctx.fillText(priceTag, textStartX, curY);
 
     // CTA Button
-    curY += format === '3:1' ? 36 : 56;
-    const btnWidth = format === '3:1' ? 220 : 300;
-    const btnHeight = format === '3:1' ? 46 : 58;
+    curY += format === "3:1" ? 36 : 56;
+    const btnWidth = format === "3:1" ? 220 : 300;
+    const btnHeight = format === "3:1" ? 46 : 58;
 
-    ctx.fillStyle = '#FFFFFF';
+    ctx.fillStyle = "#FFFFFF";
     ctx.beginPath();
     ctx.roundRect(textStartX, curY, btnWidth, btnHeight, 12);
     ctx.fill();
 
-    ctx.fillStyle = '#0F172A';
-    ctx.font = `bold ${format === '3:1' ? 14 : 18}px sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.fillText(ctaText, textStartX + btnWidth / 2, curY + btnHeight / 2 + (format === '3:1' ? 5 : 6));
-  }, [format, visualTheme, productType, headline, badgeText, ctaText, priceTag, accentColor, brand]);
+    ctx.fillStyle = "#0F172A";
+    ctx.font = `bold ${format === "3:1" ? 14 : 18}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.fillText(
+      ctaText,
+      textStartX + btnWidth / 2,
+      curY + btnHeight / 2 + (format === "3:1" ? 5 : 6),
+    );
+  }, [
+    format,
+    visualTheme,
+    productType,
+    headline,
+    badgeText,
+    ctaText,
+    priceTag,
+    accentColor,
+    brand,
+  ]);
 
   const handleDownloadImage = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const dataUrl = canvas.toDataURL('image/png');
-    const a = document.createElement('a');
+    const dataUrl = canvas.toDataURL("image/png");
+    const a = document.createElement("a");
     a.href = dataUrl;
-    a.download = `${brand.name.toLowerCase().replace(/\s+/g, '_')}_ad_${format.replace(':', 'x')}.png`;
+    a.download = `${brand.name.toLowerCase().replace(/\s+/g, "_")}_ad_${format.replace(":", "x")}.png`;
     a.click();
   };
 
@@ -415,7 +478,8 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
               <h1 className="text-xl font-semibold text-foreground">Campanhas</h1>
             </div>
             <p className="text-xs sm:text-sm text-slate-300">
-              Gere campanhas completas de alta conversão para múltiplos canais e artes publicitárias com IA.
+              Gere campanhas completas de alta conversão para múltiplos canais e artes publicitárias
+              com IA.
             </p>
           </div>
 
@@ -425,8 +489,8 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
             disabled={loading}
             className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-md bg-primary hover:bg-primary-glow disabled:opacity-50 text-primary-foreground text-sm font-semibold transition-all whitespace-nowrap"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-            <span>{loading ? 'Criando Campanha...' : 'Gerar Campanha com IA'}</span>
+            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+            <span>{loading ? "Criando Campanha..." : "Gerar Campanha com IA"}</span>
           </button>
         </div>
 
@@ -454,10 +518,18 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
               onChange={(e) => setObjective(e.target.value)}
               className="w-full px-3 py-2 text-sm bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
             >
-              <option value="Conversões & Vendas com Alto ROAS">Conversões & Vendas (Alto ROAS)</option>
-              <option value="Reconhecimento de Marca & Alcance">Reconhecimento & Alcance (Branding)</option>
-              <option value="Lançamento Exclusivo & Urgência">Lançamento Exclusivo (Urgência)</option>
-              <option value="Retargeting de Carrinho Abandonado">Retargeting de Fundo de Funil</option>
+              <option value="Conversões & Vendas com Alto ROAS">
+                Conversões & Vendas (Alto ROAS)
+              </option>
+              <option value="Reconhecimento de Marca & Alcance">
+                Reconhecimento & Alcance (Branding)
+              </option>
+              <option value="Lançamento Exclusivo & Urgência">
+                Lançamento Exclusivo (Urgência)
+              </option>
+              <option value="Retargeting de Carrinho Abandonado">
+                Retargeting de Fundo de Funil
+              </option>
             </select>
           </div>
         </div>
@@ -482,7 +554,9 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">Orçamento Previsto</label>
+            <label className="block text-xs font-medium text-slate-300 mb-1">
+              Orçamento Previsto
+            </label>
             <input
               type="text"
               value={budget}
@@ -497,29 +571,29 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
       <div className="bg-slate-900 border border-slate-800 rounded-md p-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <span className="text-[11px] font-bold text-indigo-400">
-              Campanha Ativa
-            </span>
-            <h2 className="text-xl font-semibold text-white mt-0.5">
-              {campaign.campaignName}
-            </h2>
-            <p className="text-xs text-slate-300 italic mt-1">
-              "{campaign.tagline}"
-            </p>
+            <span className="text-[11px] font-bold text-indigo-400">Campanha Ativa</span>
+            <h2 className="text-xl font-semibold text-white mt-0.5">{campaign.campaignName}</h2>
+            <p className="text-xs text-slate-300 italic mt-1">"{campaign.tagline}"</p>
           </div>
 
           <div className="flex items-center gap-6 text-xs">
             <div className="p-3 bg-slate-800/80 rounded-md border border-slate-700/60">
               <span className="text-slate-400 block text-[10px] uppercase">CTR Estimado</span>
-              <strong className="text-emerald-400 font-mono text-sm">{campaign.expectedMetrics?.estimatedCTR || '3.8%'}</strong>
+              <strong className="text-emerald-400 font-mono text-sm">
+                {campaign.expectedMetrics?.estimatedCTR || "3.8%"}
+              </strong>
             </div>
             <div className="p-3 bg-slate-800/80 rounded-md border border-slate-700/60">
               <span className="text-slate-400 block text-[10px] uppercase">CPA Previsto</span>
-              <strong className="text-indigo-300 font-mono text-sm">{campaign.expectedMetrics?.estimatedCPA || 'R$ 16,80'}</strong>
+              <strong className="text-indigo-300 font-mono text-sm">
+                {campaign.expectedMetrics?.estimatedCPA || "R$ 16,80"}
+              </strong>
             </div>
             <div className="p-3 bg-slate-800/80 rounded-md border border-slate-700/60">
               <span className="text-slate-400 block text-[10px] uppercase">ROAS Projetado</span>
-              <strong className="text-emerald-400 font-mono text-sm">{campaign.expectedMetrics?.projectedROAS || '4.8x'}</strong>
+              <strong className="text-emerald-400 font-mono text-sm">
+                {campaign.expectedMetrics?.projectedROAS || "4.8x"}
+              </strong>
             </div>
           </div>
         </div>
@@ -545,10 +619,10 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
             {/* Channel Tabs */}
             <div className="grid grid-cols-4 gap-1 p-1 bg-slate-800 rounded-xl">
               {[
-                { id: 'instagram', label: 'Instagram' },
-                { id: 'tiktok', label: 'TikTok' },
-                { id: 'linkedin', label: 'LinkedIn' },
-                { id: 'googleAds', label: 'Google Ads' },
+                { id: "instagram", label: "Instagram" },
+                { id: "tiktok", label: "TikTok" },
+                { id: "linkedin", label: "LinkedIn" },
+                { id: "googleAds", label: "Google Ads" },
               ].map((c) => (
                 <button
                   key={c.id}
@@ -556,8 +630,8 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
                   onClick={() => setActiveChannelTab(c.id as any)}
                   className={`py-1.5 text-xs font-semibold rounded-lg transition-colors ${
                     activeChannelTab === c.id
-                      ? 'bg-primary text-primary-foreground'
-                      : 'text-slate-400 hover:text-white'
+                      ? "bg-primary text-primary-foreground"
+                      : "text-slate-400 hover:text-white"
                   }`}
                 >
                   {c.label}
@@ -566,7 +640,7 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
             </div>
 
             {/* Channel Content Body */}
-            {activeChannelTab === 'instagram' && (
+            {activeChannelTab === "instagram" && (
               <div className="space-y-3 pt-2">
                 <div>
                   <label className="text-[11px] font-bold text-slate-400 block mb-1">
@@ -584,11 +658,17 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
                     </label>
                     <button
                       type="button"
-                      onClick={() => copyToClipboard(campaign.channels.instagram.caption, 'ig-caption')}
+                      onClick={() =>
+                        copyToClipboard(campaign.channels.instagram.caption, "ig-caption")
+                      }
                       className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
                     >
-                      {copiedKey === 'ig-caption' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                      <span>{copiedKey === 'ig-caption' ? 'Copiado!' : 'Copiar'}</span>
+                      {copiedKey === "ig-caption" ? (
+                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                      ) : (
+                        <Copy className="w-3.5 h-3.5" />
+                      )}
+                      <span>{copiedKey === "ig-caption" ? "Copiado!" : "Copiar"}</span>
                     </button>
                   </div>
                   <div className="p-3 bg-slate-800/80 rounded-md text-xs text-slate-200 border border-slate-700/60 whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto">
@@ -607,7 +687,10 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
 
                 <div className="flex flex-wrap gap-1.5 pt-1">
                   {campaign.channels.instagram.hashtags?.map((tag, tidx) => (
-                    <span key={tidx} className="text-[10px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded-md">
+                    <span
+                      key={tidx}
+                      className="text-[10px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded-md"
+                    >
                       {tag}
                     </span>
                   ))}
@@ -615,7 +698,7 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
               </div>
             )}
 
-            {activeChannelTab === 'tiktok' && (
+            {activeChannelTab === "tiktok" && (
               <div className="space-y-3 pt-2">
                 <div>
                   <label className="text-[11px] font-bold text-slate-400 block mb-1">
@@ -630,11 +713,17 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
                     <label className="text-[11px] font-bold text-slate-400">Legenda TikTok</label>
                     <button
                       type="button"
-                      onClick={() => copyToClipboard(campaign.channels.tiktok.caption, 'tt-caption')}
+                      onClick={() =>
+                        copyToClipboard(campaign.channels.tiktok.caption, "tt-caption")
+                      }
                       className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
                     >
-                      {copiedKey === 'tt-caption' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                      <span>{copiedKey === 'tt-caption' ? 'Copiado!' : 'Copiar'}</span>
+                      {copiedKey === "tt-caption" ? (
+                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                      ) : (
+                        <Copy className="w-3.5 h-3.5" />
+                      )}
+                      <span>{copiedKey === "tt-caption" ? "Copiado!" : "Copiar"}</span>
                     </button>
                   </div>
                   <div className="p-3 bg-slate-800/80 rounded-md text-xs text-slate-200 border border-slate-700/60">
@@ -644,24 +733,32 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
               </div>
             )}
 
-            {activeChannelTab === 'linkedin' && (
+            {activeChannelTab === "linkedin" && (
               <div className="space-y-3 pt-2">
                 <div>
-                  <label className="text-[11px] font-bold text-slate-400 block mb-1">Título B2B / Autoridade</label>
+                  <label className="text-[11px] font-bold text-slate-400 block mb-1">
+                    Título B2B / Autoridade
+                  </label>
                   <div className="p-3 bg-slate-800/80 rounded-md text-xs font-semibold text-white border border-slate-700/60">
                     {campaign.channels.linkedin.headline}
                   </div>
                 </div>
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="text-[11px] font-bold text-slate-400">Texto Corporativo</label>
+                    <label className="text-[11px] font-bold text-slate-400">
+                      Texto Corporativo
+                    </label>
                     <button
                       type="button"
-                      onClick={() => copyToClipboard(campaign.channels.linkedin.copy, 'li-copy')}
+                      onClick={() => copyToClipboard(campaign.channels.linkedin.copy, "li-copy")}
                       className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
                     >
-                      {copiedKey === 'li-copy' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                      <span>{copiedKey === 'li-copy' ? 'Copiado!' : 'Copiar'}</span>
+                      {copiedKey === "li-copy" ? (
+                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                      ) : (
+                        <Copy className="w-3.5 h-3.5" />
+                      )}
+                      <span>{copiedKey === "li-copy" ? "Copiado!" : "Copiar"}</span>
                     </button>
                   </div>
                   <div className="p-3 bg-slate-800/80 rounded-md text-xs text-slate-200 border border-slate-700/60 whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto">
@@ -671,23 +768,33 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
               </div>
             )}
 
-            {activeChannelTab === 'googleAds' && (
+            {activeChannelTab === "googleAds" && (
               <div className="space-y-3 pt-2">
                 <div>
-                  <label className="text-[11px] font-bold text-slate-400 block mb-1">Títulos Responsivos (30 Caracteres)</label>
+                  <label className="text-[11px] font-bold text-slate-400 block mb-1">
+                    Títulos Responsivos (30 Caracteres)
+                  </label>
                   <div className="space-y-1.5">
                     {campaign.channels.googleAds.headlines.map((hl, hidx) => (
-                      <div key={hidx} className="p-2 bg-slate-800 rounded-lg text-xs font-mono text-emerald-300 border border-slate-700">
+                      <div
+                        key={hidx}
+                        className="p-2 bg-slate-800 rounded-lg text-xs font-mono text-emerald-300 border border-slate-700"
+                      >
                         {hl}
                       </div>
                     ))}
                   </div>
                 </div>
                 <div>
-                  <label className="text-[11px] font-bold text-slate-400 block mb-1">Descrições (90 Caracteres)</label>
+                  <label className="text-[11px] font-bold text-slate-400 block mb-1">
+                    Descrições (90 Caracteres)
+                  </label>
                   <div className="space-y-1.5">
                     {campaign.channels.googleAds.descriptions.map((desc, didx) => (
-                      <div key={didx} className="p-2.5 bg-slate-800 rounded-lg text-xs text-slate-200 border border-slate-700">
+                      <div
+                        key={didx}
+                        className="p-2.5 bg-slate-800 rounded-lg text-xs text-slate-200 border border-slate-700"
+                      >
                         {desc}
                       </div>
                     ))}
@@ -714,19 +821,21 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
             </div>
 
             <p className="text-xs text-slate-300">
-              Compare títulos, ganchos e formatos de criativo com base em dados históricos para prever a variação vencedora antes de gastar verba real.
+              Compare títulos, ganchos e formatos de criativo com base em dados históricos para
+              prever a variação vencedora antes de gastar verba real.
             </p>
 
             <div className="space-y-2">
               {campaign.abTestVariants.slice(0, 2).map((v, vidx) => (
-                <div key={vidx} className="p-2.5 bg-slate-800/70 rounded-md border border-slate-800">
+                <div
+                  key={vidx}
+                  className="p-2.5 bg-slate-800/70 rounded-md border border-slate-800"
+                >
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs font-bold text-indigo-400">Variante {v.variant}</span>
                     <span className="text-[10px] text-slate-400">{v.focus}</span>
                   </div>
-                  <p className="text-[11px] text-slate-200 italic line-clamp-2">
-                    "{v.hook}"
-                  </p>
+                  <p className="text-[11px] text-slate-200 italic line-clamp-2">"{v.hook}"</p>
                 </div>
               ))}
             </div>
@@ -747,9 +856,13 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <Palette className="w-4 h-4 text-indigo-400" />
-                <h3 className="text-base font-semibold text-foreground">Estúdio de Design de Produto & Artes</h3>
+                <h3 className="text-base font-semibold text-foreground">
+                  Estúdio de Design de Produto & Artes
+                </h3>
               </div>
-              <p className="text-xs text-slate-400">Personalize o design visual e exporte em alta resolução PNG</p>
+              <p className="text-xs text-slate-400">
+                Personalize o design visual e exporte em alta resolução PNG
+              </p>
             </div>
 
             <button
@@ -765,7 +878,9 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
           {/* Control Bar: Format & Theme */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label className="text-[11px] font-bold text-slate-400 block mb-1">Formato da Arte</label>
+              <label className="text-[11px] font-bold text-slate-400 block mb-1">
+                Formato da Arte
+              </label>
               <select
                 value={format}
                 onChange={(e) => setFormat(e.target.value as any)}
@@ -793,7 +908,9 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
             </div>
 
             <div>
-              <label className="text-[11px] font-bold text-slate-400 block mb-1">Modelo do Produto</label>
+              <label className="text-[11px] font-bold text-slate-400 block mb-1">
+                Modelo do Produto
+              </label>
               <select
                 value={productType}
                 onChange={(e) => setProductType(e.target.value as any)}
@@ -810,7 +927,9 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
           {/* Text Customization Inputs */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="text-[11px] font-medium text-slate-400 block mb-1">Título Principal do Anúncio</label>
+              <label className="text-[11px] font-medium text-slate-400 block mb-1">
+                Título Principal do Anúncio
+              </label>
               <input
                 type="text"
                 value={headline}
@@ -819,7 +938,9 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
               />
             </div>
             <div>
-              <label className="text-[11px] font-medium text-slate-400 block mb-1">Texto da Badge de Urgência</label>
+              <label className="text-[11px] font-medium text-slate-400 block mb-1">
+                Texto da Badge de Urgência
+              </label>
               <input
                 type="text"
                 value={badgeText}
@@ -828,7 +949,9 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
               />
             </div>
             <div>
-              <label className="text-[11px] font-medium text-slate-400 block mb-1">Preço ou Oferta Especial</label>
+              <label className="text-[11px] font-medium text-slate-400 block mb-1">
+                Preço ou Oferta Especial
+              </label>
               <input
                 type="text"
                 value={priceTag}
@@ -837,7 +960,9 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
               />
             </div>
             <div>
-              <label className="text-[11px] font-medium text-slate-400 block mb-1">Texto do Botão de Ação</label>
+              <label className="text-[11px] font-medium text-slate-400 block mb-1">
+                Texto do Botão de Ação
+              </label>
               <input
                 type="text"
                 value={ctaText}
@@ -852,11 +977,11 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
             <canvas
               ref={canvasRef}
               className={`max-w-full rounded-md shadow-2xl transition-all duration-300 ${
-                format === '9:16'
-                  ? 'h-[440px] w-auto'
-                  : format === '3:1'
-                  ? 'w-full h-auto'
-                  : 'h-[360px] w-auto'
+                format === "9:16"
+                  ? "h-[440px] w-auto"
+                  : format === "3:1"
+                    ? "w-full h-auto"
+                    : "h-[360px] w-auto"
               }`}
             />
           </div>
@@ -870,12 +995,19 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
               <button
                 type="button"
                 onClick={() =>
-                  copyToClipboard(campaign.designDirectives?.adBannerCreative?.visualPrompt || '', 'img-prompt')
+                  copyToClipboard(
+                    campaign.designDirectives?.adBannerCreative?.visualPrompt || "",
+                    "img-prompt",
+                  )
                 }
                 className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
               >
-                {copiedKey === 'img-prompt' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                <span>{copiedKey === 'img-prompt' ? 'Copiado' : 'Copiar Prompt'}</span>
+                {copiedKey === "img-prompt" ? (
+                  <Check className="w-3 h-3 text-emerald-400" />
+                ) : (
+                  <Copy className="w-3 h-3" />
+                )}
+                <span>{copiedKey === "img-prompt" ? "Copiado" : "Copiar Prompt"}</span>
               </button>
             </div>
             <p className="text-xs text-slate-300 leading-relaxed italic">
@@ -890,7 +1022,15 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
         <SimulatedABTestingTool
           brand={brand}
           campaign={campaign}
-          channel={activeChannelTab === 'instagram' ? 'Instagram Reels & Stories' : activeChannelTab === 'tiktok' ? 'TikTok Spark Ads' : activeChannelTab === 'linkedin' ? 'LinkedIn B2B Sponsored' : 'Google Ads Search'}
+          channel={
+            activeChannelTab === "instagram"
+              ? "Instagram Reels & Stories"
+              : activeChannelTab === "tiktok"
+                ? "TikTok Spark Ads"
+                : activeChannelTab === "linkedin"
+                  ? "LinkedIn B2B Sponsored"
+                  : "Google Ads Search"
+          }
           onApplyWinningVariation={handleApplyWinningVariation}
         />
       </div>
