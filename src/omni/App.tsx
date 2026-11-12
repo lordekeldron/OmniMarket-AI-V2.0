@@ -15,6 +15,7 @@ import { SlideDeckModal } from './components/SlideDeckModal';
 import { LandingPage } from './components/LandingPage';
 import { AuthModal } from './components/AuthModal';
 import { AgentWorkbench } from './components/AgentWorkbench';
+import { ConnectionsView } from './components/ConnectionsView';
 
 import {
   BrandProfile,
@@ -362,6 +363,8 @@ export default function App() {
         ) : (
           <>
             {activeTab === 'agents' && activeBrand && <AgentWorkbench brand={activeBrand} />}
+
+            {activeTab === 'connections' && <ConnectionsView />}
 
             {activeTab === 'overview' && (
               <DashboardOverview

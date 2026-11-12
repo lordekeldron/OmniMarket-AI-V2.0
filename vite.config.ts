@@ -7,9 +7,21 @@
 // the build fails. Never add compression (compressPublicAssets, vite-plugin-compression):
 // hosting already compresses at the edge.
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
+  vite: {
+    resolve: {
+      alias: [
+        // O SDK de MCP depende de pkce-challenge, que não publica build para Worker (veja o arquivo do shim).
+        {
+          find: /^pkce-challenge$/,
+          replacement: fileURLToPath(new URL("./src/omni-server/connectors/shims/pkce-challenge.ts", import.meta.url)),
+        },
+      ],
+    },
+  },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this

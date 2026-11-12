@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import {
   TrendingUp, Sparkles, LayoutDashboard, Users, Share2, MessageSquare, FileText, Presentation,
-  Plus, ChevronDown, Printer, Target, LineChart, Bot, LogOut, ShieldCheck, Menu, X, Cpu,
+  Plus, ChevronDown, Printer, Target, LineChart, Bot, LogOut, ShieldCheck, Menu, X, Cpu, Plug,
 } from 'lucide-react';
 import { BrandProfile, UserProfile } from '../types';
 
@@ -43,6 +43,7 @@ export const navGroups = [
     items: [
       { id: 'roi', label: 'ROI', icon: LineChart },
       { id: 'report', label: 'Relatório', icon: FileText },
+      { id: 'connections', label: 'Contas', icon: Plug },
     ],
   },
 ];

@@ -22,3 +22,16 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## Conectores de marketing (Supermetrics, Metricool, OpenSEO, Adspirer)
+
+Aba **Contas**: o usuário conecta cada plataforma com o próprio login (OAuth via MCP); as métricas dos últimos 30 dias são buscadas ao conectar e exibidas em uma aba por conta.
+
+Configuração (em Lovable Secrets, nunca no repositório):
+
+- `CONNECTOR_SECRET` (obrigatório, ≥ 16 caracteres): chave que cifra as credenciais, guardadas em cookies httpOnly no navegador do usuário. Trocar o valor desconecta todas as contas.
+- `APP_URL` (opcional): endereço público do app, se o detectado automaticamente estiver errado.
+- Se a plataforma não aceitar registro dinâmico de cliente, defina `<SUPERMETRICS|METRICOOL|OPENSEO|ADSPIRER>_OAUTH_CLIENT_ID` e `_OAUTH_CLIENT_SECRET`. A URL de retorno a cadastrar é `<APP_URL>/api/connections/oauth/callback`.
+- `<PREFIXO>_MCP_URL` sobrescreve o endereço do servidor MCP de cada plataforma.
+
+Limites: até 8 contas por navegador; os dados de métricas ficam só no `localStorage` do usuário.
