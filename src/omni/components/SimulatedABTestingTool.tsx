@@ -1,5 +1,5 @@
 // @ts-nocheck -- ported from the original OmniMarket repo (looser TS config)
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Sparkles,
   Trophy,
@@ -37,6 +37,7 @@ interface SimulatedABTestingToolProps {
   onApplyWinningVariation: (
     winningHeadline: string,
     winningHook: string,
+    winningBodyCopy: string,
     winningCta: string,
   ) => void;
 }
@@ -68,82 +69,125 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
   const [targetChannel, setTargetChannel] = useState<string>(
     channel || "Instagram Reels & Stories",
   );
+  const campaignName = campaign.campaignName ?? "";
+  const campaignTagline = campaign.tagline ?? "";
+  const campaignConcept = campaign.concept ?? "";
+  const currentHeadline = campaign.channels?.instagram?.hook ?? "";
+  const currentCopy = campaign.channels?.instagram?.caption ?? "";
+  const currentCta = campaign.channels?.instagram?.cta ?? "";
+  const alternateHook = campaign.abTestVariants?.[0]?.hook ?? "";
   const [simulatedImpressions, setSimulatedImpressions] = useState<number>(10000);
   const [isSimulating, setIsSimulating] = useState(false);
   const [appliedNotification, setAppliedNotification] = useState(false);
 
-  // Variations list
-  const [variations, setVariations] = useState<AdVariationInput[]>([
+  const initialVariations: AdVariationInput[] = [
     {
       id: "var_a",
-      name: "Variante A (Gancho Psicológico & UGC)",
-      headline:
-        campaign.channels?.instagram?.hook ||
-        "Você já reparou que as pessoas mais elegantes nunca parecem estar se esforçando?",
-      bodyCopy:
-        campaign.channels?.instagram?.caption ||
-        "Descubra a combinação exclusiva que elimina o desperdício e garante durabilidade vitalícia com caimento impecável.",
-      ctaText: campaign.channels?.instagram?.cta || "Garantir com Desconto Exclusivo",
+      name: "Variante A · conexão",
+      headline: currentHeadline,
+      bodyCopy: currentCopy,
+      ctaText: currentCta,
       visualType: "video_ugc",
       emotionalAngle: "curiosity_hook",
     },
     {
       id: "var_b",
-      name: "Variante B (Racional & Oferta Direta)",
-      headline:
-        campaign.abTestVariants?.[0]?.hook ||
-        "Economize até 40% do seu tempo com a solução definitiva da categoria.",
-      bodyCopy:
-        "Peças com certificação premium e envio expresso para todo o Brasil. Primeira troca grátis garantida.",
-      ctaText: "Comprar Agora",
+      name: "Variante B · alternativa",
+      headline: alternateHook,
+      bodyCopy: "",
+      ctaText: "",
       visualType: "static_minimal",
       emotionalAngle: "rational_savings",
     },
-  ]);
-
-  // Initial simulation run result
+  ];
+  const [variations, setVariations] = useState<AdVariationInput[]>(initialVariations);
+  const [isGeneratingCopy, setIsGeneratingCopy] = useState(true);
+  const [copyGenerationError, setCopyGenerationError] = useState("");
   const [result, setResult] = useState<ABComparisonResult>(() =>
     runABTestingPrediction(
-      [
-        {
-          id: "var_a",
-          name: "Variante A (Gancho Psicológico & UGC)",
-          headline:
-            campaign.channels?.instagram?.hook ||
-            "Você já reparou que as pessoas mais elegantes nunca parecem estar se esforçando?",
-          bodyCopy:
-            campaign.channels?.instagram?.caption ||
-            "Descubra a combinação exclusiva que elimina o desperdício e garante durabilidade vitalícia com caimento impecável.",
-          ctaText: campaign.channels?.instagram?.cta || "Garantir com Desconto Exclusivo",
-          visualType: "video_ugc",
-          emotionalAngle: "curiosity_hook",
-        },
-        {
-          id: "var_b",
-          name: "Variante B (Racional & Oferta Direta)",
-          headline:
-            campaign.abTestVariants?.[0]?.hook ||
-            "Economize até 40% do seu tempo com a solução definitiva da categoria.",
-          bodyCopy:
-            "Peças com certificação premium e envio expresso para todo o Brasil. Primeira troca grátis garantida.",
-          ctaText: "Comprar Agora",
-          visualType: "static_minimal",
-          emotionalAngle: "rational_savings",
-        },
-      ],
-      {
-        baselineCTR: 3.1,
-        baselineConvRate: 2.6,
-        avgOrderValue: 210,
-        avgCPC: 1.18,
-        topPerformingHooks: ["Ganchos reflexivos nos primeiros 3s", "UGC autêntico"],
-        fatiguedAngles: ["Anúncios estáticos institucionais"],
-      },
+      initialVariations,
+      benchmark,
       targetChannel,
       brand.targetAudience,
       10000,
     ),
   );
+
+  const generateABVariations = useCallback(async () => {
+    setIsGeneratingCopy(true);
+    setCopyGenerationError("");
+    try {
+      const response = await fetch("/api/ai/ab-variations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          brandProfile: brand,
+          targetChannel,
+          campaign: {
+            campaignName,
+            tagline: campaignTagline,
+            concept: campaignConcept,
+            currentHeadline,
+            currentCopy,
+            currentCta,
+            alternateHook,
+          },
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success || !Array.isArray(data.data?.variations)) {
+        throw new Error(data.error || "Não foi possível gerar as variantes com IA.");
+      }
+
+      const generatedVariations: AdVariationInput[] = [...data.data.variations]
+        .sort((left, right) => left.variant.localeCompare(right.variant))
+        .map((variation) => ({
+          id: `var_${variation.variant.toLowerCase()}`,
+          name: `Variante ${variation.variant} · ${variation.focus}`,
+          headline: variation.headline,
+          bodyCopy: variation.bodyCopy,
+          ctaText: variation.ctaText,
+          visualType: variation.visualType,
+          emotionalAngle: variation.emotionalAngle,
+        }));
+
+      setVariations(generatedVariations);
+    } catch (generationError) {
+      setCopyGenerationError(
+        generationError instanceof Error
+          ? generationError.message
+          : "Não foi possível gerar as variantes com IA.",
+      );
+    } finally {
+      setIsGeneratingCopy(false);
+    }
+  }, [
+    brand,
+    campaignName,
+    campaignTagline,
+    campaignConcept,
+    currentHeadline,
+    currentCopy,
+    currentCta,
+    alternateHook,
+    targetChannel,
+  ]);
+
+  useEffect(() => {
+    void generateABVariations();
+  }, [generateABVariations]);
+
+  useEffect(() => {
+    setResult(
+      runABTestingPrediction(
+        variations,
+        benchmark,
+        targetChannel,
+        brand.targetAudience,
+        simulatedImpressions,
+      ),
+    );
+  }, [variations, benchmark, targetChannel, brand.targetAudience, simulatedImpressions]);
 
   const handleUpdateVariation = (id: string, updates: Partial<AdVariationInput>) => {
     setVariations((prev) => prev.map((v) => (v.id === id ? { ...v, ...updates } : v)));
@@ -154,11 +198,10 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
     const nextLetter = String.fromCharCode(65 + variations.length);
     const newVar: AdVariationInput = {
       id: `var_${Date.now()}`,
-      name: `Variante ${nextLetter} (Prova Social)`,
-      headline: `Mais de 12.000 clientes já adotaram a ${brand.name}. Veja o porquê...`,
-      bodyCopy:
-        "Resultados comprovados com avaliações 5 estrelas e entrega garantida para todo o Brasil.",
-      ctaText: "Experimentar Sem Riscos",
+      name: `Variante ${nextLetter} · nova hipótese`,
+      headline: "",
+      bodyCopy: "",
+      ctaText: "",
       visualType: "carousel",
       emotionalAngle: "social_proof",
     };
@@ -187,7 +230,12 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
 
   const handleApplyWinner = () => {
     const winnerVar = variations.find((v) => v.id === result.winnerId) || variations[0];
-    onApplyWinningVariation(winnerVar.headline, winnerVar.headline, winnerVar.ctaText);
+    onApplyWinningVariation(
+      winnerVar.headline,
+      winnerVar.headline,
+      winnerVar.bodyCopy,
+      winnerVar.ctaText,
+    );
     setAppliedNotification(true);
     setTimeout(() => setAppliedNotification(false), 3000);
   };
@@ -216,8 +264,18 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
         <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
           <button
             type="button"
+            onClick={() => void generateABVariations()}
+            disabled={isGeneratingCopy}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-xs font-semibold text-slate-200 transition-colors whitespace-nowrap"
+          >
+            <Sparkles className={`w-3.5 h-3.5 ${isGeneratingCopy ? "animate-pulse" : ""}`} />
+            <span>{isGeneratingCopy ? "Gerando com IA..." : "Gerar variantes com IA"}</span>
+          </button>
+
+          <button
+            type="button"
             onClick={handleAddVariation}
-            disabled={variations.length >= 4}
+            disabled={variations.length >= 4 || isGeneratingCopy}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-xs font-semibold text-slate-200 transition-colors whitespace-nowrap"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -227,7 +285,7 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
           <button
             type="button"
             onClick={handleRunSimulation}
-            disabled={isSimulating}
+            disabled={isSimulating || isGeneratingCopy}
             className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-900 text-white text-xs sm:text-sm font-semibold shadow-md shadow-indigo-600/20 transition-all whitespace-nowrap"
           >
             <Play className={`w-3.5 h-3.5 ${isSimulating ? "animate-spin" : ""}`} />
@@ -235,6 +293,15 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
           </button>
         </div>
       </div>
+
+      {copyGenerationError && (
+        <p
+          role="alert"
+          className="rounded-xl border border-red-900/50 bg-red-950/30 px-4 py-3 text-xs text-red-300"
+        >
+          {copyGenerationError}
+        </p>
+      )}
 
       {/* Simulation Configuration & Historical Baseline Card */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-slate-950/60 rounded-xl border border-slate-800 text-xs">
@@ -330,7 +397,10 @@ export const SimulatedABTestingTool: React.FC<SimulatedABTestingToolProps> = ({
             <button
               type="button"
               onClick={handleApplyWinner}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-md transition-all whitespace-nowrap"
+              disabled={
+                isGeneratingCopy || !variations.some((variation) => variation.headline.trim())
+              }
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-50 hover:bg-emerald-500 text-white text-xs font-semibold shadow-md transition-all whitespace-nowrap"
             >
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>

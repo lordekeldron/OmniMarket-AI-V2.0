@@ -74,6 +74,7 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
   const handleApplyWinningVariation = (
     winningHeadline: string,
     winningHook: string,
+    winningBodyCopy: string,
     winningCta: string,
   ) => {
     onUpdateCampaign({
@@ -83,6 +84,7 @@ export const CampaignStudio: React.FC<CampaignStudioProps> = ({
         instagram: {
           ...campaign.channels.instagram,
           hook: winningHook,
+          caption: winningBodyCopy,
           cta: winningCta,
         },
       },
