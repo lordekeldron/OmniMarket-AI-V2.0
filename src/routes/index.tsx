@@ -1,7 +1,5 @@
-import { createFileRoute, ClientOnly } from "@tanstack/react-router";
-import { lazy, Suspense } from "react";
-
-const OmniApp = lazy(() => import("@/omni/ClientApp"));
+import { createFileRoute } from "@tanstack/react-router";
+import OmniApp from "@/omni/App";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -25,20 +23,6 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-function Loading() {
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-    </div>
-  );
-}
-
 function Index() {
-  return (
-    <ClientOnly fallback={<Loading />}>
-      <Suspense fallback={<Loading />}>
-        <OmniApp />
-      </Suspense>
-    </ClientOnly>
-  );
+  return <OmniApp />;
 }
