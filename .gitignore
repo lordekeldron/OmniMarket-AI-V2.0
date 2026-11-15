@@ -37,3 +37,7 @@ __pycache__/
 *.egg-info/
 .pytest_cache/
 .venv/
+
+.mp-integrate-progress.md
+.env
+.env.*.local

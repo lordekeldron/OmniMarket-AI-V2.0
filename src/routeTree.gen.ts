@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AgentesRouteImport } from './routes/agentes'
 import { Route as Contato1eed0c06076606086afb29999ef71341RouteImport } from './routes/contato-1eed0c06076606086afb29999ef71341'
 import { Route as ApiSplatRouteImport } from './routes/api/$'
+import { Route as ApiPaymentsSplatRouteImport } from './routes/api/payments/$'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -35,18 +36,25 @@ const ApiSplatRoute = ApiSplatRouteImport.update({
   path: '/api/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPaymentsSplatRoute = ApiPaymentsSplatRouteImport.update({
+  id: '/api/payments/$',
+  path: '/api/payments/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agentes': typeof AgentesRoute
   '/contato-1eed0c06076606086afb29999ef71341': typeof Contato1eed0c06076606086afb29999ef71341Route
   '/api/$': typeof ApiSplatRoute
+  '/api/payments/$': typeof ApiPaymentsSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/agentes': typeof AgentesRoute
   '/contato-1eed0c06076606086afb29999ef71341': typeof Contato1eed0c06076606086afb29999ef71341Route
   '/api/$': typeof ApiSplatRoute
+  '/api/payments/$': typeof ApiPaymentsSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -54,19 +62,30 @@ export interface FileRoutesById {
   '/agentes': typeof AgentesRoute
   '/contato-1eed0c06076606086afb29999ef71341': typeof Contato1eed0c06076606086afb29999ef71341Route
   '/api/$': typeof ApiSplatRoute
+  '/api/payments/$': typeof ApiPaymentsSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/agentes' | '/contato-1eed0c06076606086afb29999ef71341' | '/api/$'
+    | '/'
+    | '/agentes'
+    | '/contato-1eed0c06076606086afb29999ef71341'
+    | '/api/$'
+    | '/api/payments/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/agentes' | '/contato-1eed0c06076606086afb29999ef71341' | '/api/$'
+  to:
+    | '/'
+    | '/agentes'
+    | '/contato-1eed0c06076606086afb29999ef71341'
+    | '/api/$'
+    | '/api/payments/$'
   id:
     | '__root__'
     | '/'
     | '/agentes'
     | '/contato-1eed0c06076606086afb29999ef71341'
     | '/api/$'
+    | '/api/payments/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -74,6 +93,7 @@ export interface RootRouteChildren {
   AgentesRoute: typeof AgentesRoute
   Contato1eed0c06076606086afb29999ef71341Route: typeof Contato1eed0c06076606086afb29999ef71341Route
   ApiSplatRoute: typeof ApiSplatRoute
+  ApiPaymentsSplatRoute: typeof ApiPaymentsSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -106,6 +126,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/payments/$': {
+      id: '/api/payments/$'
+      path: '/api/payments/$'
+      fullPath: '/api/payments/$'
+      preLoaderRoute: typeof ApiPaymentsSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -115,6 +142,7 @@ const rootRouteChildren: RootRouteChildren = {
   Contato1eed0c06076606086afb29999ef71341Route:
     Contato1eed0c06076606086afb29999ef71341Route,
   ApiSplatRoute: ApiSplatRoute,
+  ApiPaymentsSplatRoute: ApiPaymentsSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
