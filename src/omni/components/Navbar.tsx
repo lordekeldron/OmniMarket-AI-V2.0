@@ -20,6 +20,7 @@ import {
   Menu,
   X,
   Cpu,
+  Coins,
 } from "lucide-react";
 import { BrandProfile, UserProfile } from "../types";
 
@@ -60,6 +61,7 @@ export const navGroups = [
     items: [
       { id: "roi", label: "ROI", icon: LineChart },
       { id: "report", label: "Relatório", icon: FileText },
+      { id: "tokens", label: "Tokens", icon: Coins },
     ],
   },
 ];

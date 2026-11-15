@@ -15,6 +15,7 @@ import { SlideDeckModal } from "./components/SlideDeckModal";
 import { LandingPage } from "./components/LandingPage";
 import { AuthModal } from "./components/AuthModal";
 import { AgentWorkbench } from "./components/AgentWorkbench";
+import { TokensView } from "./components/TokensView";
 
 import {
   BrandProfile,
@@ -88,7 +89,9 @@ export default function App() {
     return null;
   });
 
-  const [activeTab, setActiveTab] = useState<string>("overview");
+  const [activeTab, setActiveTab] = useState<string>(() =>
+    typeof window !== "undefined" && new URLSearchParams(window.location.search).has("mp_return") ? "tokens" : "overview",
+  );
   const [trends, setTrends] = useState<TrendData>(emptyTrendData);
 
   const [channels, setChannels] = useState<ChannelPerformanceData[]>(() => {
@@ -365,6 +368,8 @@ export default function App() {
           ) : (
             <>
               {activeTab === "agents" && activeBrand && <AgentWorkbench brand={activeBrand} />}
+
+              {activeTab === "tokens" && <TokensView userId={currentUser?.id} />}
 
               {activeTab === "overview" && (
                 <DashboardOverview
