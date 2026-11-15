@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AgentesRouteImport } from './routes/agentes'
+import { Route as Contato1eed0c06076606086afb29999ef71341RouteImport } from './routes/contato-1eed0c06076606086afb29999ef71341'
 import { Route as ApiSplatRouteImport } from './routes/api/$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +24,12 @@ const AgentesRoute = AgentesRouteImport.update({
   path: '/agentes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Contato1eed0c06076606086afb29999ef71341Route =
+  Contato1eed0c06076606086afb29999ef71341RouteImport.update({
+    id: '/contato-1eed0c06076606086afb29999ef71341',
+    path: '/contato-1eed0c06076606086afb29999ef71341',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiSplatRoute = ApiSplatRouteImport.update({
   id: '/api/$',
   path: '/api/$',
@@ -32,30 +39,40 @@ const ApiSplatRoute = ApiSplatRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agentes': typeof AgentesRoute
+  '/contato-1eed0c06076606086afb29999ef71341': typeof Contato1eed0c06076606086afb29999ef71341Route
   '/api/$': typeof ApiSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/agentes': typeof AgentesRoute
+  '/contato-1eed0c06076606086afb29999ef71341': typeof Contato1eed0c06076606086afb29999ef71341Route
   '/api/$': typeof ApiSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/agentes': typeof AgentesRoute
+  '/contato-1eed0c06076606086afb29999ef71341': typeof Contato1eed0c06076606086afb29999ef71341Route
   '/api/$': typeof ApiSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/agentes' | '/api/$'
+  fullPaths:
+    '/' | '/agentes' | '/contato-1eed0c06076606086afb29999ef71341' | '/api/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/agentes' | '/api/$'
-  id: '__root__' | '/' | '/agentes' | '/api/$'
+  to: '/' | '/agentes' | '/contato-1eed0c06076606086afb29999ef71341' | '/api/$'
+  id:
+    | '__root__'
+    | '/'
+    | '/agentes'
+    | '/contato-1eed0c06076606086afb29999ef71341'
+    | '/api/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AgentesRoute: typeof AgentesRoute
+  Contato1eed0c06076606086afb29999ef71341Route: typeof Contato1eed0c06076606086afb29999ef71341Route
   ApiSplatRoute: typeof ApiSplatRoute
 }
 
@@ -75,6 +92,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contato-1eed0c06076606086afb29999ef71341': {
+      id: '/contato-1eed0c06076606086afb29999ef71341'
+      path: '/contato-1eed0c06076606086afb29999ef71341'
+      fullPath: '/contato-1eed0c06076606086afb29999ef71341'
+      preLoaderRoute: typeof Contato1eed0c06076606086afb29999ef71341RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/$': {
       id: '/api/$'
       path: '/api/$'
@@ -88,6 +112,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AgentesRoute: AgentesRoute,
+  Contato1eed0c06076606086afb29999ef71341Route:
+    Contato1eed0c06076606086afb29999ef71341Route,
   ApiSplatRoute: ApiSplatRoute,
 }
 export const routeTree = rootRouteImport
